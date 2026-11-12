@@ -1,0 +1,23 @@
+---
+import type { CollectionEntry } from 'astro:content';
+import { CATEGORIES } from '../consts';
+import FormattedDate from './FormattedDate.astro';
+
+interface Props {
+  post: CollectionEntry<'blog'>;
+  heading?: 'h2' | 'h3';
+}
+
+const { post, heading = 'h3' } = Astro.props;
+const Heading = heading;
+const cat = CATEGORIES[post.data.category];
+---
+
+<li class="post-card">
+  <span class="badge">{cat.name}</span>
+  <Heading><a href={`/${post.id}/`}>{post.data.title}</a></Heading>
+  <p>{post.data.description}</p>
+  <div class="meta">
+    <FormattedDate date={post.data.updatedDate ?? post.data.pubDate} />
+  </div>
+</li>

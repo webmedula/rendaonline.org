@@ -1,0 +1,20 @@
+---
+import { CATEGORIES } from '../consts';
+const path = Astro.url.pathname;
+---
+
+<header class="site-header">
+  <div class="container">
+    <a class="brand" href="/">Renda<span>Online</span></a>
+    <nav class="nav" aria-label="Principal">
+      {
+        Object.entries(CATEGORIES).map(([slug, cat]) => (
+          <a href={`/categoria/${slug}/`} aria-current={path.startsWith(`/categoria/${slug}/`) ? 'page' : undefined}>
+            {cat.name}
+          </a>
+        ))
+      }
+      <a href="/sobre/" aria-current={path === '/sobre/' ? 'page' : undefined}>Sobre</a>
+    </nav>
+  </div>
+</header>

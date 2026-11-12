@@ -1,0 +1,30 @@
+---
+import { CATEGORIES, SITE_TITLE } from '../consts';
+const year = new Date().getFullYear();
+---
+
+<footer class="site-footer">
+  <div class="container">
+    <div>
+      <h3>{SITE_TITLE}</h3>
+      <p>Tutoriais práticos de IA, automação e ferramentas para trabalhar e ganhar dinheiro online.</p>
+      <p>© {year} RendaOnline.org. Todos os direitos reservados.</p>
+    </div>
+    <div>
+      <h3>Categorias</h3>
+      <ul>
+        {Object.entries(CATEGORIES).map(([slug, cat]) => <li><a href={`/categoria/${slug}/`}>{cat.name}</a></li>)}
+      </ul>
+    </div>
+    <div>
+      <h3>Institucional</h3>
+      <ul>
+        <li><a href="/sobre/">Sobre</a></li>
+        <li><a href="/contato/">Contato</a></li>
+        <li><a href="/politica-de-privacidade/">Política de Privacidade</a></li>
+        <li><a href="/termos-de-uso/">Termos de Uso</a></li>
+        <li><a href="/rss.xml">RSS</a></li>
+      </ul>
+    </div>
+  </div>
+</footer>

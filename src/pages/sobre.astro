@@ -1,0 +1,38 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import { AUTHOR_NAME } from '../consts';
+---
+
+<BaseLayout title="Sobre o Renda Online" description="Quem escreve o Renda Online, como os artigos são feitos e como falar com a gente.">
+  <article class="prose">
+    <h1>Sobre o Renda Online</h1>
+    <p>
+      O Renda Online é um site de tutoriais sobre inteligência artificial, automação e ferramentas para quem quer trabalhar e
+      ganhar dinheiro pela internet. Tudo o que está aqui foi testado antes de ser publicado.
+    </p>
+
+    <h2>Quem escreve</h2>
+    <p>
+      Meu nome é {AUTHOR_NAME}. Crio sites, automações e conteúdo com IA desde 2023, e mantenho este site com o que aprendo no
+      dia a dia: servidores, WordPress, ferramentas de IA e formas reais de monetizar um projeto online.
+    </p>
+    <p><em>[Complete aqui com sua experiência, formação e o que você faz hoje. Uma foto sua em /public/autor.jpg aparece na caixa de autor.]</em></p>
+
+    <h2>Como os artigos são feitos</h2>
+    <ul>
+      <li>Cada ferramenta é instalada e usada de verdade antes do tutorial. Os prints são do nosso uso.</li>
+      <li>Usamos IA para ajudar na pesquisa e no rascunho, mas o texto final é revisado e completado com a nossa experiência.</li>
+      <li>Os artigos têm data de atualização e são revisados quando a ferramenta muda.</li>
+    </ul>
+
+    <h2>Como o site se mantém</h2>
+    <p>
+      O site exibe anúncios do Google AdSense e, em alguns artigos, links de afiliado. Quando você compra por um desses links, o
+      site recebe uma comissão sem custo extra para você. Isso nunca muda a nossa opinião sobre a ferramenta, e os artigos com
+      esses links avisam no início.
+    </p>
+
+    <h2>Contato</h2>
+    <p>Encontrou um erro, tem uma dúvida ou quer sugerir um tema? Fale com a gente pela <a href="/contato/">página de contato</a>.</p>
+  </article>
+</BaseLayout>

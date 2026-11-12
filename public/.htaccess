@@ -1,0 +1,48 @@
+# Renda Online — regras do servidor (OpenLiteSpeed / Apache)
+
+RewriteEngine On
+
+# www -> sem www, sempre em HTTPS
+RewriteCond %{HTTP_HOST} ^www\.rendaonline\.org$ [NC]
+RewriteRule ^(.*)$ https://rendaonline.org/$1 [R=301,L]
+
+# HTTP -> HTTPS
+RewriteCond %{HTTPS} !=on
+RewriteRule ^(.*)$ https://rendaonline.org/$1 [R=301,L]
+
+# --- Redirecionamentos de URLs antigas do WordPress ---
+# Posts antigos mantidos continuam na mesma URL e não precisam de linha aqui.
+RewriteRule ^category/marketing-de-afiliados/?$ /categoria/criar-site/ [R=301,L]
+RewriteRule ^category/renda-extra/?$ /categoria/automacao/ [R=301,L]
+RewriteRule ^category/reviews/?$ /categoria/ferramentas/ [R=301,L]
+RewriteRule ^category/ia/?$ /categoria/ia-conteudo/ [R=301,L]
+RewriteRule ^category/tutoriais/?$ /categoria/automacao/ [R=301,L]
+RewriteRule ^category/seo-basico/?$ /categoria/criar-site/ [R=301,L]
+RewriteRule ^category/tutoriais-wordpress/?$ /categoria/criar-site/ [R=301,L]
+RewriteRule ^category/ferramentas-open-source/?$ /categoria/ferramentas/ [R=301,L]
+RewriteRule ^category/.*$ /blog/ [R=301,L]
+RewriteRule ^tag/.*$ /blog/ [R=301,L]
+RewriteRule ^author/.*$ /sobre/ [R=301,L]
+RewriteRule ^page/[0-9]+/?$ /blog/ [R=301,L]
+RewriteRule ^feed/?$ /rss.xml [R=301,L]
+RewriteRule ^sitemap_index\.xml$ /sitemap-index.xml [R=301,L]
+RewriteRule ^(post|page|category|post_tag|author|project)-sitemap\.xml$ /sitemap-index.xml [R=301,L]
+
+# Caminhos do WordPress que não existem mais
+RewriteRule ^(wp-admin|wp-login\.php|wp-content|wp-includes|xmlrpc\.php)(/.*)?$ - [G,L]
+
+# Página 404 personalizada
+ErrorDocument 404 /404.html
+
+# Cache de arquivos estáticos
+<IfModule mod_expires.c>
+  ExpiresActive On
+  ExpiresByType text/css "access plus 1 year"
+  ExpiresByType application/javascript "access plus 1 year"
+  ExpiresByType image/webp "access plus 1 year"
+  ExpiresByType image/png "access plus 1 year"
+  ExpiresByType image/jpeg "access plus 1 year"
+  ExpiresByType image/svg+xml "access plus 1 year"
+  ExpiresByType font/woff2 "access plus 1 year"
+  ExpiresByType text/html "access plus 10 minutes"
+</IfModule>

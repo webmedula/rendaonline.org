@@ -1,0 +1,30 @@
+---
+import { ADSENSE_CLIENT } from '../consts';
+
+interface Props {
+  slot?: string;
+  format?: 'auto' | 'fluid' | 'rectangle' | 'horizontal';
+}
+
+// Sem `slot`, o bloco fica vazio e os anúncios automáticos do AdSense cuidam do posicionamento.
+// Com `slot`, renderiza um bloco manual (crie o bloco no painel do AdSense e cole o ID aqui).
+const { slot, format = 'auto' } = Astro.props;
+---
+
+{
+  slot && (
+    <div class="ad-slot">
+      <ins
+        class="adsbygoogle"
+        style="display:block"
+        data-ad-client={ADSENSE_CLIENT}
+        data-ad-slot={slot}
+        data-ad-format={format}
+        data-full-width-responsive="true"
+      />
+      <script is:inline>
+        (window.adsbygoogle = window.adsbygoogle || []).push({});
+      </script>
+    </div>
+  )
+}

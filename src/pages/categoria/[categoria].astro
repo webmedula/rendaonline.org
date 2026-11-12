@@ -1,0 +1,40 @@
+---
+import { getCollection } from 'astro:content';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import PostCard from '../../components/PostCard.astro';
+import { CATEGORIES, type CategorySlug } from '../../consts';
+
+export async function getStaticPaths() {
+  const posts = await getCollection('blog', ({ data }) => !data.draft);
+  return (Object.keys(CATEGORIES) as CategorySlug[]).map((categoria) => ({
+    params: { categoria },
+    props: {
+      posts: posts
+        .filter((p) => p.data.category === categoria)
+        .sort((a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf()),
+    },
+  }));
+}
+
+const { categoria } = Astro.params as { categoria: CategorySlug };
+const { posts } = Astro.props;
+const cat = CATEGORIES[categoria];
+---
+
+<BaseLayout title={cat.name} description={cat.description}>
+  <section class="hero">
+    <h1>{cat.name}</h1>
+    <p>{cat.description}</p>
+  </section>
+  {
+    posts.length === 0 ? (
+      <p class="muted">Ainda não há artigos nesta categoria.</p>
+    ) : (
+      <ul class="post-list">
+        {posts.map((post) => (
+          <PostCard post={post} heading="h2" />
+        ))}
+      </ul>
+    )
+  }
+</BaseLayout>

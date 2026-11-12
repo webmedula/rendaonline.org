@@ -1,0 +1,24 @@
+---
+import { getCollection, render } from 'astro:content';
+import BlogPost from '../layouts/BlogPost.astro';
+
+// Posts ficam na raiz do site (ex.: /criar-videos-com-ia-gratis-gemini/),
+// igual às URLs do WordPress antigo, para não perder o que já está indexado.
+export async function getStaticPaths() {
+  const posts = await getCollection('blog', ({ data }) => !data.draft);
+  return posts.map((post) => {
+    const related = posts
+      .filter((p) => p.id !== post.id && p.data.category === post.data.category)
+      .sort((a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf())
+      .slice(0, 3);
+    return { params: { slug: post.id }, props: { post, related } };
+  });
+}
+
+const { post, related } = Astro.props;
+const { Content } = await render(post);
+---
+
+<BlogPost post={post} related={related}>
+  <Content />
+</BlogPost>
