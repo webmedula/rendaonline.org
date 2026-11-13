@@ -1,0 +1,124 @@
+---
+import ToolLayout from '../../layouts/ToolLayout.astro';
+import { MEI_DAS, MEI_INSS, MEI_LIMITE_ANUAL, SALARIO_MINIMO, brl, limiteMei } from '../../lib/calc';
+
+const faq = [
+  {
+    q: 'Qual o valor do DAS MEI em 2026?',
+    a: `Comércio ou indústria: ${brl(MEI_DAS.comercio)}. Prestação de serviços: ${brl(MEI_DAS.servicos)}. Comércio e serviços: ${brl(MEI_DAS.ambos)}. O valor é 5% do salário mínimo (${brl(MEI_INSS)} de INSS) mais R$ 1 de ICMS e/ou R$ 5 de ISS.`,
+  },
+  {
+    q: 'Qual o dia do vencimento do DAS MEI?',
+    a: 'Todo dia 20 do mês seguinte ao de referência. Se cair em fim de semana ou feriado, vence no próximo dia útil. A guia é emitida no Portal do Empreendedor, no app MEI ou pelo PGMEI da Receita.',
+  },
+  {
+    q: 'Qual o limite de faturamento do MEI em 2026?',
+    a: `${brl(MEI_LIMITE_ANUAL)} por ano, ou ${brl(MEI_LIMITE_ANUAL / 12)} por mês de atividade no ano em que o MEI foi aberto. Há projetos no Congresso para aumentar esse limite, mas até agora o valor em vigor é ${brl(MEI_LIMITE_ANUAL)}.`,
+  },
+  {
+    q: 'O que acontece se eu passar do limite do MEI?',
+    a: 'Se o excesso for de até 20%, você continua MEI até o fim do ano, paga um DAS complementar sobre o valor que passou e vira microempresa no Simples Nacional a partir de janeiro. Se passar de 20%, o desenquadramento é retroativo a janeiro (ou à data de abertura) e os impostos são recalculados pelo Simples, com juros.',
+  },
+  {
+    q: 'O que acontece se eu atrasar o DAS?',
+    a: 'Há multa de 0,33% por dia de atraso, limitada a 20%, mais juros pela taxa Selic. Atrasos longos podem levar à cobrança em dívida ativa e fazem você perder a contagem do tempo para aposentadoria e auxílios do INSS nos meses não pagos.',
+  },
+  {
+    q: 'Quanto paga o MEI caminhoneiro?',
+    a: `O MEI Transportador Autônomo de Cargas contribui com 12% do salário mínimo para o INSS (${brl(SALARIO_MINIMO * 0.12)}), mais ICMS e/ou ISS conforme o tipo de transporte, e tem limite de faturamento maior, de R$ 251.600 por ano.`,
+  },
+];
+---
+
+<ToolLayout
+  slug="calculadora-das-mei"
+  title="Calculadora DAS MEI 2026: valor da guia e limite de faturamento"
+  description="Veja o valor do DAS MEI 2026 por atividade (comércio, serviços ou ambos), o total no ano e se o seu faturamento cabe no limite de R$ 81 mil."
+  h1="Calculadora do DAS MEI 2026"
+  lead="Escolha sua atividade e informe quanto fatura por mês para ver o valor da guia, o total de impostos no ano e se você está dentro do limite do MEI."
+  faq={faq}
+>
+  <Fragment slot="calc">
+    <form class="calc-form" id="f" novalidate>
+      <label>Atividade do MEI
+        <select name="atv">
+          <option value="servicos">Prestação de serviços</option>
+          <option value="comercio">Comércio ou indústria</option>
+          <option value="ambos">Comércio e serviços</option>
+        </select>
+      </label>
+      <label>Faturamento médio por mês (R$) <span class="hint">opcional, para checar o limite</span>
+        <input name="fat" inputmode="decimal" placeholder="Ex.: 5.000,00" autocomplete="off" />
+      </label>
+      <label>Meses de atividade em 2026
+        <select name="meses">
+          {Array.from({ length: 12 }, (_, i) => 12 - i).map((m) => <option value={m}>{m === 12 ? '12 (o ano todo)' : m}</option>)}
+        </select>
+      </label>
+      <button class="btn full" type="submit">Calcular DAS</button>
+    </form>
+    <div class="calc-result" id="r" hidden aria-live="polite"></div>
+  </Fragment>
+
+  <h2>Tabela do DAS MEI 2026</h2>
+  <div class="table-scroll">
+    <table>
+      <thead><tr><th>Atividade</th><th>INSS</th><th>ICMS</th><th>ISS</th><th>Total por mês</th></tr></thead>
+      <tbody>
+        <tr><td>Comércio ou indústria</td><td>{brl(MEI_INSS)}</td><td>R$ 1,00</td><td>-</td><td><strong>{brl(MEI_DAS.comercio)}</strong></td></tr>
+        <tr><td>Prestação de serviços</td><td>{brl(MEI_INSS)}</td><td>-</td><td>R$ 5,00</td><td><strong>{brl(MEI_DAS.servicos)}</strong></td></tr>
+        <tr><td>Comércio e serviços</td><td>{brl(MEI_INSS)}</td><td>R$ 1,00</td><td>R$ 5,00</td><td><strong>{brl(MEI_DAS.ambos)}</strong></td></tr>
+      </tbody>
+    </table>
+  </div>
+  <p class="small muted">INSS de 5% sobre o salário mínimo de {brl(SALARIO_MINIMO)} (LC 123/2006, art. 18-A).</p>
+
+  <h2>O que o DAS dá direito</h2>
+  <p>
+    O DAS é o único imposto mensal do MEI, independentemente de quanto você fatura dentro do limite. Pagando em dia, você tem
+    direito a aposentadoria por idade, auxílio-doença, salário-maternidade e, para a família, pensão por morte e auxílio-reclusão.
+    Também pode emitir nota fiscal, ter CNPJ para abrir conta PJ e vender para empresas.
+  </p>
+
+  <h2>Limite proporcional no primeiro ano</h2>
+  <p>
+    Quem abre o MEI no meio do ano tem limite de {brl(MEI_LIMITE_ANUAL / 12)} por mês de atividade. Abriu em julho? São 6 meses e
+    limite de {brl(limiteMei(6))} até dezembro. A declaração anual (DASN-SIMEI) deve ser entregue até 31 de maio do ano seguinte.
+  </p>
+  <p>
+    Presta serviço como MEI e não sabe quanto cobrar? Use a calculadora de
+    <a href="/ferramentas/quanto-cobrar-por-hora-freelancer/">quanto cobrar por hora</a>, que já desconta o DAS do seu preço.
+  </p>
+</ToolLayout>
+
+<script>
+  import { dasMei, brl, type AtividadeMei } from '../../lib/calc';
+  import { bind, hero, num, table, type Row } from '../../lib/ui';
+  const f = document.getElementById('f') as HTMLFormElement;
+  const r = document.getElementById('r') as HTMLElement;
+  const el = (n: string) => f.elements.namedItem(n) as HTMLInputElement;
+  bind(f, r, () => {
+    const meses = Number(el('meses').value);
+    const fat = num(el('fat'));
+    const d = dasMei(el('atv').value as AtividadeMei, fat, meses);
+    const rows: Row[] = [
+      ['INSS (5% do salário mínimo)', d.inss],
+      ...(d.icms ? ([['ICMS (estado)', d.icms]] as Row[]) : []),
+      ...(d.iss ? ([['ISS (município)', d.iss]] as Row[]) : []),
+      ['DAS por mês', d.das, 'total'],
+      [`Total em ${meses} ${meses === 1 ? 'mês' : 'meses'}`, d.totalAno, 'total'],
+      ['Seu limite de faturamento', d.limite, 'sub'],
+    ];
+    let nota = 'Vencimento todo dia 20 do mês seguinte.';
+    if (fat > 0) {
+      rows.push(['Faturamento previsto', d.faturamentoAno], ['Uso do limite', `${(d.pctLimite * 100).toLocaleString('pt-BR', { maximumFractionDigits: 1 })}%`]);
+      const pctImposto = d.totalAno / d.faturamentoAno;
+      if (d.situacao === 'ok') nota = `Você está dentro do limite. O DAS equivale a ${(pctImposto * 100).toLocaleString('pt-BR', { maximumFractionDigits: 2 })}% do seu faturamento. ` + nota;
+      else if (d.situacao === 'excesso-ate-20')
+        nota = `<strong>Atenção:</strong> você passa do limite em ${brl(d.excesso)} (até 20%). Continua MEI este ano, paga DAS complementar sobre o excesso e vira microempresa em janeiro.`;
+      else
+        nota = `<strong>Atenção:</strong> você passa do limite em ${brl(d.excesso)}, mais de 20%. O desenquadramento seria retroativo e os impostos recalculados pelo Simples Nacional. Fale com um contador.`;
+    }
+    return hero('Valor do DAS MEI por mês', d.das, `${brl(d.totalAno)} em ${meses} ${meses === 1 ? 'mês' : 'meses'}`) + table(rows) + `<p class="result-note">${nota}</p>`;
+  });
+</script>

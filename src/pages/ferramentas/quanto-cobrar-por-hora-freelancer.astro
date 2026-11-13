@@ -1,0 +1,177 @@
+---
+import ToolLayout from '../../layouts/ToolLayout.astro';
+import { MEI_DAS, MEI_LIMITE_ANUAL, brl, valorHora } from '../../lib/calc';
+import { whatsappLink } from '../../consts';
+
+const ex = valorHora({
+  rendaDesejada: 5000,
+  custosFixos: 600,
+  horasDia: 8,
+  diasSemana: 5,
+  semanasFolga: 6,
+  pctFaturavel: 60,
+  regime: 'simples',
+  aliquota: 6,
+  incluir13Ferias: true,
+  margem: 10,
+});
+const faq = [
+  {
+    q: 'Como calcular o valor da minha hora de trabalho como freelancer?',
+    a: 'Some quanto você quer ganhar por mês, seus custos fixos e uma reserva para férias e 13º. Divida pelo faturamento líquido de impostos e pelas horas que você realmente consegue cobrar no mês. A conta "salário ÷ 220 horas" da CLT não serve para autônomo, porque você não fatura todas as horas que trabalha.',
+  },
+  {
+    q: 'Por que considerar só 50% a 70% das horas como faturáveis?',
+    a: 'Porque parte do tempo vai para prospectar clientes, responder mensagens, fazer orçamentos, estudar, emitir nota e cuidar do financeiro. Quem está começando costuma faturar menos da metade das horas trabalhadas.',
+  },
+  {
+    q: 'Quanto de imposto o freelancer paga?',
+    a: `No MEI, um valor fixo por mês (${brl(MEI_DAS.servicos)} para serviços em 2026), com faturamento até ${brl(MEI_LIMITE_ANUAL)} por ano. No Simples Nacional, serviços começam em 6% do faturamento (Anexo III) ou 15,5% (Anexo V, dependendo da folha). Como pessoa física, pelo carnê-leão, pode chegar a 27,5% mais 20% de INSS.`,
+  },
+  {
+    q: 'É melhor cobrar por hora ou por projeto?',
+    a: 'Use o valor-hora como base interna e, para o cliente, prefira preço por projeto ou pacote mensal. Estime as horas, multiplique pelo seu valor-hora e some uma folga de 20% a 30% para revisões e imprevistos. Cliente compra resultado, não horas.',
+  },
+  {
+    q: 'Quanto cobra um freelancer iniciante no Brasil?',
+    a: 'Varia muito por área. Em design, redação, sites e automação é comum começar entre R$ 40 e R$ 80 por hora e passar de R$ 100 a R$ 200 com portfólio e especialização. Use a calculadora para saber o mínimo que paga suas contas e não cobre abaixo disso.',
+  },
+];
+---
+
+<ToolLayout
+  slug="quanto-cobrar-por-hora-freelancer"
+  title="Quanto cobrar por hora como freelancer: calculadora grátis"
+  description="Calcule quanto cobrar por hora como freelancer ou autônomo: renda desejada, impostos (MEI ou Simples), custos, férias, 13º e horas faturáveis."
+  h1="Quanto cobrar por hora como freelancer"
+  lead="Descubra o valor mínimo da sua hora para pagar impostos, custos, férias e ainda tirar a renda que você quer no fim do mês."
+  faq={faq}
+  cta={{
+    text: 'Quer viver de criar sites e automações para empresas, cobrando bem por isso? Na mentoria você aprende a técnica, monta sua oferta e sua tabela de preços e fecha o primeiro cliente com acompanhamento.',
+    label: 'Conhecer a mentoria',
+    href: '/mentoria/',
+  }}
+>
+  <Fragment slot="calc">
+    <form class="calc-form" id="f" novalidate>
+      <label>Quanto quer tirar por mês (R$) <span class="hint">líquido, no seu bolso</span>
+        <input name="renda" inputmode="decimal" placeholder="Ex.: 5.000,00" autocomplete="off" />
+      </label>
+      <label>Custos fixos do trabalho (R$/mês) <span class="hint">internet, softwares, contador, equipamento</span>
+        <input name="custos" inputmode="decimal" placeholder="Ex.: 600,00" />
+      </label>
+      <label>Horas de trabalho por dia
+        <input name="horas" type="number" min="1" max="16" value="8" inputmode="numeric" />
+      </label>
+      <label>Dias por semana
+        <input name="dias" type="number" min="1" max="7" value="5" inputmode="numeric" />
+      </label>
+      <label>Semanas de folga por ano <span class="hint">férias + feriados</span>
+        <input name="folga" type="number" min="0" max="26" value="6" inputmode="numeric" />
+      </label>
+      <label>% do tempo que dá para cobrar <span class="hint">o resto vai para vendas e administração</span>
+        <input name="fat" type="number" min="10" max="100" value="60" inputmode="numeric" />
+      </label>
+      <label>Como você emite nota
+        <select name="regime">
+          <option value="mei">MEI (DAS fixo de {brl(MEI_DAS.servicos)})</option>
+          <option value="simples" selected>Simples Nacional</option>
+          <option value="outro">Outro / pessoa física</option>
+        </select>
+      </label>
+      <label>Alíquota de imposto (%) <span class="hint">Simples serviços: a partir de 6%</span>
+        <input name="aliq" inputmode="decimal" value="6" />
+      </label>
+      <label>Margem para imprevistos (%) <span class="hint">clientes que atrasam, meses fracos</span>
+        <input name="margem" type="number" min="0" max="100" value="10" inputmode="numeric" />
+      </label>
+      <label class="check full"><input type="checkbox" name="ferias13" checked /> Guardar o equivalente a 13º e férias (como na CLT)</label>
+      <button class="btn full" type="submit">Calcular meu valor-hora</button>
+    </form>
+    <div class="calc-result" id="r" hidden aria-live="polite"></div>
+  </Fragment>
+
+  <h2>Por que a conta do freelancer é diferente</h2>
+  <p>
+    Quem sai da CLT costuma pegar o antigo salário e dividir por 220 horas. O resultado fica baixo demais, porque o autônomo paga
+    sozinho o que a empresa pagava: impostos, equipamento, férias, 13º, e não fatura as horas em que está vendendo, respondendo
+    e-mails ou parado entre um projeto e outro.
+  </p>
+  <ol>
+    <li><strong>Renda + reservas:</strong> o que você quer tirar por mês, mais 1/12 de 13º e 1/12 de férias com 1/3.</li>
+    <li><strong>Custos e margem:</strong> some custos fixos e uma margem para meses fracos.</li>
+    <li><strong>Impostos:</strong> divida por (1 − alíquota) para chegar no faturamento necessário. No MEI, some o DAS fixo.</li>
+    <li><strong>Horas faturáveis:</strong> horas por dia × dias × semanas trabalhadas ÷ 12 × % faturável.</li>
+    <li><strong>Valor-hora:</strong> faturamento necessário ÷ horas faturáveis.</li>
+  </ol>
+
+  <h3>Exemplo</h3>
+  <p>
+    Para tirar R$ 5.000 por mês, com R$ 600 de custos, 8 horas por dia, 5 dias por semana, 6 semanas de folga, 60% de horas
+    faturáveis, Simples a 6% e 10% de margem: você precisa faturar {brl(ex.faturamento)} por mês em {ex.horasFaturaveis.toLocaleString('pt-BR')}
+    horas cobráveis. O valor mínimo da hora é <strong>{brl(ex.hora)}</strong>.
+  </p>
+
+  <h2>Como subir o seu valor-hora</h2>
+  <ul>
+    <li><strong>Especialize-se:</strong> "sites para clínicas" ou "automação de WhatsApp para lojas" vale mais que "faço sites".</li>
+    <li><strong>Venda pacotes e mensalidades:</strong> manutenção, hospedagem e suporte geram renda recorrente com pouco tempo.</li>
+    <li><strong>Automatize o seu trabalho:</strong> com IA e ferramentas como o n8n, você entrega mais rápido e ganha mais por hora. Veja nossos guias de <a href="/categoria/automacao/">automação</a>.</li>
+    <li><strong>Mostre resultado:</strong> portfólio com números (mais contatos, horas economizadas) justifica preço maior.</li>
+  </ul>
+  <p>
+    Precisa abrir ou organizar o MEI? Use a <a href="/ferramentas/calculadora-das-mei/">calculadora do DAS MEI</a> para ver o
+    imposto mensal e o limite de faturamento. Dúvidas sobre preço de um projeto? <a href={whatsappLink('Olá! Vim da calculadora de valor-hora do Renda Online e quero conversar sobre a mentoria.')} target="_blank" rel="noopener">Fale com a gente no WhatsApp</a>.
+  </p>
+</ToolLayout>
+
+<script>
+  import { valorHora, brl, MEI_LIMITE_ANUAL, type Regime } from '../../lib/calc';
+  import { bind, hero, num, table, type Row } from '../../lib/ui';
+  const f = document.getElementById('f') as HTMLFormElement;
+  const r = document.getElementById('r') as HTMLElement;
+  const el = (n: string) => f.elements.namedItem(n) as HTMLInputElement;
+  const syncRegime = () => {
+    const mei = el('regime').value === 'mei';
+    el('aliq').disabled = mei;
+  };
+  el('regime').addEventListener('change', syncRegime);
+  syncRegime();
+  bind(f, r, () => {
+    syncRegime();
+    const renda = num(el('renda'));
+    if (renda <= 0) throw new Error('Digite quanto você quer tirar por mês.');
+    const regime = el('regime').value as Regime;
+    const aliq = num(el('aliq'));
+    if (regime !== 'mei' && (aliq < 0 || aliq >= 90)) throw new Error('Informe uma alíquota de imposto entre 0% e 90%.');
+    const v = valorHora({
+      rendaDesejada: renda,
+      custosFixos: num(el('custos')),
+      horasDia: Math.max(1, num(el('horas'))),
+      diasSemana: Math.max(1, num(el('dias'))),
+      semanasFolga: Math.max(0, num(el('folga'))),
+      pctFaturavel: Math.min(100, Math.max(10, num(el('fat')))),
+      regime,
+      aliquota: aliq,
+      incluir13Ferias: el('ferias13').checked,
+      margem: Math.max(0, num(el('margem'))),
+    });
+    if (v.horasFaturaveis <= 0) throw new Error('Confira as horas e semanas de trabalho.');
+    const rows: Row[] = [
+      ['Renda que você quer tirar', renda],
+      ...(v.reservas > 0 ? ([['Reserva de 13º e férias', v.reservas]] as Row[]) : []),
+      ['Custos fixos', num(el('custos'))],
+      ...(v.das ? ([['DAS do MEI', v.das]] as Row[]) : []),
+      ...(v.margemValor > 0 ? ([['Margem para imprevistos', v.margemValor]] as Row[]) : []),
+      ...(v.impostos > 0 ? ([['Impostos sobre o faturamento', v.impostos]] as Row[]) : []),
+      ['Faturamento necessário por mês', v.faturamento, 'total'],
+      ['Horas trabalhadas por mês', `${v.horasMes.toLocaleString('pt-BR')} h`, 'sub'],
+      ['Horas que dá para cobrar', `${v.horasFaturaveis.toLocaleString('pt-BR')} h`, 'sub'],
+      ['Valor do dia de trabalho', v.dia],
+    ];
+    const notas = ['Esse é o valor mínimo. Para o cliente, transforme em preço por projeto: horas estimadas × valor-hora + 20% a 30% de folga.'];
+    if (v.passaLimiteMei)
+      notas.unshift(`<strong>Atenção:</strong> esse faturamento (${brl(v.faturamentoAno)} por ano) passa do limite do MEI de ${brl(MEI_LIMITE_ANUAL)}. Considere o Simples Nacional.`);
+    return hero('Cobre no mínimo, por hora', v.hora, `Faturamento de ${brl(v.faturamento)} por mês`) + table(rows) + `<p class="result-note">${notas.join(' ')}</p>`;
+  });
+</script>

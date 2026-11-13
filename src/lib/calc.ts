@@ -370,3 +370,78 @@ export function jurosCompostos(opts: {
 
 export const brl = (n: number) => n.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
 export const pct = (n: number, casas = 2) => `${(n * 100).toLocaleString('pt-BR', { maximumFractionDigits: casas })}%`;
+
+// ---------- MEI ----------
+
+export const MEI_INSS = r2(SALARIO_MINIMO * 0.05);
+export const MEI_ICMS = 1;
+export const MEI_ISS = 5;
+export type AtividadeMei = keyof typeof MEI_DAS;
+
+/** Limite proporcional do MEI no ano de abertura: R$ 6.750 por mês de atividade. */
+export function limiteMei(mesesNoAno: number) {
+  return r2((MEI_LIMITE_ANUAL / 12) * mesesNoAno);
+}
+
+export function dasMei(atividade: AtividadeMei, faturamentoMensal: number, mesesNoAno = 12) {
+  const das = MEI_DAS[atividade];
+  const limite = limiteMei(mesesNoAno);
+  const faturamentoAno = r2(faturamentoMensal * mesesNoAno);
+  const excesso = r2(Math.max(0, faturamentoAno - limite));
+  const situacao = excesso === 0 ? 'ok' : excesso <= limite * 0.2 ? 'excesso-ate-20' : 'excesso-acima-20';
+  return {
+    das,
+    inss: MEI_INSS,
+    icms: atividade === 'servicos' ? 0 : MEI_ICMS,
+    iss: atividade === 'comercio' ? 0 : MEI_ISS,
+    totalAno: r2(das * mesesNoAno),
+    limite,
+    faturamentoAno,
+    excesso,
+    situacao,
+    pctLimite: limite ? faturamentoAno / limite : 0,
+  };
+}
+
+// ---------- Quanto cobrar por hora ----------
+
+export type Regime = 'mei' | 'simples' | 'outro';
+
+export function valorHora(o: {
+  rendaDesejada: number; // líquido por mês que você quer tirar
+  custosFixos: number; // por mês
+  horasDia: number;
+  diasSemana: number;
+  semanasFolga: number; // férias + feriados, por ano
+  pctFaturavel: number; // 0-100
+  regime: Regime;
+  aliquota: number; // % para simples/outro
+  incluir13Ferias: boolean;
+  margem: number; // % de reserva / lucro
+}) {
+  const semanas = Math.max(0, 52 - o.semanasFolga);
+  const horasMes = (o.horasDia * o.diasSemana * semanas) / 12;
+  const horasFaturaveis = horasMes * (o.pctFaturavel / 100);
+  const fator = o.incluir13Ferias ? (12 + 1 + 1 / 3) / 12 : 1;
+  const renda = o.rendaDesejada * fator;
+  const imposto = o.regime === 'mei' ? 0 : o.aliquota / 100;
+  const das = o.regime === 'mei' ? MEI_DAS.servicos : 0;
+  const custo = renda + o.custosFixos + das;
+  const comMargem = custo * (1 + o.margem / 100);
+  const faturamento = imposto < 1 ? comMargem / (1 - imposto) : 0;
+  const hora = horasFaturaveis > 0 ? faturamento / horasFaturaveis : 0;
+  const faturamentoAno = faturamento * 12;
+  return {
+    horasMes: r2(horasMes),
+    horasFaturaveis: r2(horasFaturaveis),
+    reservas: r2(renda - o.rendaDesejada),
+    das,
+    impostos: r2(faturamento * imposto),
+    margemValor: r2(comMargem - custo),
+    faturamento: r2(faturamento),
+    hora: r2(hora),
+    dia: r2(hora * o.horasDia),
+    faturamentoAno: r2(faturamentoAno),
+    passaLimiteMei: o.regime === 'mei' && faturamentoAno > MEI_LIMITE_ANUAL,
+  };
+}

@@ -194,6 +194,18 @@ export const TOOLS = [
     short: 'Juros compostos',
     summary: 'Simule quanto seu dinheiro rende com aportes mensais, ano a ano.',
   },
+  {
+    slug: 'quanto-cobrar-por-hora-freelancer',
+    name: 'Quanto cobrar por hora como freelancer',
+    short: 'Valor da hora (freelancer)',
+    summary: 'Calcule seu valor-hora com impostos, custos, férias e o tempo que não dá para cobrar.',
+  },
+  {
+    slug: 'calculadora-das-mei',
+    name: 'Calculadora do DAS MEI 2026',
+    short: 'DAS MEI',
+    summary: 'Valor do DAS por atividade, total no ano e se o seu faturamento cabe no limite do MEI.',
+  },
 ] as const;
 
 export type ToolSlug = (typeof TOOLS)[number]['slug'];
