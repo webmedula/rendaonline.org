@@ -1,6 +1,6 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
-import { AUTHOR_NAME, COMPANY_CITY, COMPANY_NAME, COMPANY_URL, MENTORING, whatsappLink } from '../consts';
+import { AUTHOR_BOOK_URL, AUTHOR_NAME, COMPANY_CITY, COMPANY_NAME, COMPANY_URL, MENTORING, whatsappLink } from '../consts';
 
 const general = whatsappLink('Olá! Quero saber mais sobre a mentoria de sites e automações.');
 const faq = [
@@ -86,7 +86,8 @@ const faqLd = {
       {AUTHOR_NAME} é fundador da <a href={COMPANY_URL} rel="noopener">{COMPANY_NAME}</a>, de {COMPANY_CITY}, que cria sites,
       tráfego pago e automações para empresas: pedidos da Shopee no Tiny com nota fiscal automática, central de devoluções do
       Mercado Livre, landing pages de lançamento imobiliário e sites para empresas de serviço. Também escreve os tutoriais do
-      Renda Online. Na mentoria, você aprende exatamente o que é usado nesses projetos.
+      Renda Online e é autor de um <a href={AUTHOR_BOOK_URL} rel="noopener">livro sobre mediocridade e mérito</a>, publicado
+      na Amazon. Na mentoria, você aprende exatamente o que é usado nesses projetos.
     </p>
   </section>
 

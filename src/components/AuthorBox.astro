@@ -1,7 +1,7 @@
 ---
 import fs from 'node:fs';
 import path from 'node:path';
-import { AUTHOR_NAME, COMPANY_NAME, COMPANY_URL } from '../consts';
+import { AUTHOR_BOOK_URL, AUTHOR_NAME, COMPANY_NAME, COMPANY_URL } from '../consts';
 const hasPhoto = fs.existsSync(path.join(process.cwd(), 'public', 'autor.jpg'));
 ---
 
@@ -12,7 +12,7 @@ const hasPhoto = fs.existsSync(path.join(process.cwd(), 'public', 'autor.jpg'));
     <p>
       Fundador da <a href={COMPANY_URL} rel="noopener">{COMPANY_NAME}</a>, que cria sites, tráfego pago e automações para empresas.
       No Renda Online, ensina o que aplica nos projetos de clientes: IA, servidores, automação e formas reais de ganhar dinheiro
-      na internet. <a href="/sobre/">Saiba mais</a>.
+      na internet. Autor de um <a href={AUTHOR_BOOK_URL} rel="noopener">livro na Amazon</a>. <a href="/sobre/">Saiba mais</a>.
     </p>
   </div>
 </aside>
