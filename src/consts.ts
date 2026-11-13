@@ -23,6 +23,10 @@ export const CATEGORIES = {
     name: 'Criar e monetizar site',
     description: 'WordPress, VPS, SEO, AdSense e afiliados na prática.',
   },
+  'ia-empresas': {
+    name: 'IA para empresas',
+    description: 'Atendimento no WhatsApp, automação e sites para pequenos negócios: como funciona e quanto custa.',
+  },
 } as const;
 
 export type CategorySlug = keyof typeof CATEGORIES;
@@ -90,5 +94,6 @@ export function serviceForPost(category: string, tags: readonly string[] = []): 
   if (t.some((x) => ['vps', 'cyberpanel'].includes(x))) return 'vps';
   if (t.some((x) => ['ads.txt', 'adsense'].includes(x)) && !t.includes('criar blog')) return 'diagnostico';
   if (category === 'criar-site') return 'blog';
+  // ia-empresas e demais caem em automação sob medida
   return 'automacao';
 }
