@@ -1,0 +1,125 @@
+---
+import ToolLayout from '../../layouts/ToolLayout.astro';
+import { brl, jurosCompostos } from '../../lib/calc';
+
+const ex = jurosCompostos({ inicial: 1000, aporte: 500, taxa: 1, taxaPeriodo: 'mes', meses: 120 });
+const faq = [
+  {
+    q: 'Qual a fórmula dos juros compostos?',
+    a: 'M = C × (1 + i)^n, em que M é o montante final, C o capital inicial, i a taxa por período e n o número de períodos. Com aportes mensais, cada depósito rende juros a partir do mês em que entra, e a calculadora soma tudo mês a mês.',
+  },
+  {
+    q: 'Como converter taxa anual em mensal?',
+    a: 'Use (1 + taxa anual)^(1/12) − 1. Uma taxa de 12% ao ano equivale a cerca de 0,95% ao mês, e não 1%. A calculadora faz essa conversão quando você escolhe "ao ano".',
+  },
+  {
+    q: 'Qual a diferença entre juros simples e compostos?',
+    a: 'Nos juros simples, a taxa incide só sobre o valor inicial. Nos compostos, incide sobre o valor inicial mais os juros já acumulados ("juros sobre juros"). Em prazos longos a diferença é enorme.',
+  },
+  {
+    q: 'O resultado já desconta o Imposto de Renda?',
+    a: 'Não. A simulação mostra o rendimento bruto. CDB, Tesouro Direto e fundos têm IR regressivo de 22,5% a 15% sobre o lucro, conforme o prazo; LCI, LCA e poupança são isentos para pessoa física.',
+  },
+];
+---
+
+<ToolLayout
+  slug="calculadora-juros-compostos"
+  title="Calculadora de juros compostos com aportes mensais"
+  description="Simule juros compostos com valor inicial e aportes mensais: veja quanto seu dinheiro rende ano a ano, quanto é juros e quanto é dinheiro investido."
+  h1="Calculadora de juros compostos"
+  lead="Simule quanto seu dinheiro rende com valor inicial, depósitos mensais e taxa de juros, e veja a evolução ano a ano."
+  faq={faq}
+>
+  <Fragment slot="calc">
+    <form class="calc-form" id="f" novalidate>
+      <label>Valor inicial (R$)
+        <input name="inicial" inputmode="decimal" placeholder="Ex.: 1.000,00" autocomplete="off" />
+      </label>
+      <label>Aporte mensal (R$)
+        <input name="aporte" inputmode="decimal" placeholder="Ex.: 500,00" autocomplete="off" />
+      </label>
+      <label>Taxa de juros (%)
+        <input name="taxa" inputmode="decimal" placeholder="Ex.: 1" autocomplete="off" />
+      </label>
+      <label>A taxa é
+        <select name="tp">
+          <option value="mes">ao mês</option>
+          <option value="ano">ao ano</option>
+        </select>
+      </label>
+      <label>Período
+        <input name="periodo" type="number" min="1" max="1200" value="10" inputmode="numeric" />
+      </label>
+      <label>Em
+        <select name="unidade">
+          <option value="anos">anos</option>
+          <option value="meses">meses</option>
+        </select>
+      </label>
+      <button class="btn full" type="submit">Calcular</button>
+    </form>
+    <div class="calc-result" id="r" hidden aria-live="polite"></div>
+  </Fragment>
+
+  <h2>O poder dos juros compostos</h2>
+  <p>
+    Juros compostos são "juros sobre juros": o rendimento de cada mês passa a render também no mês seguinte. No começo a diferença
+    é pequena, mas com o tempo os juros passam a crescer mais que os próprios depósitos.
+  </p>
+  <p>
+    Exemplo: começando com R$ 1.000 e guardando R$ 500 por mês a 1% ao mês, em 10 anos você investe {brl(ex.investido)} e termina
+    com <strong>{brl(ex.final)}</strong>. Mais da metade, {brl(ex.juros)}, são juros.
+  </p>
+
+  <h2>Taxas de referência para simular</h2>
+  <ul>
+    <li><strong>Poupança:</strong> cerca de 0,5% ao mês + TR quando a Selic está acima de 8,5% ao ano.</li>
+    <li><strong>CDB a 100% do CDI e Tesouro Selic:</strong> acompanham a taxa Selic, antes do Imposto de Renda.</li>
+    <li><strong>Inflação:</strong> para ver o ganho real, subtraia a inflação esperada (IPCA) da taxa.</li>
+  </ul>
+  <p>
+    Quer aumentar o valor dos aportes? Veja ideias práticas de renda extra nos nossos guias de
+    <a href="/categoria/ferramentas/">ferramentas</a> e <a href="/categoria/automacao/">automação</a>.
+  </p>
+</ToolLayout>
+
+<script>
+  import { jurosCompostos, brl } from '../../lib/calc';
+  import { bind, hero, num, table } from '../../lib/ui';
+  const f = document.getElementById('f') as HTMLFormElement;
+  const r = document.getElementById('r') as HTMLElement;
+  const el = (n: string) => f.elements.namedItem(n) as HTMLInputElement;
+  bind(f, r, () => {
+    const inicial = num(el('inicial'));
+    const aporte = num(el('aporte'));
+    const taxa = num(el('taxa'));
+    const p = Math.max(1, Math.floor(num(el('periodo'))));
+    const meses = Math.min(1200, el('unidade').value === 'anos' ? p * 12 : p);
+    if (inicial <= 0 && aporte <= 0) throw new Error('Informe o valor inicial ou o aporte mensal.');
+    const j = jurosCompostos({ inicial, aporte, taxa, taxaPeriodo: el('tp').value as 'mes' | 'ano', meses });
+    const max = j.final || 1;
+    const bars = j.anos
+      .map((a) => {
+        const inv = (a.investido / max) * 100;
+        const jur = (Math.max(0, a.juros) / max) * 100;
+        return `<div title="Ano ${a.ano}: ${brl(a.saldo)}"><span class="b-inv" style="height:${inv}%"></span><span class="b-jur" style="height:${jur}%"></span></div>`;
+      })
+      .join('');
+    const linhas = j.anos
+      .map((a) => `<tr><td>${a.ano}</td><td>${brl(a.investido)}</td><td>${brl(a.juros)}</td><td>${brl(a.saldo)}</td></tr>`)
+      .join('');
+    return (
+      hero('Valor final', j.final, `Taxa equivalente: ${(j.taxaMensal * 100).toLocaleString('pt-BR', { maximumFractionDigits: 3 })}% ao mês`) +
+      table([
+        ['Total investido', j.investido],
+        ['Total em juros', j.juros],
+        ['Valor final (bruto)', j.final, 'total'],
+      ]) +
+      (j.anos.length > 1
+        ? `<div class="bars" aria-hidden="true">${bars}</div><div class="legend"><span><i class="b-inv"></i>Investido</span><span><i class="b-jur"></i>Juros</span></div>`
+        : '') +
+      `<h3>Evolução ano a ano</h3><div class="table-scroll"><table class="result-table"><thead><tr><th>Ano</th><th>Investido</th><th>Juros</th><th>Saldo</th></tr></thead><tbody>${linhas}</tbody></table></div>`
+    );
+  });
+</script>

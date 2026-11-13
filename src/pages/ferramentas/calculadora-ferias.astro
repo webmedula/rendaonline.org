@@ -1,0 +1,127 @@
+---
+import ToolLayout from '../../layouts/ToolLayout.astro';
+import { brl, ferias } from '../../lib/calc';
+
+const ex = ferias({ salario: 3000, dias: 30 });
+const exV = ferias({ salario: 3000, dias: 30, venderDias: true });
+const faq = [
+  {
+    q: 'Como calcular o valor das férias?',
+    a: 'Divida o salário por 30, multiplique pelos dias de férias e some 1/3 desse valor (o terço constitucional). Sobre esse total são descontados INSS e Imposto de Renda.',
+  },
+  {
+    q: 'Vale a pena vender 10 dias de férias?',
+    a: 'Financeiramente, sim: o abono pecuniário (os 10 dias vendidos mais 1/3) não tem desconto de INSS nem de Imposto de Renda. Em troca você descansa 20 dias em vez de 30. O pedido precisa ser feito até 15 dias antes do fim do período aquisitivo.',
+  },
+  {
+    q: 'Quando as férias devem ser pagas?',
+    a: 'Até 2 dias antes do início das férias. Se a empresa atrasar, a CLT prevê pagamento em dobro.',
+  },
+  {
+    q: 'Quantos dias de férias eu tenho direito?',
+    a: 'São 30 dias por ano trabalhado. Faltas sem justificativa reduzem o período: de 6 a 14 faltas, 24 dias; de 15 a 23, 18 dias; de 24 a 32, 12 dias; acima de 32 faltas, perde o direito.',
+  },
+  {
+    q: 'Posso dividir as férias?',
+    a: 'Sim, em até 3 períodos, se você concordar. Um deles precisa ter pelo menos 14 dias e os outros no mínimo 5 dias cada.',
+  },
+];
+---
+
+<ToolLayout
+  slug="calculadora-ferias"
+  title="Calculadora de férias 2026: valor com 1/3, abono e descontos"
+  description="Calcule suas férias em 2026: valor com 1/3, venda de 10 dias (abono pecuniário), adiantamento do 13º e descontos de INSS e IR."
+  h1="Calculadora de férias 2026"
+  lead="Calcule quanto você recebe nas férias, com o terço constitucional, a venda de 10 dias e os descontos de INSS e Imposto de Renda."
+  faq={faq}
+>
+  <Fragment slot="calc">
+    <form class="calc-form" id="f" novalidate>
+      <label>Salário bruto (R$)
+        <input name="salario" inputmode="decimal" placeholder="Ex.: 3.000,00" autocomplete="off" />
+      </label>
+      <label>Dias de férias
+        <select name="dias">
+          <option value="30">30 dias</option>
+          <option value="20">20 dias</option>
+          <option value="15">15 dias</option>
+          <option value="14">14 dias</option>
+          <option value="10">10 dias</option>
+          <option value="5">5 dias</option>
+        </select>
+      </label>
+      <label>Média de adicionais (R$) <span class="hint">horas extras, comissões; opcional</span>
+        <input name="media" inputmode="decimal" placeholder="0,00" />
+      </label>
+      <label>Número de dependentes
+        <input name="dep" type="number" min="0" max="20" value="0" inputmode="numeric" />
+      </label>
+      <label class="check full"><input type="checkbox" name="vender" /> Vender 10 dias (abono pecuniário)</label>
+      <label class="check full"><input type="checkbox" name="adiantar" /> Receber a 1ª parcela do 13º junto</label>
+      <button class="btn full" type="submit">Calcular férias</button>
+    </form>
+    <div class="calc-result" id="r" hidden aria-live="polite"></div>
+  </Fragment>
+
+  <h2>Como as férias são calculadas</h2>
+  <ol>
+    <li><strong>Valor das férias:</strong> (salário + média de adicionais) ÷ 30 × dias de descanso.</li>
+    <li><strong>1/3 constitucional:</strong> um terço do valor das férias, garantido pela Constituição.</li>
+    <li><strong>Descontos:</strong> INSS e Imposto de Renda incidem sobre férias + 1/3. Em 2026, quem recebe até R$ 5 mil fica isento de IR.</li>
+    <li><strong>Abono pecuniário (opcional):</strong> vender 10 dias rende 10 dias de salário + 1/3, sem nenhum desconto.</li>
+  </ol>
+
+  <h3>Exemplo com salário de R$ 3.000</h3>
+  <p>
+    Com 30 dias de descanso: férias de {brl(ex.valorFerias)} + 1/3 de {brl(ex.terco)}, INSS de {brl(ex.inss)} e líquido de
+    <strong>{brl(ex.liquido)}</strong>. Vendendo 10 dias, você descansa 20, recebe {brl(exV.abono + exV.tercoAbono)} de abono sem
+    descontos e o total líquido sobe para <strong>{brl(exV.liquido)}</strong>.
+  </p>
+
+  <h2>Atenção ao salário do mês seguinte</h2>
+  <p>
+    As férias são pagas adiantadas. Por isso, no mês em que você volta, o salário vem menor: os dias de férias já foram pagos
+    antes. Planeje os gastos considerando esse intervalo. Quem trabalha por conta própria não tem férias remuneradas, por isso é
+    bom embutir esse custo no preço que cobra dos clientes.
+  </p>
+</ToolLayout>
+
+<script>
+  import { ferias, brl } from '../../lib/calc';
+  import { bind, hero, num, table, type Row } from '../../lib/ui';
+  const f = document.getElementById('f') as HTMLFormElement;
+  const r = document.getElementById('r') as HTMLElement;
+  const el = (n: string) => f.elements.namedItem(n) as HTMLInputElement;
+  const syncVender = () => {
+    const ok = el('dias').value === '30';
+    el('vender').disabled = !ok;
+    if (!ok) el('vender').checked = false;
+  };
+  el('dias').addEventListener('change', syncVender);
+  bind(f, r, () => {
+    syncVender();
+    const s = num(el('salario'));
+    if (s <= 0) throw new Error('Digite o salário bruto para calcular.');
+    const v = ferias({
+      salario: s,
+      mediaVariaveis: num(el('media')),
+      dias: Number(el('dias').value),
+      venderDias: el('vender').checked,
+      adiantar13: el('adiantar').checked,
+      dependentes: Math.max(0, Math.floor(num(el('dep')))),
+    });
+    const rows: Row[] = [
+      [`Férias (${v.diasGozo} dias)`, v.valorFerias],
+      ['1/3 constitucional', v.terco],
+    ];
+    if (v.abono) rows.push(['Abono pecuniário (10 dias vendidos)', v.abono], ['1/3 sobre o abono', v.tercoAbono]);
+    if (v.adiantamento13) rows.push(['1ª parcela do 13º', v.adiantamento13]);
+    rows.push(['Total bruto', v.bruto, 'total'], ['INSS', v.inss, 'neg'], ['Imposto de Renda', v.ir.imposto, 'neg'], ['Total líquido', v.liquido, 'total']);
+    return (
+      hero('Você recebe nas férias', v.liquido, `Pagamento até 2 dias antes de começar o descanso`) +
+      table(rows) +
+      (v.abono ? `<p class="result-note">O abono de ${brl(v.abono + v.tercoAbono)} não tem desconto de INSS nem de IR.</p>` : '')
+    );
+  });
+</script>

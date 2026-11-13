@@ -1,0 +1,59 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import { SITE_URL, TOOLS } from '../../consts';
+import { ANO_TABELAS, ATUALIZADO_EM } from '../../lib/calc';
+
+const icons: Record<string, string> = {
+  'calculadora-salario-liquido': 'R$',
+  'calculadora-rescisao': '⇥',
+  'calculadora-decimo-terceiro': '13º',
+  'calculadora-ferias': '☀',
+  'calculadora-juros-compostos': '%',
+};
+const ld = {
+  '@context': 'https://schema.org',
+  '@type': 'ItemList',
+  name: 'Calculadoras grátis do Renda Online',
+  itemListElement: TOOLS.map((t, i) => ({ '@type': 'ListItem', position: i + 1, name: t.name, url: `${SITE_URL}/ferramentas/${t.slug}/` })),
+};
+---
+
+<BaseLayout
+  title={`Calculadoras grátis ${ANO_TABELAS}: salário, rescisão, férias, 13º e juros`}
+  description="Calculadoras online grátis e atualizadas com as tabelas de 2026: salário líquido, rescisão, férias, 13º salário e juros compostos. Sem cadastro."
+>
+  <script type="application/ld+json" slot="head" set:html={JSON.stringify(ld)} />
+  <section class="hero">
+    <h1>Calculadoras grátis para o seu dinheiro</h1>
+    <p>
+      Faça as contas do salário, da rescisão, das férias, do 13º e dos seus investimentos em segundos. Tudo atualizado com as
+      tabelas oficiais de {ANO_TABELAS}, incluindo a nova isenção do Imposto de Renda até R$ 5 mil. Sem cadastro, direto no navegador.
+    </p>
+  </section>
+
+  <ul class="tool-grid">
+    {
+      TOOLS.map((t) => (
+        <li class="tool-card">
+          <span class="tool-icon" aria-hidden="true">{icons[t.slug]}</span>
+          <h2>
+            <a href={`/ferramentas/${t.slug}/`}>{t.name}</a>
+          </h2>
+          <p>{t.summary}</p>
+        </li>
+      ))
+    }
+  </ul>
+
+  <section class="prose">
+    <h2>Por que confiar nestas calculadoras</h2>
+    <p>
+      Cada cálculo segue a legislação vigente: tabela progressiva do INSS de {ANO_TABELAS}, tabela mensal do IRRF com a redução da
+      Lei 15.270/2025, regras da CLT para férias, 13º e rescisão. Revisamos os valores sempre que o governo publica tabelas novas
+      (última revisão em {ATUALIZADO_EM}). Os dados que você digita ficam só no seu navegador; nada é enviado para servidores.
+    </p>
+    <p class="small muted">
+      Os resultados são estimativas. Convenções coletivas e situações específicas podem alterar os valores.
+    </p>
+  </section>
+</BaseLayout>

@@ -1,0 +1,114 @@
+---
+import BaseLayout from './BaseLayout.astro';
+import { SITE_URL, TOOLS, COMPANY_NAME, whatsappLink, type ToolSlug } from '../consts';
+import { ATUALIZADO_EM } from '../lib/calc';
+
+interface Props {
+  slug: ToolSlug;
+  title: string;
+  description: string;
+  h1: string;
+  lead: string;
+  faq: { q: string; a: string }[];
+  cta?: { text: string; label: string; href: string };
+}
+
+const { slug, title, description, h1, lead, faq, cta } = Astro.props;
+const tool = TOOLS.find((t) => t.slug === slug)!;
+const others = TOOLS.filter((t) => t.slug !== slug);
+const url = `${SITE_URL}/ferramentas/${slug}/`;
+
+const ld = [
+  {
+    '@context': 'https://schema.org',
+    '@type': 'WebApplication',
+    name: tool.name,
+    url,
+    description,
+    applicationCategory: 'FinanceApplication',
+    operatingSystem: 'Any',
+    inLanguage: 'pt-BR',
+    offers: { '@type': 'Offer', price: '0', priceCurrency: 'BRL' },
+  },
+  {
+    '@context': 'https://schema.org',
+    '@type': 'BreadcrumbList',
+    itemListElement: [
+      { '@type': 'ListItem', position: 1, name: 'Início', item: `${SITE_URL}/` },
+      { '@type': 'ListItem', position: 2, name: 'Ferramentas', item: `${SITE_URL}/ferramentas/` },
+      { '@type': 'ListItem', position: 3, name: tool.name, item: url },
+    ],
+  },
+  {
+    '@context': 'https://schema.org',
+    '@type': 'FAQPage',
+    mainEntity: faq.map((f) => ({ '@type': 'Question', name: f.q, acceptedAnswer: { '@type': 'Answer', text: f.a } })),
+  },
+];
+
+const ctaFinal = cta ?? {
+  text: `Tem um negócio e perde tempo com planilhas, cálculos e mensagens repetidas? A ${COMPANY_NAME}, equipe que mantém o Renda Online, cria sites e automações com IA que fazem esse trabalho sozinhos.`,
+  label: 'Falar no WhatsApp',
+  href: whatsappLink(`Olá! Usei a ${tool.name} no Renda Online e quero saber sobre automação para o meu negócio.`),
+};
+---
+
+<BaseLayout title={title} description={description}>
+  <script type="application/ld+json" slot="head" set:html={JSON.stringify(ld)} />
+  <div class="tool-head">
+    <nav class="breadcrumb" aria-label="Você está em">
+      <a href="/">Início</a> › <a href="/ferramentas/">Ferramentas</a> › {tool.short}
+    </nav>
+    <h1>{h1}</h1>
+    <p class="lead">{lead}</p>
+    <p class="small muted">{slug === 'calculadora-juros-compostos' ? 'Cálculo mês a mês' : 'Tabelas oficiais de 2026'} · atualizado em {ATUALIZADO_EM} · grátis, sem cadastro</p>
+  </div>
+
+  <section class="tool-box" aria-label="Calculadora">
+    <slot name="calc" />
+  </section>
+
+  <article class="prose">
+    <slot />
+
+    <h2>Perguntas frequentes</h2>
+    {
+      faq.map((f) => (
+        <details>
+          <summary>
+            <strong>{f.q}</strong>
+          </summary>
+          <p>{f.a}</p>
+        </details>
+      ))
+    }
+
+    <p class="notice small">
+      Os resultados são estimativas com base na legislação e nas tabelas vigentes em 2026. Convenções coletivas, adicionais e
+      situações específicas podem mudar os valores. Para decisões importantes, confirme com o RH, um contador ou o sindicato.
+    </p>
+
+    <aside class="service-cta tool-cta" aria-label="Serviços">
+      <p class="service-cta__eyebrow">Para empresas</p>
+      <p>{ctaFinal.text}</p>
+      <p class="service-cta__actions">
+        <a class="btn" href={ctaFinal.href} target="_blank" rel="noopener">{ctaFinal.label}</a>
+        <a href="/servicos/">Ver serviços</a>
+      </p>
+    </aside>
+
+    <h2>Outras calculadoras grátis</h2>
+    <ul class="tool-grid">
+      {
+        others.map((t) => (
+          <li class="tool-card">
+            <h3>
+              <a href={`/ferramentas/${t.slug}/`}>{t.name}</a>
+            </h3>
+            <p>{t.summary}</p>
+          </li>
+        ))
+      }
+    </ul>
+  </article>
+</BaseLayout>
