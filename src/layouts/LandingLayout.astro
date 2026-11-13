@@ -1,0 +1,114 @@
+---
+import BaseLayout from './BaseLayout.astro';
+import { COMPANY_CITY, COMPANY_NAME, COMPANY_URL, whatsappLink } from '../consts';
+
+export interface Props {
+  title: string;
+  description: string;
+  eyebrow: string;
+  headline: string;
+  subhead: string;
+  waMessage: string;
+  ctaLabel: string;
+  pains: string[];
+  steps: { title: string; text: string }[];
+  examples: { title: string; text: string }[];
+  includes: string[];
+  price: string;
+  priceNote: string;
+  faq: { q: string; a: string }[];
+}
+
+const p = Astro.props;
+const wa = whatsappLink(p.waMessage);
+const faqLd = {
+  '@context': 'https://schema.org',
+  '@type': 'FAQPage',
+  mainEntity: p.faq.map((f) => ({ '@type': 'Question', name: f.q, acceptedAnswer: { '@type': 'Answer', text: f.a } })),
+};
+---
+
+<BaseLayout title={p.title} description={p.description} noads>
+  <script slot="head" type="application/ld+json" set:html={JSON.stringify(faqLd)} />
+  <section class="lp-hero">
+    <p class="service-cta__eyebrow">{p.eyebrow}</p>
+    <h1>{p.headline}</h1>
+    <p class="lp-sub">{p.subhead}</p>
+    <p class="service-cta__actions">
+      <a class="btn btn-lg" href={wa} target="_blank" rel="noopener">{p.ctaLabel}</a>
+      <span class="muted small">Diagnóstico gratuito de 20 minutos, sem compromisso.</span>
+    </p>
+  </section>
+
+  <section class="lp-block">
+    <h2>Isso acontece no seu negócio?</h2>
+    <ul class="lp-pains">{p.pains.map((x) => <li>{x}</li>)}</ul>
+  </section>
+
+  <section class="lp-block">
+    <h2>Como funciona</h2>
+    <ol class="lp-steps">
+      {
+        p.steps.map((s) => (
+          <li>
+            <strong>{s.title}</strong>
+            <span>{s.text}</span>
+          </li>
+        ))
+      }
+    </ol>
+  </section>
+
+  <section class="lp-block">
+    <h2>Exemplos do que dá para automatizar</h2>
+    <ul class="service-grid">
+      {
+        p.examples.map((e) => (
+          <li class="service-card">
+            <h3>{e.title}</h3>
+            <p>{e.text}</p>
+          </li>
+        ))
+      }
+    </ul>
+  </section>
+
+  <section class="lp-block lp-offer">
+    <div>
+      <h2>O que está incluído</h2>
+      <ul>{p.includes.map((x) => <li>{x}</li>)}</ul>
+    </div>
+    <div class="lp-price">
+      <p class="muted small">Investimento</p>
+      <p class="lp-price__value">{p.price}</p>
+      <p class="small">{p.priceNote}</p>
+      <a class="btn btn-lg" href={wa} target="_blank" rel="noopener">{p.ctaLabel}</a>
+    </div>
+  </section>
+
+  <section class="lp-block prose">
+    <h2>Quem faz</h2>
+    <p>
+      A <a href={COMPANY_URL} rel="noopener">{COMPANY_NAME}</a>, de {COMPANY_CITY}, cria sites, faz tráfego pago e automatiza
+      processos para empresas: de pedidos da Shopee com nota fiscal automática a atendimento no WhatsApp. Atendemos todo o Brasil
+      de forma remota. Conheça também os <a href="/servicos/">serviços com preço fechado</a>.
+    </p>
+  </section>
+
+  <section class="lp-block prose">
+    <h2>Perguntas frequentes</h2>
+    {
+      p.faq.map((f) => (
+        <details>
+          <summary>{f.q}</summary>
+          <p>{f.a}</p>
+        </details>
+      ))
+    }
+  </section>
+
+  <section class="lp-hero lp-final">
+    <h2>Vamos ver o que dá para automatizar no seu negócio?</h2>
+    <a class="btn btn-lg" href={wa} target="_blank" rel="noopener">{p.ctaLabel}</a>
+  </section>
+</BaseLayout>

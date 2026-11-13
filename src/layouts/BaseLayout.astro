@@ -2,21 +2,23 @@
 import BaseHead from '../components/BaseHead.astro';
 import Header from '../components/Header.astro';
 import Footer from '../components/Footer.astro';
+import WhatsAppButton from '../components/WhatsAppButton.astro';
 
 interface Props {
   title: string;
   description: string;
   image?: string;
   noindex?: boolean;
+  noads?: boolean;
 }
 
-const { title, description, image, noindex } = Astro.props;
+const { title, description, image, noindex, noads } = Astro.props;
 ---
 
 <!doctype html>
 <html lang="pt-BR">
   <head>
-    <BaseHead title={title} description={description} image={image} noindex={noindex} />
+    <BaseHead title={title} description={description} image={image} noindex={noindex} noads={noads} />
     <slot name="head" />
   </head>
   <body>
@@ -25,5 +27,6 @@ const { title, description, image, noindex } = Astro.props;
       <slot />
     </main>
     <Footer />
+    <WhatsAppButton />
   </body>
 </html>

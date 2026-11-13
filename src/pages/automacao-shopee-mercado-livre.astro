@@ -1,0 +1,49 @@
+---
+import LandingLayout from '../layouts/LandingLayout.astro';
+---
+
+<LandingLayout
+  title="Automação para lojas na Shopee e Mercado Livre: pedidos no Tiny e nota fiscal automática"
+  description="Pedidos da Shopee e do Mercado Livre entrando sozinhos no Tiny (Olist), NF-e emitida sem digitação e cliente avisado no WhatsApp."
+  eyebrow="Para quem vende em marketplace"
+  headline="Pare de digitar pedido e nota fiscal. Venda mais com a mesma equipe."
+  subhead="Integramos Shopee e Mercado Livre ao seu ERP (Tiny/Olist): o pedido entra sozinho, a nota fiscal sai automática e o cliente recebe o aviso no WhatsApp."
+  waMessage="Olá! Vendo em marketplace e quero automatizar pedidos e notas fiscais. Pode fazer um diagnóstico?"
+  ctaLabel="Quero automatizar minha loja"
+  pains={[
+    'Alguém da equipe passa horas por dia copiando pedidos do marketplace para o sistema.',
+    'Nota fiscal emitida errada ou atrasada trava o envio e gera reclamação.',
+    'Devoluções e reclamações do Mercado Livre ficam espalhadas e você perde prazo.',
+    'A operação não acompanha quando as vendas sobem numa data como a Black Friday.',
+  ]}
+  steps={[
+    { title: 'Diagnóstico (gratuito, 20 min)', text: 'Mapeamos seus canais de venda, o ERP e onde a equipe perde tempo.' },
+    { title: 'Proposta com preço fechado', text: 'Você vê o fluxo completo, o prazo e o investimento antes de começar.' },
+    { title: 'Integração e testes', text: 'Ligamos os canais ao ERP e testamos com pedidos reais antes de virar a chave.' },
+    { title: 'Operação e suporte', text: 'Monitoramos as primeiras semanas e ficamos de plantão para ajustes.' },
+  ]}
+  examples={[
+    { title: 'Shopee → Tiny → NF-e', text: 'Pedido sincronizado no Tiny, nota fiscal emitida automaticamente e etiqueta pronta para envio.' },
+    { title: 'Central de devoluções', text: 'Reclamações e devoluções do Mercado Livre reunidas em um painel com prazos.' },
+    { title: 'Aviso no WhatsApp', text: 'Cliente recebe confirmação, código de rastreio e pedido de avaliação automaticamente.' },
+    { title: 'Estoque em dia', text: 'Estoque atualizado entre canais para não vender o que não tem.' },
+    { title: 'Relatórios diários', text: 'Vendas, margem e problemas do dia chegando no seu WhatsApp toda manhã.' },
+    { title: 'Outros sistemas', text: 'Usa outro ERP ou canal? Avaliamos a API disponível antes de propor.' },
+  ]}
+  includes={[
+    'Integração entre marketplace e ERP',
+    'Emissão automática de NF-e',
+    'Avisos automáticos ao cliente no WhatsApp',
+    'Monitoramento de falhas com alerta',
+    '30 dias de suporte após a entrega',
+  ]}
+  price="a partir de R$ 1.500"
+  priceNote="Valor de referência para uma integração. O preço final depende dos canais e do ERP e sai no diagnóstico."
+  faq={[
+    { q: 'Funciona com o Tiny (Olist)?', a: 'Sim, é a integração que mais fazemos: pedidos da Shopee e do Mercado Livre no Tiny com nota fiscal automática.' },
+    { q: 'E se eu usar outro ERP?', a: 'Avaliamos a API do seu sistema no diagnóstico e só propomos o que dá para entregar.' },
+    { q: 'Preciso parar as vendas para integrar?', a: 'Não. Montamos e testamos em paralelo e só viramos a chave quando estiver tudo certo.' },
+    { q: 'Quanto tempo leva?', a: 'Uma integração padrão leva de 1 a 3 semanas, conforme os canais e as regras fiscais da sua empresa.' },
+    { q: 'Vocês atendem lojas de qualquer estado?', a: 'Sim. O trabalho é remoto e atendemos todo o Brasil.' },
+  ]}
+/>

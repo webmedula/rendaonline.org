@@ -8,7 +8,7 @@ const blog = defineCollection({
     description: z.string().max(200),
     pubDate: z.coerce.date(),
     updatedDate: z.coerce.date().optional(),
-    category: z.enum(['ia-conteudo', 'automacao', 'ferramentas', 'criar-site']),
+    category: z.enum(['ia-conteudo', 'automacao', 'ferramentas', 'criar-site', 'ia-empresas']),
     tags: z.array(z.string()).default([]),
     image: z.string().optional(),
     imageAlt: z.string().optional(),

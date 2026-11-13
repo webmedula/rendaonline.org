@@ -1,0 +1,24 @@
+---
+import { COMPANY_NAME, SERVICES, serviceForPost, whatsappLink } from '../consts';
+
+interface Props {
+  category: string;
+  tags?: readonly string[];
+}
+
+const { category, tags = [] } = Astro.props;
+const key = serviceForPost(category, tags);
+const s = SERVICES[key];
+const href = whatsappLink(`Olá! Li um artigo no Renda Online e tenho interesse em: ${s.name}.`);
+---
+
+<aside class="service-cta" aria-label="Serviço relacionado">
+  <p class="service-cta__eyebrow">Prefere não fazer sozinho?</p>
+  <h2>{s.name} <span class="service-cta__price">{s.price}</span></h2>
+  <p>{s.summary} Feito pela equipe da {COMPANY_NAME}, que mantém este site.</p>
+  <p class="service-cta__actions">
+    <a class="btn" href={href} target="_blank" rel="noopener">Pedir pelo WhatsApp</a>
+    {'page' in s && <a href={s.page}>Saiba como funciona</a>}
+    <a href="/servicos/">Ver todos os serviços</a>
+  </p>
+</aside>

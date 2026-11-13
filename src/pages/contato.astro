@@ -1,16 +1,21 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
+import { COMPANY_EMAIL, COMPANY_INSTAGRAM, COMPANY_NAME, COMPANY_URL, whatsappLink } from '../consts';
+const wa = whatsappLink('Olá! Vim pelo site Renda Online.');
 ---
 
-<BaseLayout title="Contato" description="Fale com o Renda Online: dúvidas, correções, sugestões de tema e parcerias.">
+<BaseLayout title="Contato" description="Fale com o Renda Online: dúvidas, correções, sugestões de tema, parcerias e orçamentos.">
   <article class="prose">
     <h1>Contato</h1>
-    <p>Para dúvidas, correções, sugestões de tema ou parcerias, use um dos canais abaixo.</p>
+    <p>Para dúvidas, correções, sugestões de tema, parcerias ou orçamento de serviços, use um dos canais abaixo.</p>
     <ul>
-      <li>E-mail: <a href="mailto:contato@rendaonline.org">contato@rendaonline.org</a></li>
-      <li>Instagram: <a href="https://www.instagram.com/rendaonline.org" rel="noopener">@rendaonline.org</a></li>
-      <li>X (Twitter): <a href="https://x.com/Rendaonline_org" rel="noopener">@Rendaonline_org</a></li>
+      <li>WhatsApp: <a href={wa} target="_blank" rel="noopener">(62) 98290-8000</a> (resposta mais rápida)</li>
+      <li>E-mail: <a href={`mailto:${COMPANY_EMAIL}`}>{COMPANY_EMAIL}</a></li>
+      <li>Instagram: <a href={COMPANY_INSTAGRAM} rel="noopener">@webmedula</a></li>
     </ul>
-    <p class="muted small">[Confirme o e-mail e os perfis acima antes de publicar.]</p>
+    <p>
+      O Renda Online é mantido pela <a href={COMPANY_URL} rel="noopener">{COMPANY_NAME}</a>. Quer que a gente faça por você?
+      Veja os <a href="/servicos/">serviços com preço fechado</a>.
+    </p>
   </article>
 </BaseLayout>

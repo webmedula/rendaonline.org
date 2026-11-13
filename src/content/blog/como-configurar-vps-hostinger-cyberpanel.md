@@ -4,12 +4,12 @@ description: "Passo a passo para configurar uma VPS da Hostinger com CyberPanel:
 pubDate: 2026-11-12
 category: criar-site
 tags: ["vps", "hostinger", "cyberpanel", "tutorial"]
-affiliate: true
+affiliate: false
 ---
 
 Uma VPS é um servidor só seu. Em vez de dividir a máquina com centenas de sites, como na hospedagem compartilhada, você tem processador, memória e disco reservados, e pode instalar o que quiser: sites, n8n, ferramentas de IA, bancos de dados. Custa um pouco mais, mas é o que permite crescer sem trocar de hospedagem.
 
-Este tutorial mostra como configurar uma VPS da **Hostinger** com o **CyberPanel**, do zero até o site no ar com SSL. É a configuração que usamos aqui no Renda Online. Os links da Hostinger são de afiliado.
+Este tutorial mostra como configurar uma VPS da **Hostinger** com o **CyberPanel**, do zero até o site no ar com SSL. É a configuração que usamos aqui no Renda Online. Se preferir não cuidar de servidor, a WebMedula, equipe por trás do site, [hospeda seu site na nossa VPS ou configura a sua](/servicos/).
 
 ## Por que VPS e por que CyberPanel
 
