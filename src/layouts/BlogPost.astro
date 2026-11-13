@@ -31,7 +31,7 @@ const jsonLd = {
   dateModified: (updatedDate ?? pubDate).toISOString(),
   inLanguage: 'pt-BR',
   mainEntityOfPage: { '@type': 'WebPage', '@id': url },
-  author: { '@type': 'Person', name: AUTHOR_NAME, url: `${SITE_URL}/sobre/` },
+  author: { '@type': 'Person', name: AUTHOR_NAME, url: `${SITE_URL}/sobre/`, image: `${SITE_URL}/autor.jpg` },
   publisher: {
     '@type': 'Organization',
     name: SITE_TITLE,
