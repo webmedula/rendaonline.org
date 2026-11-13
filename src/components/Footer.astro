@@ -28,6 +28,7 @@ const year = new Date().getFullYear();
       <h3>Categorias</h3>
       <ul>
         {Object.entries(CATEGORIES).map(([slug, cat]) => <li><a href={`/categoria/${slug}/`}>{cat.name}</a></li>)}
+        <li><a href="/trabalho-online/">Trabalho online</a></li>
       </ul>
     </div>
     <div>

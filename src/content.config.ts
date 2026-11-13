@@ -17,4 +17,28 @@ const blog = defineCollection({
   }),
 });
 
-export const collections = { blog };
+const plataformas = defineCollection({
+  loader: glob({ pattern: '**/*.md', base: './src/content/plataformas' }),
+  schema: z.object({
+    name: z.string(),
+    title: z.string(),
+    description: z.string().max(200),
+    tipo: z.enum(['ia', 'testes', 'freela', 'pesquisas']),
+    nota: z.number().min(0).max(5),
+    ganhos: z.string(),
+    aceitaBrasil: z.string(),
+    pagamento: z.string(),
+    idioma: z.string(),
+    paraQuem: z.string(),
+    link: z.string().url(),
+    indicacao: z.boolean().default(false),
+    pros: z.array(z.string()),
+    contras: z.array(z.string()),
+    veredito: z.string(),
+    pubDate: z.coerce.date(),
+    updatedDate: z.coerce.date().optional(),
+    order: z.number().default(50),
+  }),
+});
+
+export const collections = { blog, plataformas };

@@ -1,0 +1,170 @@
+---
+import { getCollection } from 'astro:content';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import AuthorBox from '../../components/AuthorBox.astro';
+import Estrelas from '../../components/Estrelas.astro';
+import { SITE_URL, TIPOS_TRABALHO, type TipoTrabalho } from '../../consts';
+
+const all = (await getCollection('plataformas')).sort((a, b) => a.data.order - b.data.order);
+const porTipo = (t: TipoTrabalho) => all.filter((p) => p.data.tipo === t);
+
+// Opções rápidas, sem avaliação completa. indicacao = link de indicação do autor.
+const extras = [
+  { name: 'GreenPanthera', link: 'https://greenpanthera.com/br/?rf=fe13047221ef24', indicacao: true, text: 'Painel de pesquisas com versão para o Brasil. Pesquisas pagas em dinheiro, com bônus de cadastro.' },
+  { name: 'GrabPoints', link: 'https://grabpoints.com/?ref=VMYAHA', indicacao: true, text: 'Pontos por pesquisas, vídeos e ofertas, trocados por PayPal ou vales. Paga pouco, mas paga.' },
+  { name: 'PrizeRebel', link: 'https://www.prizerebel.com/index.php?r=10494969', indicacao: true, text: 'Um dos sites de recompensa mais antigos. Pesquisas e ofertas por pontos, saque em PayPal e vales.' },
+  { name: 'Idle-Empire', link: 'https://www.idle-empire.com/?r=ykzkwt', indicacao: true, text: 'Para quem joga: pontos por pesquisas e ofertas, trocados por itens de jogos, Steam e PayPal.' },
+  { name: 'The Insiders', link: 'https://www.theinsidersnet.com/?section=home/welkom&country=22', indicacao: false, text: 'Não paga em dinheiro: você recebe produtos para testar em casa e dá a sua opinião.' },
+  { name: 'Méliuz', link: 'https://www.meliuz.com.br/i/ref_joaopaulorocha?ref_source=1', indicacao: true, text: 'Não é trabalho, é cashback: parte do valor das compras online volta para você em dinheiro. Útil para quem compra online.' },
+];
+
+const faq = [
+  { q: 'Sites de trabalho online pagam mesmo?', a: 'Os desta página pagam. Mas o valor depende do tipo: pesquisas rendem trocados, treinamento de IA e testes de usabilidade pagam de US$ 5 a US$ 25 por hora, e freelas não têm teto. Desconfie de qualquer site que prometa salário alto sem habilidade nenhuma.' },
+  { q: 'Qual plataforma paga melhor para brasileiros?', a: 'Para quem escreve bem ou tem formação, Outlier e Mindrift pagam as melhores taxas por hora em dólar. Para quem tem uma habilidade (texto, design, sites), Workana e 99Freelas permitem cobrar o próprio preço e costumam render mais no longo prazo.' },
+  { q: 'Preciso saber inglês?', a: 'Não para começar. Outlier, CrowdGen, OneForma, Clickworker, Userfeel, Workana e 99Freelas têm trabalho em português. O inglês abre mais projetos e paga melhor.' },
+  { q: 'Como recebo em dólar no Brasil?', a: 'A maioria paga por PayPal ou Payoneer. De lá, você transfere para a sua conta brasileira. Compare as taxas de conversão: Wise e Payoneer costumam ter câmbio melhor que o PayPal.' },
+  { q: 'Preciso pagar imposto sobre esse dinheiro?', a: 'Sim. Renda recebida do exterior por pessoa física entra no carnê-leão mensal, e a renda de plataformas brasileiras vai para a declaração anual. Se o volume crescer, abrir um MEI ou empresa pode valer a pena.' },
+  { q: 'Um site pediu taxa para eu começar a trabalhar. É golpe?', a: 'Quase sempre. Plataformas sérias não cobram para você trabalhar. Pedido de taxa, de Pix para liberar saque ou de contato só por WhatsApp e Telegram é sinal de golpe.' },
+];
+
+const ld = [
+  {
+    '@context': 'https://schema.org',
+    '@type': 'ItemList',
+    name: 'Sites de trabalho online avaliados pelo Renda Online',
+    itemListElement: all.map((p, i) => ({ '@type': 'ListItem', position: i + 1, name: p.data.name, url: `${SITE_URL}/trabalho-online/${p.id}/` })),
+  },
+  {
+    '@context': 'https://schema.org',
+    '@type': 'FAQPage',
+    mainEntity: faq.map((f) => ({ '@type': 'Question', name: f.q, acceptedAnswer: { '@type': 'Answer', text: f.a } })),
+  },
+];
+---
+
+<BaseLayout
+  title="Sites para trabalhar online e ganhar em dólar: 12 plataformas avaliadas (2026)"
+  description="As plataformas de trabalho online que pagam de verdade em 2026: treinar IA, testar sites, freelas e pesquisas. Quanto pagam, se aceitam brasileiros e como receber."
+>
+  <script type="application/ld+json" slot="head" set:html={JSON.stringify(ld)} />
+  <article class="prose">
+    <nav class="meta small" aria-label="Você está em"><a href="/">Início</a> › Trabalho online</nav>
+    <h1>Sites para trabalhar online que pagam de verdade</h1>
+    <p class="lead">
+      Avaliamos as plataformas de trabalho online mais conhecidas com foco em quem mora no Brasil: quanto pagam de verdade, se aceitam
+      brasileiros, como você recebe e os problemas que ninguém conta. A maior novidade dos últimos anos é que boa parte delas hoje paga
+      para você <strong>treinar inteligência artificial</strong>, e isso paga melhor que as antigas microtarefas.
+    </p>
+    <p class="notice">
+      Transparência: alguns links desta seção são de indicação. Se você se cadastrar por eles, o Renda Online pode receber um bônus da
+      plataforma, sem custo para você. Isso não muda as notas: avaliamos do mesmo jeito plataformas com e sem indicação, e deixamos de fora
+      as que não recomendamos, mesmo tendo programa de indicação.
+    </p>
+
+    <h2>Resumo: qual escolher</h2>
+    <div class="table-scroll">
+      <table class="plat-table">
+        <thead><tr><th>Plataforma</th><th>Tipo</th><th>Quanto paga</th><th>Nota</th></tr></thead>
+        <tbody>
+          {
+            all.map((p) => (
+              <tr>
+                <td><a href={`/trabalho-online/${p.id}/`}><strong>{p.data.name}</strong></a></td>
+                <td>{TIPOS_TRABALHO[p.data.tipo].short}</td>
+                <td>{p.data.ganhos}</td>
+                <td style="white-space:nowrap"><Estrelas nota={p.data.nota} /></td>
+              </tr>
+            ))
+          }
+        </tbody>
+      </table>
+    </div>
+    <ul>
+      <li><strong>Quer o melhor valor por hora sem ter uma profissão?</strong> Comece pelo <a href="/trabalho-online/outlier/">Outlier</a> e pelo <a href="/trabalho-online/userfeel/">Userfeel</a>.</li>
+      <li><strong>Tem formação ou inglês avançado?</strong> Candidate-se à <a href="/trabalho-online/mindrift/">Mindrift</a>.</li>
+      <li><strong>Sabe fazer algo (texto, design, sites)?</strong> Freelas rendem mais: <a href="/trabalho-online/workana/">Workana</a> e <a href="/trabalho-online/99freelas/">99Freelas</a>.</li>
+      <li><strong>Só quer um trocado no celular?</strong> <a href="/trabalho-online/meseems/">MeSeems</a> e <a href="/trabalho-online/ysense/">ySense</a>.</li>
+    </ul>
+
+    {
+      (Object.keys(TIPOS_TRABALHO) as TipoTrabalho[]).map((t) => (
+        <>
+          <h2>{TIPOS_TRABALHO[t].name}</h2>
+          <p>{TIPOS_TRABALHO[t].description}</p>
+          <ul class="tool-grid">
+            {porTipo(t).map((p) => (
+              <li class="tool-card">
+                <h3><a href={`/trabalho-online/${p.id}/`}>{p.data.name}</a></h3>
+                <p><Estrelas nota={p.data.nota} /></p>
+                <p>{p.data.veredito}</p>
+                <p class="small"><strong>Aceita brasileiros:</strong> {p.data.aceitaBrasil} · <strong>Recebe:</strong> {p.data.pagamento}</p>
+              </li>
+            ))}
+          </ul>
+        </>
+      ))
+    }
+
+    <h2>Outras opções rápidas</h2>
+    <p>Sites menores, conhecidos por pagar, mas que rendem pouco demais para uma avaliação completa. Bons para juntar trocados:</p>
+    <ul>
+      {
+        extras.map((e) => (
+          <li>
+            <a href={e.link} target="_blank" rel={e.indicacao ? 'sponsored nofollow noopener' : 'nofollow noopener'}><strong>{e.name}</strong></a>
+            {e.indicacao && <span class="small muted"> (indicação)</span>}: {e.text}
+          </li>
+        ))
+      }
+    </ul>
+
+    <h2>O que deixamos de fora, e por quê</h2>
+    <p>Muitos sites pagam bem por indicação, mas não entram aqui porque fazem mais mal que bem a quem se cadastra:</p>
+    <ul>
+      <li><strong>Sites que pagam para curtir, seguir e comentar</strong> em Instagram, TikTok ou YouTube. Violam as regras das redes sociais, podem bloquear a sua conta e pagam centavos.</li>
+      <li><strong>Opções binárias e "robôs" de trader.</strong> Não é trabalho, é aposta. A maioria das pessoas perde dinheiro, e a CVM alerta contra corretoras que oferecem esse produto no Brasil.</li>
+      <li><strong>Mineração de cripto pelo navegador ou pelo celular.</strong> Rende quase nada, gasta energia e bateria, e o saque costuma ter regras que mudam.</li>
+      <li><strong>"Ganhe assistindo vídeos" ou "avaliando produtos" com taxa de adesão.</strong> Se é preciso pagar para começar, o lucro vem de quem entra, não de um cliente real.</li>
+      <li><strong>Plataformas que fecharam ou mudaram de ramo.</strong> Revisamos todos os links desta página em novembro de 2026.</li>
+    </ul>
+
+    <h2>Como receber e não perder dinheiro no câmbio</h2>
+    <p>
+      As plataformas estrangeiras pagam em dólar ou euro, quase sempre por PayPal ou Payoneer. O PayPal é o mais fácil, mas a conversão
+      para reais tem spread alto. Payoneer e Wise costumam ter câmbio melhor. Faça as contas antes de sacar valores maiores, e guarde os
+      comprovantes para o carnê-leão.
+    </p>
+    <p>
+      Quer saber quanto cobrar se for para os freelas? Use a nossa <a href="/ferramentas/quanto-cobrar-por-hora-freelancer/">calculadora de valor-hora para freelancer</a>.
+      Se a renda crescer, veja também a <a href="/ferramentas/calculadora-das-mei/">calculadora do DAS MEI</a>.
+    </p>
+
+    <h2>Como não cair em golpe</h2>
+    <ol>
+      <li>Nenhuma plataforma séria cobra para você trabalhar ou para liberar saque.</li>
+      <li>Recrutamento só por WhatsApp ou Telegram, com "tarefas" de curtir produtos e depositar para "subir de nível", é golpe.</li>
+      <li>Cadastre-se sempre pelo site oficial. Golpistas usam nomes de empresas reais, como Appen e Outlier.</li>
+      <li>Desconfie de promessas de salário fixo alto sem experiência.</li>
+    </ol>
+
+    <aside class="service-cta" aria-label="Mentoria">
+      <p class="service-cta__eyebrow">O próximo passo</p>
+      <p>
+        Treinar IA e responder pesquisas é um começo, mas o dinheiro de verdade está em vender um serviço. Criar sites e automações com IA
+        para pequenas empresas paga por projeto, e dá para aprender do zero.
+      </p>
+      <p class="service-cta__actions"><a class="btn" href="/mentoria/">Conhecer a mentoria</a><a href="/como-automatizar-tarefas-com-ia-sem-programar/">Ler o guia de automação com IA</a></p>
+    </aside>
+
+    <h2>Perguntas frequentes</h2>
+    {
+      faq.map((f) => (
+        <details>
+          <summary><strong>{f.q}</strong></summary>
+          <p>{f.a}</p>
+        </details>
+      ))
+    }
+    <AuthorBox />
+  </article>
+</BaseLayout>

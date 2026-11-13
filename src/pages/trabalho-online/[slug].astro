@@ -1,0 +1,125 @@
+---
+import { getCollection, render } from 'astro:content';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import AuthorBox from '../../components/AuthorBox.astro';
+import Estrelas from '../../components/Estrelas.astro';
+import FormattedDate from '../../components/FormattedDate.astro';
+import { AUTHOR_NAME, SITE_TITLE, SITE_URL, TIPOS_TRABALHO } from '../../consts';
+
+export async function getStaticPaths() {
+  const all = (await getCollection('plataformas')).sort((a, b) => a.data.order - b.data.order);
+  return all.map((p) => ({
+    params: { slug: p.id },
+    props: { p, outras: all.filter((o) => o.id !== p.id && o.data.tipo === p.data.tipo).concat(all.filter((o) => o.data.tipo !== p.data.tipo)).slice(0, 4) },
+  }));
+}
+
+const { p, outras } = Astro.props;
+const d = p.data;
+const { Content } = await render(p);
+const url = `${SITE_URL}/trabalho-online/${p.id}/`;
+const tipo = TIPOS_TRABALHO[d.tipo];
+const rel = d.indicacao ? 'sponsored nofollow noopener' : 'nofollow noopener';
+const ld = [
+  {
+    '@context': 'https://schema.org',
+    '@type': 'Article',
+    headline: d.title,
+    description: d.description,
+    datePublished: d.pubDate.toISOString(),
+    dateModified: (d.updatedDate ?? d.pubDate).toISOString(),
+    inLanguage: 'pt-BR',
+    mainEntityOfPage: url,
+    image: `${SITE_URL}/og-default.png`,
+    author: { '@type': 'Person', name: AUTHOR_NAME, url: `${SITE_URL}/sobre/` },
+    publisher: { '@type': 'Organization', name: SITE_TITLE, logo: { '@type': 'ImageObject', url: `${SITE_URL}/icon-512.png` } },
+  },
+  {
+    '@context': 'https://schema.org',
+    '@type': 'BreadcrumbList',
+    itemListElement: [
+      { '@type': 'ListItem', position: 1, name: 'Início', item: `${SITE_URL}/` },
+      { '@type': 'ListItem', position: 2, name: 'Trabalho online', item: `${SITE_URL}/trabalho-online/` },
+      { '@type': 'ListItem', position: 3, name: d.name, item: url },
+    ],
+  },
+];
+---
+
+<BaseLayout title={d.title} description={d.description}>
+  <script type="application/ld+json" slot="head" set:html={JSON.stringify(ld)} />
+  <article class="prose">
+    <nav class="meta small" aria-label="Você está em">
+      <a href="/">Início</a> › <a href="/trabalho-online/">Trabalho online</a> › {d.name}
+    </nav>
+    <h1>{d.title}</h1>
+    <p class="meta">
+      <span>Por <a href="/sobre/">{AUTHOR_NAME}</a></span><span>·</span>
+      <span>Atualizado em <FormattedDate date={d.updatedDate ?? d.pubDate} /></span>
+    </p>
+
+    <section class="plat-box" aria-label={`Resumo: ${d.name}`}>
+      <p class="plat-box__nota"><Estrelas nota={d.nota} /> <span class="muted small">nossa nota · {tipo.short}</span></p>
+      <dl class="plat-facts">
+        <div><dt>Quanto paga</dt><dd>{d.ganhos}</dd></div>
+        <div><dt>Aceita brasileiros?</dt><dd>{d.aceitaBrasil}</dd></div>
+        <div><dt>Como recebe</dt><dd>{d.pagamento}</dd></div>
+        <div><dt>Idioma</dt><dd>{d.idioma}</dd></div>
+        <div><dt>Para quem</dt><dd>{d.paraQuem}</dd></div>
+      </dl>
+      <p class="plat-box__cta">
+        <a class="btn" href={d.link} target="_blank" rel={rel}>Cadastrar no {d.name}</a>
+        {d.indicacao && <span class="small muted">link de indicação</span>}
+      </p>
+    </section>
+
+    {
+      d.indicacao && (
+        <p class="notice">
+          O botão acima é um link de indicação: se você se cadastrar por ele, o Renda Online pode receber um bônus da plataforma,
+          sem custo nenhum para você e sem diminuir o que você ganha. A nota e a avaliação são as mesmas com ou sem indicação.
+        </p>
+      )
+    }
+
+    <Content />
+
+    <div class="pros-cons">
+      <div>
+        <h2>Pontos positivos</h2>
+        <ul>{d.pros.map((x) => <li>{x}</li>)}</ul>
+      </div>
+      <div>
+        <h2>Pontos negativos</h2>
+        <ul>{d.contras.map((x) => <li>{x}</li>)}</ul>
+      </div>
+    </div>
+
+    <h2>Vale a pena?</h2>
+    <p>{d.veredito}</p>
+    <p><a class="btn" href={d.link} target="_blank" rel={rel}>Ir para o {d.name}</a></p>
+
+    <aside class="service-cta" aria-label="Mentoria">
+      <p class="service-cta__eyebrow">Quer ganhar mais que tarefas por hora?</p>
+      <p>
+        Plataformas como esta são um bom começo, mas o teto é baixo. Quem aprende a criar sites e automações com IA para pequenas empresas
+        cobra por projeto. Na mentoria, o {AUTHOR_NAME} mostra o caminho até o primeiro cliente.
+      </p>
+      <p class="service-cta__actions"><a class="btn" href="/mentoria/">Conhecer a mentoria</a><a href="/trabalho-online/">Ver todas as plataformas</a></p>
+    </aside>
+
+    <h2>Outras plataformas avaliadas</h2>
+    <ul class="tool-grid">
+      {
+        outras.map((o) => (
+          <li class="tool-card">
+            <h3><a href={`/trabalho-online/${o.id}/`}>{o.data.name}</a></h3>
+            <p><Estrelas nota={o.data.nota} /></p>
+            <p>{o.data.description}</p>
+          </li>
+        ))
+      }
+    </ul>
+    <AuthorBox />
+  </article>
+</BaseLayout>
