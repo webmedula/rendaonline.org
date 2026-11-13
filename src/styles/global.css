@@ -551,3 +551,20 @@ summary { cursor: pointer; font-weight: 600; }
 
 .service-card--featured { border: 2px solid var(--accent); }
 .service-cta__learn { margin: 0.9em 0 0; font-size: 0.9rem; color: var(--text-muted); }
+
+.author-photo {
+  float: right;
+  width: 11rem;
+  height: auto;
+  margin: 0.3rem 0 1rem 1.5rem;
+  border-radius: 12px;
+}
+
+@media (max-width: 560px) {
+  .author-photo {
+    float: none;
+    display: block;
+    width: 9rem;
+    margin: 0 0 1rem;
+  }
+}
