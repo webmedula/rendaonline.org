@@ -1,0 +1,49 @@
+---
+import LandingLayout from '../layouts/LandingLayout.astro';
+---
+
+<LandingLayout
+  title="Atendimento automático no WhatsApp com IA para empresas"
+  description="Seu WhatsApp respondendo clientes 24 horas, agendando, tirando dúvidas e passando para um humano quando precisa. Diagnóstico gratuito."
+  eyebrow="Atendimento no WhatsApp com IA"
+  headline="Seu WhatsApp respondendo clientes 24 horas, sem perder venda"
+  subhead="Um assistente com IA que responde dúvidas, envia preços, agenda horários e passa para a sua equipe só o que precisa de gente. Feito sob medida para o seu negócio, no seu número."
+  waMessage="Olá! Vi a página de atendimento no WhatsApp com IA e quero um diagnóstico gratuito."
+  ctaLabel="Quero meu diagnóstico gratuito"
+  pains={[
+    'Cliente manda mensagem à noite ou no fim de semana e ninguém responde. No dia seguinte, ele já comprou do concorrente.',
+    'Sua equipe passa o dia respondendo as mesmas perguntas: preço, horário, endereço, formas de pagamento.',
+    'Agendamentos e orçamentos se perdem no meio das conversas.',
+    'Você não sabe quantos contatos chegaram, quantos viraram venda e quantos ficaram sem resposta.',
+  ]}
+  steps={[
+    { title: 'Diagnóstico (gratuito, 20 min)', text: 'Entendemos como o seu atendimento funciona hoje e o que mais se repete.' },
+    { title: 'Proposta com preço fechado', text: 'Você recebe o fluxo desenhado, o prazo e o investimento antes de começar.' },
+    { title: 'Construção e testes', text: 'Montamos o assistente com as informações do seu negócio e testamos com você antes de ligar.' },
+    { title: 'No ar e acompanhamento', text: 'Ligamos no seu número, acompanhamos as primeiras semanas e ajustamos as respostas.' },
+  ]}
+  examples={[
+    { title: 'Clínicas e consultórios', text: 'Confirma consultas, remarca horários, envia preparo de exames e lembra o paciente na véspera.' },
+    { title: 'Salões e estética', text: 'Mostra serviços e preços, agenda pelo calendário e reduz faltas com lembrete automático.' },
+    { title: 'Imobiliárias', text: 'Qualifica o interessado (bairro, valor, financiamento) e entrega o lead pronto para o corretor.' },
+    { title: 'Lojas e e-commerce', text: 'Informa status do pedido, prazo de entrega e trocas, sem ninguém da equipe precisar abrir o sistema.' },
+    { title: 'Prestadores de serviço', text: 'Coleta fotos e informações do problema e já devolve uma faixa de orçamento.' },
+    { title: 'Pós-venda', text: 'Pede avaliação no Google, oferece recompra e recupera clientes inativos.' },
+  ]}
+  includes={[
+    'Assistente com IA treinado com as informações do seu negócio',
+    'Transferência para atendente humano quando necessário',
+    'Integração com agenda, planilha ou CRM',
+    'Relatório de conversas e contatos',
+    '30 dias de acompanhamento e ajustes',
+  ]}
+  price="a partir de R$ 1.500"
+  priceNote="Valor de referência para um fluxo de atendimento. O preço final sai no diagnóstico, sem surpresa. Há opção de manutenção mensal."
+  faq={[
+    { q: 'Preciso trocar de número?', a: 'Não. Na maioria dos casos usamos o mesmo número da empresa, conectado à API oficial do WhatsApp.' },
+    { q: 'A IA vai responder coisas erradas para o cliente?', a: 'O assistente responde só com as informações que você aprovou e passa para um humano quando não sabe. Você revisa tudo antes de ir ao ar.' },
+    { q: 'Tem custo mensal?', a: 'Existe o custo de uso da API do WhatsApp e da IA, que costuma ser baixo para pequenas empresas, e a manutenção opcional. Explicamos os valores no diagnóstico.' },
+    { q: 'Quanto tempo leva?', a: 'Um fluxo de atendimento simples fica pronto em 1 a 2 semanas, dependendo das integrações.' },
+    { q: 'Vocês atendem fora de Goiânia?', a: 'Sim. Todo o trabalho é remoto e atendemos empresas de todo o Brasil.' },
+  ]}
+/>

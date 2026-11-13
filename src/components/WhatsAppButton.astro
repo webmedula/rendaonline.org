@@ -9,3 +9,13 @@ const href = whatsappLink('Olá! Vim pelo site Renda Online e quero falar sobre 
   </svg>
   <span>WhatsApp</span>
 </a>
+
+<script is:inline>
+  document.addEventListener('click', function (e) {
+    var a = e.target.closest && e.target.closest('a[href*="wa.me/"]');
+    if (!a) return;
+    window.dataLayer = window.dataLayer || [];
+    window.dataLayer.push({ event: 'whatsapp_click', page: location.pathname });
+    if (typeof window.gtag === 'function') window.gtag('event', 'whatsapp_click', { page_path: location.pathname });
+  });
+</script>

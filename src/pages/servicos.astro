@@ -1,12 +1,13 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
-import { COMPANY_NAME, SERVICES, whatsappLink } from '../consts';
+import { COMPANY_CITY, COMPANY_NAME, COMPANY_URL, SERVICES, whatsappLink } from '../consts';
 
 const general = whatsappLink('Olá! Vim pela página de serviços do Renda Online e quero um orçamento.');
 const diag = whatsappLink('Olá! Quero agendar o diagnóstico gratuito de 20 minutos para o meu negócio.');
 ---
 
 <BaseLayout
+  noads
   title="Serviços: sites, automações e IA para o seu negócio"
   description={`Instalação de n8n, VPS configurada, blogs prontos e automações com IA feitos pela ${COMPANY_NAME}, a equipe por trás do Renda Online.`}
 >
@@ -52,6 +53,33 @@ const diag = whatsappLink('Olá! Quero agendar o diagnóstico gratuito de 20 min
       Comece por um <strong>diagnóstico gratuito de 20 minutos</strong>: você conta como o seu negócio funciona hoje e
       mostramos o que dá para automatizar e quanto custa.
     </p>
+    <p>
+      Veja em detalhe: <a href="/atendimento-whatsapp-com-ia/">atendimento no WhatsApp com IA</a> e
+      <a href="/automacao-shopee-mercado-livre/">automação para lojas na Shopee e Mercado Livre</a>.
+    </p>
     <p><a class="btn" href={diag} target="_blank" rel="noopener">Agendar diagnóstico gratuito</a></p>
+  </section>
+
+  <section class="prose">
+    <h2>Quem faz: {COMPANY_NAME}</h2>
+    <p>
+      A <a href={COMPANY_URL} rel="noopener">{COMPANY_NAME}</a> é uma empresa de {COMPANY_CITY} que junta site, tráfego pago e
+      automação: cria o site, traz os clientes com Google Ads e Meta Ads e automatiza o que vem depois, do pedido à nota fiscal.
+      Atendemos o Brasil todo, de forma remota.
+    </p>
+    <h3>Alguns projetos</h3>
+    <ul>
+      <li><strong>Pedidos da Shopee no Tiny com nota fiscal automática:</strong> pedidos sincronizados e NF-e emitida sem digitação.</li>
+      <li><strong>Central de devoluções do Mercado Livre:</strong> reclamações e devoluções reunidas em um painel.</li>
+      <li><strong>Página de lançamento imobiliário em Goiânia:</strong> landing page de captação para um residencial.</li>
+      <li><strong>Sites para empresas de serviço:</strong> refrigeração, extintores e condomínios.</li>
+    </ul>
+    <h3>Como trabalhamos</h3>
+    <ol>
+      <li><strong>Diagnóstico</strong> gratuito para entender o que você precisa.</li>
+      <li><strong>Proposta</strong> com escopo, prazo e preço fechados.</li>
+      <li><strong>Execução</strong> em etapas curtas, com prévia para você aprovar.</li>
+      <li><strong>Acompanhamento</strong> depois da entrega, com hospedagem e ajustes se quiser.</li>
+    </ol>
   </section>
 </BaseLayout>

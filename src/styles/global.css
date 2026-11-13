@@ -491,3 +491,23 @@ th {
     padding: 0.7em;
   }
 }
+
+/* Landing pages */
+.btn-lg { padding: 0.85em 1.6em; font-size: 1.05rem; }
+.lp-hero { padding: 3rem 0 2rem; max-width: 46rem; }
+.lp-hero h1 { font-size: clamp(1.9rem, 4.5vw, 2.8rem); line-height: 1.15; margin: 0.3em 0 0.5em; }
+.lp-sub { font-size: 1.15rem; color: var(--text-muted); }
+.lp-block { margin: 2.5rem 0; }
+.lp-pains { list-style: none; padding: 0; display: grid; gap: 0.8rem; }
+.lp-pains li { background: var(--bg-soft); border-left: 4px solid var(--accent); padding: 0.8em 1em; border-radius: 6px; }
+.lp-steps { counter-reset: s; list-style: none; padding: 0; display: grid; gap: 1rem; grid-template-columns: repeat(auto-fit, minmax(14rem, 1fr)); }
+.lp-steps li { counter-increment: s; border: 1px solid var(--border); border-radius: 10px; padding: 1em; display: flex; flex-direction: column; gap: 0.3em; }
+.lp-steps li::before { content: counter(s); font-weight: 800; color: var(--accent); font-size: 1.4rem; }
+.lp-offer { display: grid; gap: 1.5rem; grid-template-columns: repeat(auto-fit, minmax(16rem, 1fr)); align-items: start; }
+.lp-price { border: 2px solid var(--accent); border-radius: 12px; padding: 1.4em; background: var(--bg-soft); }
+.lp-price p { margin: 0.2em 0; }
+.lp-price__value { font-size: 1.8rem; font-weight: 800; color: var(--accent); }
+.lp-price .btn { margin-top: 1em; }
+.lp-final { text-align: center; margin: 0 auto; }
+details { border-bottom: 1px solid var(--border); padding: 0.7em 0; }
+summary { cursor: pointer; font-weight: 600; }

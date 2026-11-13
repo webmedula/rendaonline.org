@@ -34,6 +34,10 @@ export type CategorySlug = keyof typeof CATEGORIES;
 // Contato comercial (WebMedula). Número no formato internacional, só dígitos.
 export const WHATSAPP_NUMBER = '5562982908000';
 export const COMPANY_NAME = 'WebMedula';
+export const COMPANY_URL = 'https://www.webmedula.com.br';
+export const COMPANY_EMAIL = 'contato@webmedula.com.br';
+export const COMPANY_INSTAGRAM = 'https://www.instagram.com/webmedula/';
+export const COMPANY_CITY = 'Goiânia (GO)';
 
 export function whatsappLink(message: string) {
   return `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(message)}`;
@@ -77,6 +81,12 @@ export const SERVICES = {
     summary: 'Seu site em servidor rápido com LiteSpeed, SSL, backup diário e suporte direto pelo WhatsApp, sem você mexer em painel.',
     includes: ['Servidor LiteSpeed com SSL', 'Backup diário', 'Migração gratuita do site', 'Suporte por WhatsApp'],
   },
+  marketplace: {
+    name: 'Automação para lojas na Shopee e Mercado Livre',
+    price: 'a partir de R$ 1.500',
+    summary: 'Pedidos do marketplace entram sozinhos no ERP (Tiny/Olist), a nota fiscal sai automática e o cliente recebe aviso no WhatsApp.',
+    includes: ['Pedidos sincronizados no Tiny', 'NF-e emitida sem digitação', 'Avisos no WhatsApp', 'Painel de devoluções opcional'],
+  },
   manutencao: {
     name: 'Manutenção mensal de VPS e n8n',
     price: 'a partir de R$ 97/mês',
@@ -93,6 +103,8 @@ export function serviceForPost(category: string, tags: readonly string[] = []): 
   if (t.includes('n8n')) return 'n8n';
   if (t.some((x) => ['vps', 'cyberpanel'].includes(x))) return 'vps';
   if (t.some((x) => ['ads.txt', 'adsense'].includes(x)) && !t.includes('criar blog')) return 'diagnostico';
+  if (t.some((x) => ['shopee', 'mercado livre', 'tiny', 'nota fiscal'].includes(x))) return 'marketplace';
+  if (t.includes('hospedagem')) return 'hospedagem';
   if (category === 'criar-site') return 'blog';
   // ia-empresas e demais caem em automação sob medida
   return 'automacao';

@@ -10,6 +10,7 @@ interface Props {
   publishedTime?: Date;
   modifiedTime?: Date;
   noindex?: boolean;
+  noads?: boolean;
 }
 
 const {
@@ -20,6 +21,7 @@ const {
   publishedTime,
   modifiedTime,
   noindex = false,
+  noads = false,
 } = Astro.props;
 
 const canonicalURL = new URL(Astro.url.pathname, Astro.site);
@@ -57,8 +59,8 @@ const fullTitle = title === SITE_TITLE ? title : `${title} - ${SITE_TITLE}`;
 <meta name="twitter:image" content={imageURL} />
 
 <meta name="google-adsense-account" content={ADSENSE_CLIENT} />
-<script
+{!noads && <script
   async
   src={`https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=${ADSENSE_CLIENT}`}
   crossorigin="anonymous"
-  is:inline></script>
+  is:inline></script>}
