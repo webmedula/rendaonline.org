@@ -34,6 +34,7 @@ const diag = whatsappLink('Olá! Quero agendar o diagnóstico gratuito de 20 min
                 <li>{i}</li>
               ))}
             </ul>
+            {'page' in s && <p class="small"><a href={s.page}>Saiba como funciona</a></p>}
             <a class="btn" href={whatsappLink(`Olá! Tenho interesse em: ${s.name}.`)} target="_blank" rel="noopener">
               Quero este
             </a>
