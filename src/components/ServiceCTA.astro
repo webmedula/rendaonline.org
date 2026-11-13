@@ -21,4 +21,11 @@ const href = whatsappLink(`Olá! Li um artigo no Renda Online e tenho interesse 
     {'page' in s && <a href={s.page}>Saiba como funciona</a>}
     <a href="/servicos/">Ver todos os serviços</a>
   </p>
+  {
+    category !== 'ia-empresas' && (
+      <p class="service-cta__learn">
+        Prefere aprender a fazer e até vender isso para clientes? Conheça a <a href="/mentoria/">mentoria em sites e automações</a>.
+      </p>
+    )
+  }
 </aside>
