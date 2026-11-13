@@ -1,0 +1,110 @@
+---
+import ToolLayout from '../../layouts/ToolLayout.astro';
+import { brl, decimoTerceiro, DEDUCAO_DEPENDENTE } from '../../lib/calc';
+
+const ex = decimoTerceiro(3000, 12);
+const exProp = decimoTerceiro(3000, 7);
+const faq = [
+  {
+    q: 'Quando é pago o 13º salário em 2026?',
+    a: 'A primeira parcela deve ser paga até 30 de novembro e a segunda até 20 de dezembro. Em 2026, 20 de dezembro cai num domingo, então o pagamento costuma ser antecipado para sexta-feira, 18. A primeira parcela também pode vir junto com as férias, se você pediu.',
+  },
+  {
+    q: 'Por que a segunda parcela do 13º é menor que a primeira?',
+    a: 'Porque a primeira parcela é metade do valor bruto, sem nenhum desconto. O INSS e o Imposto de Renda de todo o 13º são descontados de uma vez na segunda parcela.',
+  },
+  {
+    q: 'Quem ganha até R$ 5 mil paga Imposto de Renda no 13º?',
+    a: 'Não. A redução da Lei 15.270/2025 também vale para o 13º salário, que é tributado separado do salário do mês. Com 13º de até R$ 5.000 o IR fica zerado; o INSS continua sendo descontado.',
+  },
+  {
+    q: 'Como contar os meses trabalhados para o 13º?',
+    a: 'Cada mês do ano em que você trabalhou 15 dias ou mais conta como 1/12 do salário. Quem entrou em 10 de junho, por exemplo, tem direito a 7/12 (junho a dezembro).',
+  },
+  {
+    q: 'Horas extras e comissões entram no 13º?',
+    a: 'Sim. A média dos valores variáveis recebidos no ano (horas extras, comissões, adicional noturno) entra no cálculo. Informe essa média no campo "média de adicionais".',
+  },
+];
+---
+
+<ToolLayout
+  slug="calculadora-decimo-terceiro"
+  title="Calculadora de 13º salário 2026: 1ª e 2ª parcela"
+  description="Calcule o 13º salário de 2026: valor da primeira e da segunda parcela, descontos de INSS e IR e 13º proporcional aos meses trabalhados."
+  h1="Calculadora de 13º salário 2026"
+  lead="Veja quanto você recebe na primeira parcela (até 30/11) e na segunda (até 20/12), já com INSS e Imposto de Renda descontados."
+  faq={faq}
+>
+  <Fragment slot="calc">
+    <form class="calc-form" id="f" novalidate>
+      <label>Salário bruto (R$)
+        <input name="salario" inputmode="decimal" placeholder="Ex.: 3.000,00" autocomplete="off" />
+      </label>
+      <label>Meses trabalhados no ano
+        <select name="meses">
+          {Array.from({ length: 12 }, (_, i) => 12 - i).map((m) => <option value={m}>{m} {m === 1 ? 'mês' : 'meses'}</option>)}
+        </select>
+      </label>
+      <label>Média de adicionais (R$) <span class="hint">horas extras, comissões; opcional</span>
+        <input name="media" inputmode="decimal" placeholder="0,00" />
+      </label>
+      <label>Número de dependentes
+        <input name="dep" type="number" min="0" max="20" value="0" inputmode="numeric" />
+      </label>
+      <button class="btn full" type="submit">Calcular 13º</button>
+    </form>
+    <div class="calc-result" id="r" hidden aria-live="polite"></div>
+  </Fragment>
+
+  <h2>Como é calculado o 13º salário</h2>
+  <p>
+    O 13º é um salário extra por ano, pago a todo trabalhador com carteira assinada, aposentados e pensionistas do INSS. O valor
+    é o salário de dezembro dividido por 12 e multiplicado pelos meses trabalhados no ano (contando os meses com 15 dias ou mais).
+  </p>
+  <ul>
+    <li><strong>1ª parcela (até 30 de novembro):</strong> metade do valor bruto, sem descontos.</li>
+    <li><strong>2ª parcela (até 20 de dezembro):</strong> o restante, já com INSS e IR do 13º inteiro descontados.</li>
+    <li><strong>Imposto de Renda:</strong> calculado separado do salário, com dedução de INSS e de {brl(DEDUCAO_DEPENDENTE)} por dependente, e com a redução de 2026 que isenta valores até R$ 5 mil.</li>
+  </ul>
+
+  <h3>Exemplos</h3>
+  <p>
+    Salário de R$ 3.000 e ano inteiro trabalhado: 13º bruto de {brl(ex.bruto)}, primeira parcela de {brl(ex.primeira)} e segunda de
+    <strong>{brl(ex.segunda)}</strong> (desconto de {brl(ex.inss)} de INSS). Quem trabalhou 7 meses recebe {brl(exProp.bruto)} bruto:
+    {brl(exProp.primeira)} na primeira parcela e {brl(exProp.segunda)} na segunda.
+  </p>
+
+  <h2>Quem tem direito</h2>
+  <p>
+    Empregados CLT (inclusive domésticos e temporários), trabalhadores avulsos, aposentados e pensionistas do INSS. Quem foi
+    demitido por justa causa perde o 13º proporcional daquele ano. Na demissão sem justa causa ou no pedido de demissão, o 13º
+    proporcional é pago na rescisão; use a <a href="/ferramentas/calculadora-rescisao/">calculadora de rescisão</a> nesse caso.
+  </p>
+</ToolLayout>
+
+<script>
+  import { decimoTerceiro, brl } from '../../lib/calc';
+  import { bind, hero, num, table } from '../../lib/ui';
+  const f = document.getElementById('f') as HTMLFormElement;
+  const r = document.getElementById('r') as HTMLElement;
+  const el = (n: string) => f.elements.namedItem(n) as HTMLInputElement;
+  bind(f, r, () => {
+    const s = num(el('salario'));
+    if (s <= 0) throw new Error('Digite o salário bruto para calcular.');
+    const d = decimoTerceiro(s, Number(el('meses').value), num(el('media')), Math.max(0, Math.floor(num(el('dep')))));
+    return (
+      hero('13º líquido total', d.liquido, `1ª parcela ${brl(d.primeira)} + 2ª parcela ${brl(d.segunda)}`) +
+      table([
+        ['13º bruto', d.bruto],
+        ['1ª parcela (até 30/11), sem descontos', d.primeira, 'total'],
+        ['Restante bruto', d.bruto - d.primeira],
+        ['INSS sobre o 13º', d.inss, 'neg'],
+        ['Imposto de Renda sobre o 13º', d.ir.imposto, 'neg'],
+        ['Redução da Lei 15.270 aplicada ao IR', d.ir.reducao, 'sub'],
+        ['2ª parcela (até 20/12)', d.segunda, 'total'],
+      ]) +
+      `<p class="result-note">A empresa também deposita ${brl(d.fgts)} de FGTS sobre o 13º.</p>`
+    );
+  });
+</script>

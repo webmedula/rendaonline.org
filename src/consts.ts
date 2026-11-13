@@ -161,3 +161,39 @@ export const MENTORING = [
     includes: ['12 encontros semanais de 1 hora', 'Montagem da sua oferta e tabela de preços', 'Modelos de proposta e contrato', 'Revisão do seu primeiro projeto de cliente', 'Suporte no WhatsApp por 90 dias'],
   },
 ] as const;
+
+// Ferramentas grátis (calculadoras) em /ferramentas/. Páginas com AdSense.
+export const TOOLS = [
+  {
+    slug: 'calculadora-salario-liquido',
+    name: 'Calculadora de salário líquido',
+    short: 'Salário líquido',
+    summary: 'Descubra quanto cai na conta depois do INSS e do Imposto de Renda, já com a isenção até R$ 5 mil.',
+  },
+  {
+    slug: 'calculadora-rescisao',
+    name: 'Calculadora de rescisão',
+    short: 'Rescisão',
+    summary: 'Saldo de salário, aviso prévio, 13º, férias e multa do FGTS para demissão, pedido ou acordo.',
+  },
+  {
+    slug: 'calculadora-decimo-terceiro',
+    name: 'Calculadora de 13º salário',
+    short: '13º salário',
+    summary: 'Valor da primeira e da segunda parcela do 13º, com descontos e meses trabalhados.',
+  },
+  {
+    slug: 'calculadora-ferias',
+    name: 'Calculadora de férias',
+    short: 'Férias',
+    summary: 'Férias com 1/3, venda de 10 dias (abono) e adiantamento do 13º, com o líquido a receber.',
+  },
+  {
+    slug: 'calculadora-juros-compostos',
+    name: 'Calculadora de juros compostos',
+    short: 'Juros compostos',
+    summary: 'Simule quanto seu dinheiro rende com aportes mensais, ano a ano.',
+  },
+] as const;
+
+export type ToolSlug = (typeof TOOLS)[number]['slug'];

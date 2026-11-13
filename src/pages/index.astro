@@ -2,7 +2,7 @@
 import { getCollection } from 'astro:content';
 import BaseLayout from '../layouts/BaseLayout.astro';
 import PostCard from '../components/PostCard.astro';
-import { CATEGORIES, SITE_DESCRIPTION, SITE_TITLE } from '../consts';
+import { CATEGORIES, SITE_DESCRIPTION, SITE_TITLE, TOOLS } from '../consts';
 
 const posts = (await getCollection('blog', ({ data }) => !data.draft)).sort(
   (a, b) => (b.data.updatedDate ?? b.data.pubDate).valueOf() - (a.data.updatedDate ?? a.data.pubDate).valueOf()
@@ -18,6 +18,22 @@ const latest = posts.slice(0, 9);
       criar conteúdo e montar uma renda na internet.
     </p>
     <a class="btn" href="/categoria/ferramentas/">Comece pelas ferramentas gratuitas</a>
+  </section>
+
+  <section>
+    <h2>Calculadoras grátis</h2>
+    <ul class="tool-grid">
+      {
+        TOOLS.map((t) => (
+          <li class="tool-card">
+            <h3>
+              <a href={`/ferramentas/${t.slug}/`}>{t.name}</a>
+            </h3>
+            <p>{t.summary}</p>
+          </li>
+        ))
+      }
+    </ul>
   </section>
 
   <section>

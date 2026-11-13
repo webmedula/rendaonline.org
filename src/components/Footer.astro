@@ -1,5 +1,5 @@
 ---
-import { CATEGORIES, SITE_TITLE, SOCIAL } from '../consts';
+import { CATEGORIES, SITE_TITLE, SOCIAL, TOOLS } from '../consts';
 const year = new Date().getFullYear();
 ---
 
@@ -28,6 +28,12 @@ const year = new Date().getFullYear();
       <h3>Categorias</h3>
       <ul>
         {Object.entries(CATEGORIES).map(([slug, cat]) => <li><a href={`/categoria/${slug}/`}>{cat.name}</a></li>)}
+      </ul>
+    </div>
+    <div>
+      <h3>Calculadoras grátis</h3>
+      <ul>
+        {TOOLS.map((t) => <li><a href={`/ferramentas/${t.slug}/`}>{t.short}</a></li>)}
       </ul>
     </div>
     <div>

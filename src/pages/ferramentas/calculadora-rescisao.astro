@@ -1,0 +1,181 @@
+---
+import ToolLayout from '../../layouts/ToolLayout.astro';
+import { brl, rescisao } from '../../lib/calc';
+
+const ex = rescisao({
+  salario: 3000,
+  admissao: '2022-03-10',
+  saida: '2026-11-13',
+  motivo: 'sem-justa-causa',
+  aviso: 'indenizado',
+  feriasVencidas: 0,
+  saldoFgts: 10000,
+  dependentes: 0,
+});
+const faq = [
+  {
+    q: 'Qual o prazo para a empresa pagar a rescisão?',
+    a: 'Até 10 dias corridos depois do fim do contrato, qualquer que seja o tipo de aviso prévio. Se atrasar, a empresa paga multa de um salário ao trabalhador (art. 477 da CLT).',
+  },
+  {
+    q: 'Quantos dias de aviso prévio eu tenho?',
+    a: 'São 30 dias, mais 3 dias por ano completo na empresa, até o máximo de 90 dias (Lei 12.506/2011). Quem tem 4 anos de casa, por exemplo, tem 42 dias. O aviso indenizado também conta como tempo de serviço para 13º e férias.',
+  },
+  {
+    q: 'O que recebo se pedir demissão?',
+    a: 'Saldo de salário, 13º proporcional, férias vencidas e proporcionais com 1/3. Não recebe multa de 40% do FGTS, não saca o FGTS e não tem seguro-desemprego. Se não cumprir o aviso, a empresa pode descontar até um salário.',
+  },
+  {
+    q: 'Como funciona a demissão por acordo?',
+    a: 'Na rescisão por acordo (art. 484-A da CLT), o aviso prévio indenizado e a multa do FGTS caem pela metade (multa de 20%), você pode sacar 80% do FGTS e não tem direito ao seguro-desemprego. As demais verbas são pagas por inteiro.',
+  },
+  {
+    q: 'O que perco na demissão por justa causa?',
+    a: 'Recebe apenas o saldo de salário e as férias vencidas com 1/3. Perde o aviso prévio, o 13º proporcional, as férias proporcionais, a multa do FGTS, o saque do FGTS e o seguro-desemprego.',
+  },
+  {
+    q: 'Tem desconto de INSS e IR na rescisão?',
+    a: 'Só sobre o saldo de salário e o 13º. Aviso prévio indenizado, férias indenizadas e o terço de férias pagos na rescisão não têm INSS nem Imposto de Renda, e a multa do FGTS também é isenta.',
+  },
+];
+---
+
+<ToolLayout
+  slug="calculadora-rescisao"
+  title="Calculadora de rescisão 2026: quanto vou receber?"
+  description="Calcule sua rescisão em 2026: saldo de salário, aviso prévio, 13º, férias com 1/3 e multa do FGTS para demissão sem justa causa, pedido de demissão, acordo ou justa causa."
+  h1="Calculadora de rescisão de contrato 2026"
+  lead="Informe o salário, as datas e o motivo da saída para ver cada verba da rescisão, os descontos e o FGTS que você pode sacar."
+  faq={faq}
+>
+  <Fragment slot="calc">
+    <form class="calc-form" id="f" novalidate>
+      <label>Último salário bruto (R$)
+        <input name="salario" inputmode="decimal" placeholder="Ex.: 3.000,00" autocomplete="off" />
+      </label>
+      <label>Motivo da saída
+        <select name="motivo">
+          <option value="sem-justa-causa">Demissão sem justa causa</option>
+          <option value="pedido">Pedido de demissão</option>
+          <option value="acordo">Acordo (art. 484-A)</option>
+          <option value="justa-causa">Demissão por justa causa</option>
+        </select>
+      </label>
+      <label>Data de admissão
+        <input name="admissao" type="date" />
+      </label>
+      <label>Último dia trabalhado
+        <input name="saida" type="date" />
+      </label>
+      <label>Aviso prévio
+        <select name="aviso">
+          <option value="indenizado">Indenizado (não trabalhado)</option>
+          <option value="trabalhado">Trabalhado</option>
+          <option value="nao-cumprido">Não cumprido (pedido de demissão)</option>
+        </select>
+      </label>
+      <label>Férias vencidas não tiradas
+        <select name="vencidas">
+          <option value="0">Não tenho</option>
+          <option value="1">1 período (12 meses)</option>
+          <option value="2">2 períodos</option>
+        </select>
+      </label>
+      <label>Saldo do FGTS (R$) <span class="hint">veja no app FGTS; para a multa</span>
+        <input name="fgts" inputmode="decimal" placeholder="0,00" />
+      </label>
+      <label>Número de dependentes
+        <input name="dep" type="number" min="0" max="20" value="0" inputmode="numeric" />
+      </label>
+      <button class="btn full" type="submit">Calcular rescisão</button>
+    </form>
+    <div class="calc-result" id="r" hidden aria-live="polite"></div>
+  </Fragment>
+
+  <h2>O que entra na rescisão</h2>
+  <div class="table-scroll">
+    <table>
+      <thead><tr><th>Verba</th><th>Sem justa causa</th><th>Pedido</th><th>Acordo</th><th>Justa causa</th></tr></thead>
+      <tbody>
+        <tr><td>Saldo de salário</td><td>Sim</td><td>Sim</td><td>Sim</td><td>Sim</td></tr>
+        <tr><td>Aviso prévio indenizado</td><td>Sim</td><td>Não</td><td>Metade</td><td>Não</td></tr>
+        <tr><td>13º proporcional</td><td>Sim</td><td>Sim</td><td>Sim</td><td>Não</td></tr>
+        <tr><td>Férias vencidas + 1/3</td><td>Sim</td><td>Sim</td><td>Sim</td><td>Sim</td></tr>
+        <tr><td>Férias proporcionais + 1/3</td><td>Sim</td><td>Sim</td><td>Sim</td><td>Não</td></tr>
+        <tr><td>Multa do FGTS</td><td>40%</td><td>Não</td><td>20%</td><td>Não</td></tr>
+        <tr><td>Saque do FGTS</td><td>100%</td><td>Não</td><td>80%</td><td>Não</td></tr>
+        <tr><td>Seguro-desemprego</td><td>Sim</td><td>Não</td><td>Não</td><td>Não</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <h2>Como cada verba é calculada</h2>
+  <ul>
+    <li><strong>Saldo de salário:</strong> salário ÷ 30 × dias trabalhados no mês da saída.</li>
+    <li><strong>Aviso prévio indenizado:</strong> 30 dias + 3 por ano completo (máximo 90). Ele projeta a data de saída para frente, o que pode somar mais avos de 13º e férias.</li>
+    <li><strong>13º proporcional:</strong> salário ÷ 12 × meses do ano com 15 dias ou mais trabalhados (contando a projeção do aviso).</li>
+    <li><strong>Férias proporcionais:</strong> salário ÷ 12 × meses desde o último aniversário de admissão, mais 1/3.</li>
+    <li><strong>Multa do FGTS:</strong> 40% (ou 20% no acordo) sobre o saldo do FGTS, incluindo o depósito do mês da rescisão.</li>
+  </ul>
+
+  <h3>Exemplo</h3>
+  <p>
+    Salário de R$ 3.000, admissão em 10/03/2022, demissão sem justa causa em 13/11/2026 com aviso indenizado ({ex.diasAvisoCheio}
+    dias) e R$ 10.000 de FGTS: verbas líquidas de <strong>{brl(ex.liquido)}</strong>, multa de {brl(ex.multa)} e saque total de FGTS de
+    {brl(ex.saqueFgts + ex.multa)}, além do seguro-desemprego.
+  </p>
+  <p>
+    Se o 13º já foi adiantado (a primeira parcela sai até 30 de novembro), a empresa desconta o que já pagou. Confira também a
+    <a href="/ferramentas/calculadora-salario-liquido/">calculadora de salário líquido</a> para planejar o próximo emprego.
+  </p>
+</ToolLayout>
+
+<script>
+  import { rescisao, brl, type Motivo, type Aviso } from '../../lib/calc';
+  import { bind, hero, num, table, type Row } from '../../lib/ui';
+  const f = document.getElementById('f') as HTMLFormElement;
+  const r = document.getElementById('r') as HTMLElement;
+  const el = (n: string) => f.elements.namedItem(n) as HTMLInputElement;
+  const fmt = (iso: string) => iso.split('-').reverse().join('/');
+  if (!el('saida').value) el('saida').value = new Date().toISOString().slice(0, 10);
+  bind(f, r, () => {
+    const s = num(el('salario'));
+    if (s <= 0) throw new Error('Digite o último salário bruto.');
+    if (!el('admissao').value || !el('saida').value) throw new Error('Preencha a data de admissão e o último dia trabalhado.');
+    const motivo = el('motivo').value as Motivo;
+    let aviso = el('aviso').value as Aviso;
+    if (aviso === 'nao-cumprido' && motivo !== 'pedido') aviso = 'trabalhado';
+    if (motivo === 'justa-causa' || (motivo === 'pedido' && aviso === 'indenizado')) aviso = 'trabalhado';
+    const x = rescisao({
+      salario: s,
+      admissao: el('admissao').value,
+      saida: el('saida').value,
+      motivo,
+      aviso,
+      feriasVencidas: Number(el('vencidas').value),
+      saldoFgts: num(el('fgts')),
+      dependentes: Math.max(0, Math.floor(num(el('dep')))),
+    });
+    const rows: Row[] = [
+      ...x.proventos.map((l) => [l.nome, l.valor] as Row),
+      ['Total de proventos', x.totalProventos, 'total'],
+      ...x.descontos.map((l) => [l.nome, l.valor, 'neg'] as Row),
+      ['Total de descontos', x.totalDescontos, 'total'],
+      ['Valor líquido da rescisão', x.liquido, 'total'],
+    ];
+    const fgts: Row[] = [['Depósito de FGTS do mês da rescisão (estimado)', x.fgtsMes]];
+    if (x.pctMulta) fgts.push([`Multa de ${x.pctMulta * 100}% do FGTS (paga pela empresa)`, x.multa]);
+    fgts.push([x.pctSaque ? `Saque do FGTS (${x.pctSaque * 100}% do saldo)` : 'Saque do FGTS', x.pctSaque ? x.saqueFgts : 'Não pode sacar']);
+    const notas: string[] = [];
+    if (x.fimProjetado !== el('saida').value) notas.push(`Com a projeção do aviso, o contrato termina oficialmente em ${fmt(x.fimProjetado)}.`);
+    if (x.seguroDesemprego) notas.push('Você também pode ter direito ao seguro-desemprego (peça pelo app Carteira de Trabalho Digital).');
+    notas.push('Se já recebeu a 1ª parcela do 13º, ela é descontada deste valor.');
+    return (
+      hero('Você deve receber na rescisão', x.liquido, x.pctMulta ? `+ ${brl(x.multa)} de multa do FGTS` : '') +
+      table(rows) +
+      '<h3>FGTS</h3>' +
+      table(fgts) +
+      `<p class="result-note">${notas.join(' ')}</p>`
+    );
+  });
+</script>
