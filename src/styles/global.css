@@ -3,8 +3,8 @@
   --bg-soft: #f6f7f9;
   --text: #1a1d23;
   --text-muted: #5b6270;
-  --accent: #0a7c59;
-  --accent-dark: #075e43;
+  --accent: #0a664a;
+  --accent-dark: #074a36;
   --border: #e3e6ea;
   --max: 72rem;
   --content: 44rem;
@@ -201,15 +201,29 @@ th {
 }
 
 .brand {
-  font-weight: 800;
-  font-size: 1.25rem;
+  display: inline-flex;
+  align-items: center;
+  padding: 0.6rem 0;
   text-decoration: none;
-  color: var(--text);
-  letter-spacing: -0.01em;
+  line-height: 0;
 }
 
-.brand span {
-  color: var(--accent);
+.brand-logo {
+  display: block;
+  height: 40px;
+  width: auto;
+}
+
+.footer-logo {
+  display: inline-block;
+  margin-bottom: 0.75rem;
+  line-height: 0;
+}
+
+.footer-logo img {
+  display: block;
+  height: 44px;
+  width: auto;
 }
 
 .nav {
@@ -511,3 +525,26 @@ th {
 .lp-final { text-align: center; margin: 0 auto; }
 details { border-bottom: 1px solid var(--border); padding: 0.7em 0; }
 summary { cursor: pointer; font-weight: 600; }
+
+.social {
+  display: flex;
+  gap: 0.6rem;
+  margin: 0.75rem 0;
+}
+
+.social a {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 2.5rem;
+  height: 2.5rem;
+  border-radius: 50%;
+  border: 1px solid var(--border);
+  color: var(--accent);
+}
+
+.social a:hover {
+  background: var(--accent);
+  border-color: var(--accent);
+  color: #fff;
+}

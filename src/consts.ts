@@ -125,3 +125,8 @@ export function serviceForPost(category: string, tags: readonly string[] = []): 
   // ia-empresas e demais caem em automação sob medida
   return 'automacao';
 }
+
+export const SOCIAL = {
+  instagram: 'https://www.instagram.com/rendaonlineorg/',
+  facebook: 'https://www.facebook.com/rendaonline.org',
+} as const;
