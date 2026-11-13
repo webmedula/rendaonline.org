@@ -5,7 +5,12 @@ const path = Astro.url.pathname;
 
 <header class="site-header">
   <div class="container">
-    <a class="brand" href="/">Renda<span>Online</span></a>
+    <a class="brand" href="/" aria-label="Renda Online, página inicial">
+      <picture>
+        <source srcset="/logo-branco.png" media="(prefers-color-scheme: dark)" width="233" height="73" />
+        <img src="/logo.png" alt="Renda Online" fetchpriority="high" width="181" height="56" class="brand-logo" />
+      </picture>
+    </a>
     <nav class="nav" aria-label="Principal">
       {
         Object.entries(CATEGORIES).map(([slug, cat]) => (

@@ -6,7 +6,12 @@ const year = new Date().getFullYear();
 <footer class="site-footer">
   <div class="container">
     <div>
-      <h3>{SITE_TITLE}</h3>
+      <a href="/" class="footer-logo" aria-label={SITE_TITLE}>
+        <picture>
+        <source srcset="/logo-branco.png" media="(prefers-color-scheme: dark)" width="233" height="73" />
+        <img src="/logo.png" alt={SITE_TITLE} loading="lazy" width="181" height="56" class="brand-logo" />
+      </picture>
+      </a>
       <p>Tutoriais práticos de IA, automação e ferramentas para trabalhar e ganhar dinheiro online.</p>
       <p>Um projeto da <a href="https://www.webmedula.com.br" rel="noopener">WebMedula</a>: sites, tráfego e automação.</p>
       <p>© {year} RendaOnline.org. Todos os direitos reservados.</p>
