@@ -1,6 +1,6 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
-import { AUTHOR_NAME, COMPANY_CITY, COMPANY_NAME, COMPANY_URL } from '../consts';
+import { AUTHOR_BOOK_URL, AUTHOR_NAME, COMPANY_CITY, COMPANY_NAME, COMPANY_URL } from '../consts';
 ---
 
 <BaseLayout title="Sobre o Renda Online" description="Quem escreve o Renda Online, como os artigos são feitos e como falar com a gente.">
@@ -17,6 +17,10 @@ import { AUTHOR_NAME, COMPANY_CITY, COMPANY_NAME, COMPANY_URL } from '../consts'
       Meu nome é {AUTHOR_NAME}. Sou fundador da <a href={COMPANY_URL} rel="noopener">{COMPANY_NAME}</a>, empresa de {COMPANY_CITY}{' '}
       que cria sites, faz tráfego pago e automatiza processos para empresas: atendimento no WhatsApp, pedidos de marketplace
       integrados ao ERP com nota fiscal automática, painéis e sistemas sob medida.
+    </p>
+    <p>
+      Também sou autor de um livro sobre mediocridade e mérito, publicado como João Paulo Rocha e
+      <a href={AUTHOR_BOOK_URL} rel="noopener">disponível na Amazon</a>.
     </p>
     <p>
       O Renda Online nasceu para compartilhar o que aplico nesses projetos. Os tutoriais mostram como fazer sozinho. Se preferir

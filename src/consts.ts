@@ -3,6 +3,8 @@ export const SITE_DESCRIPTION =
   'Tutoriais práticos de inteligência artificial, automação e ferramentas para trabalhar e ganhar dinheiro online.';
 export const SITE_URL = 'https://rendaonline.org';
 export const AUTHOR_NAME = 'João Paulo';
+// Livro do autor na Amazon (ebook Kindle, como João Paulo Rocha).
+export const AUTHOR_BOOK_URL = 'https://www.amazon.com.br/dp/B0HPYG6L3H';
 export const TWITTER_HANDLE = '@Rendaonline_org';
 export const ADSENSE_CLIENT = 'ca-pub-6982528073256938';
 
