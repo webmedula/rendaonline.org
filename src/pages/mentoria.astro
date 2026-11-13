@@ -1,0 +1,108 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import { AUTHOR_NAME, COMPANY_CITY, COMPANY_NAME, COMPANY_URL, MENTORING, whatsappLink } from '../consts';
+
+const general = whatsappLink('Olá! Quero saber mais sobre a mentoria de sites e automações.');
+const faq = [
+  { q: 'Preciso saber programar?', a: 'Não. A mentoria começa do seu nível. Usamos ferramentas visuais como n8n e WordPress, e a IA para o que antes exigia código.' },
+  { q: 'Como são os encontros?', a: 'Ao vivo, por vídeo, com compartilhamento de tela. Todos ficam gravados para você rever.' },
+  { q: 'Qual a diferença para um curso?', a: 'No curso você assiste aulas prontas. Na mentoria trabalhamos no seu projeto, com as suas dúvidas, e você sai com algo funcionando.' },
+  { q: 'Vou aprender a vender esses serviços?', a: 'Sim. O Programa Primeiro Cliente cobre oferta, preço, proposta e prospecção, com o que usamos na WebMedula para fechar clientes.' },
+  { q: 'Posso parcelar?', a: 'O Programa Primeiro Cliente pode ser pago em 3 vezes. Fale com a gente pelo WhatsApp.' },
+];
+const faqLd = {
+  '@context': 'https://schema.org',
+  '@type': 'FAQPage',
+  mainEntity: faq.map((f) => ({ '@type': 'Question', name: f.q, acceptedAnswer: { '@type': 'Answer', text: f.a } })),
+};
+---
+
+<BaseLayout
+  noads
+  title="Mentoria em criação de sites e automações com IA"
+  description="Aprenda a criar sites, automações com n8n e IA e a vender esses serviços, com mentoria ao vivo de quem faz isso para empresas todos os dias."
+>
+  <script slot="head" type="application/ld+json" set:html={JSON.stringify(faqLd)} />
+  <section class="lp-hero">
+    <p class="service-cta__eyebrow">Mentoria ao vivo</p>
+    <h1>Aprenda a criar sites e automações, e a vender isso para empresas</h1>
+    <p class="lp-sub">
+      Mentoria individual com {AUTHOR_NAME}, fundador da {COMPANY_NAME}. Você aprende com projetos reais de clientes, não com aula
+      gravada genérica, e sai com algo funcionando.
+    </p>
+    <p class="service-cta__actions">
+      <a class="btn btn-lg" href={general} target="_blank" rel="noopener">Quero conversar sobre a mentoria</a>
+      <span class="muted small">Conversa de 15 minutos para ver se faz sentido, sem compromisso.</span>
+    </p>
+  </section>
+
+  <section class="lp-block">
+    <h2>O que você pode aprender</h2>
+    <ul class="service-grid">
+      <li class="service-card">
+        <h3>Sites</h3>
+        <p>WordPress ou site estático, servidor próprio (VPS com CyberPanel), domínio, SSL, SEO técnico e AdSense.</p>
+      </li>
+      <li class="service-card">
+        <h3>Automações com IA</h3>
+        <p>n8n do zero, atendimento no WhatsApp, integrações com planilhas, CRM e ERP, agentes de IA no dia a dia.</p>
+      </li>
+      <li class="service-card">
+        <h3>Vender o serviço</h3>
+        <p>Oferta, preço, proposta, prospecção e como transformar hospedagem e manutenção em renda recorrente.</p>
+      </li>
+    </ul>
+  </section>
+
+  <section class="lp-block">
+    <h2>Formatos e investimento</h2>
+    <ul class="service-grid">
+      {
+        MENTORING.map((m) => (
+          <li class={`service-card${'featured' in m ? ' service-card--featured' : ''}`}>
+            {'featured' in m && <p class="service-cta__eyebrow">Mais escolhido</p>}
+            <h3>{m.name}</h3>
+            <p class="service-cta__price">{m.price}</p>
+            <p class="small muted">{m.detail}</p>
+            <p>{m.summary}</p>
+            <ul class="small">
+              {m.includes.map((i) => (
+                <li>{i}</li>
+              ))}
+            </ul>
+            <a class="btn" href={whatsappLink(`Olá! Tenho interesse na mentoria: ${m.name}.`)} target="_blank" rel="noopener">
+              Quero este
+            </a>
+          </li>
+        ))
+      }
+    </ul>
+  </section>
+
+  <section class="lp-block prose">
+    <h2>Quem é o mentor</h2>
+    <p>
+      {AUTHOR_NAME} é fundador da <a href={COMPANY_URL} rel="noopener">{COMPANY_NAME}</a>, de {COMPANY_CITY}, que cria sites,
+      tráfego pago e automações para empresas: pedidos da Shopee no Tiny com nota fiscal automática, central de devoluções do
+      Mercado Livre, landing pages de lançamento imobiliário e sites para empresas de serviço. Também escreve os tutoriais do
+      Renda Online. Na mentoria, você aprende exatamente o que é usado nesses projetos.
+    </p>
+  </section>
+
+  <section class="lp-block prose">
+    <h2>Perguntas frequentes</h2>
+    {
+      faq.map((f) => (
+        <details>
+          <summary>{f.q}</summary>
+          <p>{f.a}</p>
+        </details>
+      ))
+    }
+  </section>
+
+  <section class="lp-hero lp-final">
+    <h2>Vamos montar o seu plano?</h2>
+    <a class="btn btn-lg" href={general} target="_blank" rel="noopener">Falar no WhatsApp</a>
+  </section>
+</BaseLayout>

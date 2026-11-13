@@ -548,3 +548,6 @@ summary { cursor: pointer; font-weight: 600; }
   border-color: var(--accent);
   color: #fff;
 }
+
+.service-card--featured { border: 2px solid var(--accent); }
+.service-cta__learn { margin: 0.9em 0 0; font-size: 0.9rem; color: var(--text-muted); }

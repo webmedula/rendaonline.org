@@ -130,3 +130,32 @@ export const SOCIAL = {
   instagram: 'https://www.instagram.com/rendaonlineorg/',
   facebook: 'https://www.facebook.com/rendaonline.org',
 } as const;
+
+// Mentoria (sites, automações e como vender esses serviços).
+export const MENTORING = [
+  {
+    key: 'avulsa',
+    name: 'Sessão avulsa',
+    price: 'R$ 197',
+    detail: '1 encontro de 1 hora, online',
+    summary: 'Para destravar um problema específico: instalar o n8n, subir um site na VPS, montar uma automação, precificar um projeto.',
+    includes: ['Encontro ao vivo por vídeo, gravado', 'Revisão do seu projeto na tela', 'Resumo com os próximos passos'],
+  },
+  {
+    key: 'mensal',
+    name: 'Mentoria mensal',
+    price: 'R$ 697',
+    detail: '4 encontros semanais + suporte no WhatsApp',
+    summary: 'Para quem quer aprender a criar sites ou automações com acompanhamento, construindo um projeto real do começo ao fim.',
+    includes: ['4 encontros de 1 hora', 'Suporte no WhatsApp entre os encontros', 'Plano de estudo sob medida', 'Templates e workflows usados na WebMedula'],
+    featured: true,
+  },
+  {
+    key: 'primeiro-cliente',
+    name: 'Programa Primeiro Cliente',
+    price: 'R$ 1.797',
+    detail: '90 dias, 12 encontros (ou 3x de R$ 599)',
+    summary: 'Para quem quer transformar sites e automações em renda: técnica, oferta, preço, proposta e o primeiro cliente pagante.',
+    includes: ['12 encontros semanais de 1 hora', 'Montagem da sua oferta e tabela de preços', 'Modelos de proposta e contrato', 'Revisão do seu primeiro projeto de cliente', 'Suporte no WhatsApp por 90 dias'],
+  },
+] as const;
