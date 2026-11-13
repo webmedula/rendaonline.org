@@ -14,6 +14,7 @@ const path = Astro.url.pathname;
           </a>
         ))
       }
+      <a href="/servicos/" class="nav-cta" aria-current={path === '/servicos/' ? 'page' : undefined}>Serviços</a>
       <a href="/sobre/" aria-current={path === '/sobre/' ? 'page' : undefined}>Sobre</a>
     </nav>
   </div>

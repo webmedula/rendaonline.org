@@ -1,0 +1,57 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import { COMPANY_NAME, SERVICES, whatsappLink } from '../consts';
+
+const general = whatsappLink('Olá! Vim pela página de serviços do Renda Online e quero um orçamento.');
+const diag = whatsappLink('Olá! Quero agendar o diagnóstico gratuito de 20 minutos para o meu negócio.');
+---
+
+<BaseLayout
+  title="Serviços: sites, automações e IA para o seu negócio"
+  description={`Instalação de n8n, VPS configurada, blogs prontos e automações com IA feitos pela ${COMPANY_NAME}, a equipe por trás do Renda Online.`}
+>
+  <section class="hero">
+    <h1>Deixe com a gente</h1>
+    <p>
+      Os tutoriais do Renda Online ensinam a fazer tudo sozinho. Se você prefere ganhar tempo, a equipe da {COMPANY_NAME} faz
+      por você, com preço fechado e entrega combinada.
+    </p>
+    <a class="btn" href={general} target="_blank" rel="noopener">Pedir orçamento no WhatsApp</a>
+  </section>
+
+  <section>
+    <h2>Serviços com preço fechado</h2>
+    <ul class="service-grid">
+      {
+        Object.entries(SERVICES).map(([key, s]) => (
+          <li class="service-card">
+            <h3>{s.name}</h3>
+            <p class="service-cta__price">{s.price}</p>
+            <p>{s.summary}</p>
+            <ul class="small">
+              {s.includes.map((i) => (
+                <li>{i}</li>
+              ))}
+            </ul>
+            <a class="btn" href={whatsappLink(`Olá! Tenho interesse em: ${s.name}.`)} target="_blank" rel="noopener">
+              Quero este
+            </a>
+          </li>
+        ))
+      }
+    </ul>
+  </section>
+
+  <section class="prose">
+    <h2>Para empresas: IA e automação sob medida</h2>
+    <p>
+      Atendimento automático no WhatsApp, agendamentos, integração de planilhas e CRM, sites profissionais e sistemas
+      internos. A {COMPANY_NAME} cria a solução e acompanha depois da entrega.
+    </p>
+    <p>
+      Comece por um <strong>diagnóstico gratuito de 20 minutos</strong>: você conta como o seu negócio funciona hoje e
+      mostramos o que dá para automatizar e quanto custa.
+    </p>
+    <p><a class="btn" href={diag} target="_blank" rel="noopener">Agendar diagnóstico gratuito</a></p>
+  </section>
+</BaseLayout>

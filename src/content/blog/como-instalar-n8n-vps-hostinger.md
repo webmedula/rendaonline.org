@@ -4,12 +4,12 @@ description: "Instale o n8n na sua VPS da Hostinger em 20 minutos, com Docker, d
 pubDate: 2026-11-12
 category: automacao
 tags: ["n8n", "vps", "hostinger", "docker", "tutorial"]
-affiliate: true
+affiliate: false
 ---
 
 O **n8n** é a ferramenta de automação que mais usamos aqui. Na nuvem deles, o plano começa em torno de 20 euros por mês e limita o número de execuções. Instalado na sua própria VPS, é **gratuito e ilimitado**: você paga só o servidor, que já serve para seus sites.
 
-Este tutorial instala o n8n numa VPS da Hostinger usando **Docker**, com domínio próprio e HTTPS automático. Leva uns 20 minutos. Se a sua VPS ainda não existe, veja antes o [tutorial de configuração da VPS com CyberPanel](/como-configurar-vps-hostinger-cyberpanel/). Os links da Hostinger são de afiliado.
+Este tutorial instala o n8n numa VPS da Hostinger usando **Docker**, com domínio próprio e HTTPS automático. Leva uns 20 minutos. Se a sua VPS ainda não existe, veja antes o [tutorial de configuração da VPS com CyberPanel](/como-configurar-vps-hostinger-cyberpanel/).
 
 ## O que você vai precisar
 

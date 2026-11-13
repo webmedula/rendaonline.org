@@ -391,3 +391,103 @@ th {
     padding: 2rem 0 1rem;
   }
 }
+
+/* Serviços (WebMedula) */
+.nav-cta {
+  font-weight: 700;
+  color: var(--accent) !important;
+}
+
+.service-cta {
+  border: 2px solid var(--accent);
+  border-radius: 10px;
+  padding: 1.2em 1.4em;
+  margin: 2.5em 0 1.5em;
+  background: var(--bg-soft);
+}
+.service-cta h2 {
+  margin: 0.2em 0 0.4em;
+  padding-top: 0;
+  border-top: 0;
+  font-size: 1.3rem;
+}
+.service-cta__eyebrow {
+  margin: 0;
+  font-size: 0.85rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: var(--accent);
+}
+.service-cta__price {
+  white-space: nowrap;
+  color: var(--accent);
+  font-weight: 700;
+}
+.service-cta__actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1em;
+  align-items: center;
+  margin-bottom: 0;
+}
+
+.service-grid {
+  list-style: none;
+  padding: 0;
+  display: grid;
+  gap: 1.2rem;
+  grid-template-columns: repeat(auto-fill, minmax(16rem, 1fr));
+}
+.service-card {
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 1.2em;
+  display: flex;
+  flex-direction: column;
+}
+.service-card h3 {
+  margin: 0 0 0.3em;
+}
+.service-card .service-cta__price {
+  margin: 0 0 0.5em;
+  font-size: 1.15rem;
+}
+.service-card ul {
+  padding-left: 1.1em;
+  margin: 0.5em 0 1em;
+  color: var(--text-muted);
+}
+.service-card .btn {
+  margin-top: auto;
+  text-align: center;
+}
+
+.wa-float {
+  position: fixed;
+  right: 16px;
+  bottom: 16px;
+  z-index: 50;
+  display: flex;
+  align-items: center;
+  gap: 0.4em;
+  background: #25d366;
+  color: #fff;
+  padding: 0.6em 1em 0.6em 0.8em;
+  border-radius: 999px;
+  font-weight: 700;
+  text-decoration: none;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.2);
+}
+.wa-float:hover {
+  background: #1ebe5b;
+  color: #fff;
+}
+@media (max-width: 600px) {
+  .wa-float span {
+    display: none;
+  }
+  .wa-float {
+    padding: 0.7em;
+  }
+}

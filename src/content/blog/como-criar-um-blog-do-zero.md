@@ -4,7 +4,7 @@ description: "Passo a passo completo para criar um blog em 2026: escolher nicho,
 pubDate: 2026-11-12
 category: criar-site
 tags: ["criar blog", "adsense", "afiliados", "guia"]
-affiliate: true
+affiliate: false
 ---
 
 Criar um blog continua sendo uma das formas mais baratas de montar uma fonte de renda online: custa menos de R$ 50 por mês para manter e não depende de aparecer em vídeo. Mas o jogo mudou. Em 2026, blog que copia o que já existe não ranqueia, e blog que publica em massa com IA é rebaixado pelo Google.
@@ -50,7 +50,7 @@ Evite nichos genéricos demais ("renda extra", "saúde", "tecnologia"). Foque em
 
 Para o primeiro blog, a **hospedagem compartilhada** da Hostinger ou da HostGator resolve. Se você também quer rodar automações (n8n) e ferramentas de IA, vá direto para uma **VPS**. É o que usamos aqui, e temos um [tutorial de configuração da VPS na Hostinger](/como-configurar-vps-hostinger-cyberpanel/).
 
-Os links de hospedagem neste artigo são de afiliado. Indicamos só o que usamos.
+Se você não quer lidar com servidor, a WebMedula, equipe por trás deste site, hospeda o seu blog na nossa VPS com SSL, backup e suporte. Veja os [planos de hospedagem](/servicos/).
 
 ## Passo 3: WordPress ou site estático?
 
