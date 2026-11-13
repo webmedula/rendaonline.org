@@ -614,3 +614,20 @@ summary { cursor: pointer; font-weight: 600; }
 .legend i { display: inline-block; width: 0.8em; height: 0.8em; border-radius: 2px; margin-right: 0.3em; vertical-align: middle; }
 .table-scroll { overflow-x: auto; }
 @media print { .site-header, .site-footer, .wa-float, .calc-form, .tool-cta, .ad-slot { display: none !important; } }
+/* Trabalho online */
+.stars { position: relative; display: inline-block; font-size: 1.05rem; line-height: 1; letter-spacing: 1px; vertical-align: -1px; }
+.stars-bg { color: var(--border); }
+.stars-fg { position: absolute; left: 0; top: 0; overflow: hidden; white-space: nowrap; color: #e3a008; }
+.stars-num { margin-left: 0.3em; font-size: 0.95rem; }
+.plat-box { border: 2px solid var(--accent); border-radius: 10px; padding: 1rem 1.2rem; margin: 1.5rem 0; background: var(--bg); }
+.plat-box__nota { margin: 0 0 0.6rem; }
+.plat-facts { display: grid; grid-template-columns: repeat(auto-fill, minmax(13rem, 1fr)); gap: 0.6rem 1.2rem; margin: 0 0 1rem; }
+.plat-facts dt { font-size: 0.8rem; text-transform: uppercase; letter-spacing: 0.04em; color: var(--text-muted); }
+.plat-facts dd { margin: 0.1rem 0 0; font-weight: 600; font-size: 0.95rem; }
+.plat-box__cta { margin: 0; display: flex; gap: 0.8rem; align-items: center; flex-wrap: wrap; }
+.pros-cons { display: grid; grid-template-columns: repeat(auto-fit, minmax(15rem, 1fr)); gap: 0 1.5rem; }
+.pros-cons > div:first-child li::marker { content: '✓  '; color: var(--accent); }
+.pros-cons > div:last-child li::marker { content: '✗  '; color: #b42318; }
+.plat-table td, .plat-table th { padding: 0.5em 0.7em; border: 1px solid var(--border); font-size: 0.92rem; vertical-align: top; }
+.plat-table { border-collapse: collapse; width: 100%; }
+.plat-table .stars { font-size: 0.85rem; }

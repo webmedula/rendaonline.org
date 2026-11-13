@@ -209,3 +209,12 @@ export const TOOLS = [
 ] as const;
 
 export type ToolSlug = (typeof TOOLS)[number]['slug'];
+
+// Seção Trabalho online (/trabalho-online/): tipos de plataforma avaliados.
+export const TIPOS_TRABALHO = {
+  ia: { name: 'Treinar inteligência artificial', short: 'Treinar IA', description: 'Avaliar respostas de IA, anotar dados, gravar áudio e corrigir textos. Paga melhor que microtarefas comuns.' },
+  testes: { name: 'Testes de sites e transcrição', short: 'Testes e transcrição', description: 'Testar sites e apps falando em voz alta, ou transcrever áudios. Pede atenção e, muitas vezes, inglês.' },
+  freela: { name: 'Freelas', short: 'Freelas', description: 'Vender o que você sabe fazer (texto, design, sites, tradução) por projeto. É onde dá para ganhar de verdade.' },
+  pesquisas: { name: 'Pesquisas e recompensas', short: 'Pesquisas', description: 'Responder pesquisas e ganhar pontos. Fácil, mas paga pouco: serve como trocado, não como renda.' },
+} as const;
+export type TipoTrabalho = keyof typeof TIPOS_TRABALHO;
