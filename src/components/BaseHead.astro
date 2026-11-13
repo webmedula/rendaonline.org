@@ -1,5 +1,5 @@
 ---
-import { SITE_TITLE, SITE_URL, TWITTER_HANDLE, ADSENSE_CLIENT } from '../consts';
+import { SITE_TITLE, SITE_URL, TWITTER_HANDLE, ADSENSE_CLIENT, SOCIAL } from '../consts';
 import '../styles/global.css';
 
 interface Props {
@@ -26,6 +26,14 @@ const {
 
 const canonicalURL = new URL(Astro.url.pathname, Astro.site);
 const imageURL = new URL(image, Astro.site);
+const orgLd = {
+  '@context': 'https://schema.org',
+  '@type': 'Organization',
+  name: SITE_TITLE,
+  url: SITE_URL,
+  logo: `${SITE_URL}/icon-512.png`,
+  sameAs: Object.values(SOCIAL),
+};
 const fullTitle = title === SITE_TITLE ? title : `${title} - ${SITE_TITLE}`;
 ---
 
@@ -71,3 +79,5 @@ const fullTitle = title === SITE_TITLE ? title : `${title} - ${SITE_TITLE}`;
   src={`https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=${ADSENSE_CLIENT}`}
   crossorigin="anonymous"
   is:inline></script>}
+
+{Astro.url.pathname === '/' && <script type="application/ld+json" set:html={JSON.stringify(orgLd)} />}

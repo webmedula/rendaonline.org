@@ -525,3 +525,26 @@ th {
 .lp-final { text-align: center; margin: 0 auto; }
 details { border-bottom: 1px solid var(--border); padding: 0.7em 0; }
 summary { cursor: pointer; font-weight: 600; }
+
+.social {
+  display: flex;
+  gap: 0.6rem;
+  margin: 0.75rem 0;
+}
+
+.social a {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 2.5rem;
+  height: 2.5rem;
+  border-radius: 50%;
+  border: 1px solid var(--border);
+  color: var(--accent);
+}
+
+.social a:hover {
+  background: var(--accent);
+  border-color: var(--accent);
+  color: #fff;
+}
