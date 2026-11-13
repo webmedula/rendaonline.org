@@ -9,6 +9,8 @@ const icons: Record<string, string> = {
   'calculadora-decimo-terceiro': '13º',
   'calculadora-ferias': '☀',
   'calculadora-juros-compostos': '%',
+  'quanto-cobrar-por-hora-freelancer': '⏱',
+  'calculadora-das-mei': 'MEI',
 };
 const ld = {
   '@context': 'https://schema.org',
@@ -19,14 +21,14 @@ const ld = {
 ---
 
 <BaseLayout
-  title={`Calculadoras grátis ${ANO_TABELAS}: salário, rescisão, férias, 13º e juros`}
-  description="Calculadoras online grátis e atualizadas com as tabelas de 2026: salário líquido, rescisão, férias, 13º salário e juros compostos. Sem cadastro."
+  title={`Calculadoras grátis ${ANO_TABELAS}: salário, rescisão, férias, 13º, MEI e freelancer`}
+  description="Calculadoras online grátis e atualizadas com as tabelas de 2026: salário líquido, rescisão, férias, 13º, juros compostos, DAS MEI e valor-hora de freelancer. Sem cadastro."
 >
   <script type="application/ld+json" slot="head" set:html={JSON.stringify(ld)} />
   <section class="hero">
     <h1>Calculadoras grátis para o seu dinheiro</h1>
     <p>
-      Faça as contas do salário, da rescisão, das férias, do 13º e dos seus investimentos em segundos. Tudo atualizado com as
+      Faça as contas do salário, da rescisão, das férias, do 13º, do MEI, do seu valor-hora e dos seus investimentos em segundos. Tudo atualizado com as
       tabelas oficiais de {ANO_TABELAS}, incluindo a nova isenção do Imposto de Renda até R$ 5 mil. Sem cadastro, direto no navegador.
     </p>
   </section>
