@@ -110,6 +110,13 @@ export const SERVICES = {
     includes: ['Cardápio digital no seu link', 'Pedidos sem app e sem cadastro do cliente', 'Pix, dinheiro ou cartão direto com você', 'Painel no computador e no celular'],
     page: '/delivery-sem-comissao/',
   },
+  sistemas: {
+    name: 'Sistemas de código aberto instalados para sua empresa',
+    price: 'instalação a partir de R$ 297',
+    summary: 'Multiatendimento no WhatsApp, central de atendimento, e-mail marketing, agenda online e automação, sem licença por usuário e com os dados no seu servidor.',
+    includes: ['Instalação com domínio e SSL', 'Configuração inicial e treinamento', 'Hospedagem e atualizações opcionais', 'Suporte por WhatsApp'],
+    page: '/sistemas-instalados/',
+  },
   manutencao: {
     name: 'Manutenção mensal de VPS e n8n',
     price: 'a partir de R$ 97/mês',
@@ -261,3 +268,80 @@ export const TIPOS_TRABALHO = {
   pesquisas: { name: 'Pesquisas e recompensas', short: 'Pesquisas', description: 'Responder pesquisas e ganhar pontos. Fácil, mas paga pouco: serve como trocado, não como renda.' },
 } as const;
 export type TipoTrabalho = keyof typeof TIPOS_TRABALHO;
+
+// Sistemas de código aberto que instalamos (/sistemas-instalados/). Preços editáveis aqui.
+// Só software de código aberto ou com licença que permite instalar para terceiros. Não revendemos scripts de pacotes.
+export const SYSTEMS = [
+  {
+    key: 'multiatendimento',
+    name: 'Multiatendimento no WhatsApp',
+    tech: 'Ticketz ou Whaticket Community',
+    summary: 'Um número de WhatsApp atendido por vários atendentes ao mesmo tempo, com filas por setor, transferência, respostas rápidas e histórico de cada cliente.',
+    forWho: 'Lojas, clínicas, imobiliárias e qualquer empresa que tem mais de uma pessoa respondendo no WhatsApp.',
+    setup: 'R$ 497',
+    monthly: 'R$ 129/mês',
+    includes: ['Atendentes e setores ilimitados', 'Filas, etiquetas e respostas rápidas', 'Painel no navegador e no celular', 'Mensagem de boas-vindas e horário de atendimento'],
+    whatsappUnofficial: true,
+  },
+  {
+    key: 'chatwoot',
+    name: 'Central de atendimento omnichannel',
+    tech: 'Chatwoot',
+    summary: 'WhatsApp, Instagram, Facebook, chat do site e e-mail numa caixa de entrada só, com etiquetas, relatórios e espaço para um assistente com IA.',
+    forWho: 'Empresas que atendem por vários canais e perdem mensagens entre um app e outro.',
+    setup: 'R$ 497',
+    monthly: 'R$ 129/mês',
+    includes: ['Chat para o site', 'Instagram, Facebook e e-mail conectados', 'Relatórios de atendimento', 'Pronto para integrar com IA via n8n'],
+  },
+  {
+    key: 'evolution',
+    name: 'API de WhatsApp própria',
+    tech: 'Evolution API',
+    summary: 'Sua própria API para enviar e receber mensagens de WhatsApp a partir de sistemas, planilhas e automações, sem pagar por mensagem a terceiros.',
+    forWho: 'Quem quer ligar o WhatsApp ao n8n, ao CRM, ao sistema da loja ou ao Chatwoot.',
+    setup: 'R$ 297',
+    monthly: 'R$ 79/mês',
+    includes: ['Instâncias para vários números', 'Webhooks para n8n e outros sistemas', 'Painel de conexão por QR code', 'Documentação de uso entregue'],
+    whatsappUnofficial: true,
+  },
+  {
+    key: 'n8n',
+    name: 'Automação de processos',
+    tech: 'n8n',
+    summary: 'Fluxos que trabalham sozinhos: lead do site vai para o CRM, pedido gera nota, planilha manda mensagem, IA responde e classifica.',
+    forWho: 'Empresas com tarefas repetitivas entre sistemas, planilhas e WhatsApp.',
+    setup: 'R$ 297',
+    monthly: 'R$ 97/mês',
+    monthlyNote: 'manutenção',
+    includes: ['Instalação na VPS da sua empresa', 'Subdomínio e SSL', 'Backup automático', 'Chamada de 20 min para entrega'],
+    ownServer: true,
+  },
+  {
+    key: 'mautic',
+    name: 'E-mail marketing e automação de leads',
+    tech: 'Mautic',
+    summary: 'Envie campanhas e sequências de e-mail para sua lista sem pagar por contato, com formulários, segmentos e pontuação de leads.',
+    forWho: 'Negócios com lista de clientes que hoje pagam caro por ferramenta de e-mail ou não fazem e-mail nenhum.',
+    setup: 'R$ 497',
+    monthly: 'R$ 99/mês',
+    includes: ['Contatos ilimitados', 'Formulários para o site', 'Sequências automáticas', 'Configuração de envio (SMTP) e domínio'],
+  },
+  {
+    key: 'calcom',
+    name: 'Agenda online',
+    tech: 'Cal.com',
+    summary: 'Uma página onde o cliente escolhe o horário e agenda sozinho, com confirmação e lembrete, sincronizada com o Google Agenda.',
+    forWho: 'Consultórios, salões, barbearias, consultores e prestadores de serviço que marcam horário.',
+    setup: 'R$ 297',
+    monthly: 'R$ 69/mês',
+    includes: ['Página de agendamento com sua marca', 'Sincronia com Google Agenda', 'Lembretes por e-mail', 'Vários profissionais e serviços'],
+  },
+] as const;
+
+export const SYSTEMS_COMBO = {
+  name: 'Combo atendimento completo',
+  items: 'Chatwoot + Evolution API + n8n com assistente de IA',
+  setup: 'R$ 997',
+  monthly: 'R$ 197/mês',
+  summary: 'WhatsApp, Instagram e chat do site numa caixa só, com um assistente de IA que responde as dúvidas comuns e passa para a equipe quando precisa.',
+} as const;
