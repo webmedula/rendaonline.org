@@ -22,6 +22,14 @@ const href = whatsappLink(`Olá! Li um artigo no Renda Online e tenho interesse 
     <a href="/servicos/">Ver todos os serviços</a>
   </p>
   {
+    category === 'ia-empresas' && (
+      <p class="service-cta__learn">
+        Não sabe por onde começar? Faça o <a href="/diagnostico-automacao/">diagnóstico grátis</a> e veja em 2 minutos quanto sua
+        empresa perde sem automação.
+      </p>
+    )
+  }
+  {
     category !== 'ia-empresas' && (
       <p class="service-cta__learn">
         Prefere aprender a fazer e até vender isso para clientes? Conheça a <a href="/mentoria/">mentoria em sites e automações</a>.
