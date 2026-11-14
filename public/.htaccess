@@ -260,6 +260,9 @@ ErrorDocument 404 /404.html
 ErrorDocument 410 /404.html
 
 # Cache de arquivos estáticos
+# ATENÇÃO: o OpenLiteSpeed (CyberPanel) IGNORA mod_expires/mod_headers no .htaccess — só as regras de
+# rewrite e o ErrorDocument valem aqui. O cache real vem da configuração do vHost no CyberPanel
+# (hoje: 7 dias para tudo). Bloco mantido só para o caso de migrar para Apache/LiteSpeed Enterprise.
 <IfModule mod_expires.c>
   ExpiresActive On
   ExpiresByType text/css "access plus 1 year"

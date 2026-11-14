@@ -83,7 +83,7 @@ const breadcrumb = {
             )
           }
         </p>
-        {image && <img src={image} alt={imageAlt ?? title} width="1200" height="630" />}
+        {image && <img src={image} alt={imageAlt ?? title} width="1200" height="630" fetchpriority="high" decoding="async" />}
         {
           affiliate && (
             <p class="notice">
