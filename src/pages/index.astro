@@ -2,6 +2,7 @@
 import { getCollection } from 'astro:content';
 import BaseLayout from '../layouts/BaseLayout.astro';
 import PostCard from '../components/PostCard.astro';
+import LeadMagnet from '../components/LeadMagnet.astro';
 import { CATEGORIES, SITE_DESCRIPTION, SITE_TITLE, TOOLS } from '../consts';
 
 const posts = (await getCollection('blog', ({ data }) => !data.draft)).sort(
@@ -19,6 +20,8 @@ const latest = posts.slice(0, 9);
     </p>
     <a class="btn" href="/categoria/ferramentas/">Comece pelas ferramentas gratuitas</a>
   </section>
+
+  <LeadMagnet />
 
   <section>
     <h2>Calculadoras grátis</h2>

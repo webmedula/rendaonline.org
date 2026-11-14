@@ -1,5 +1,6 @@
 ---
 import BaseLayout from './BaseLayout.astro';
+import LeadMagnet from '../components/LeadMagnet.astro';
 import { SITE_URL, TOOLS, COMPANY_NAME, whatsappLink, type ToolSlug } from '../consts';
 import { ATUALIZADO_EM } from '../lib/calc';
 
@@ -87,6 +88,8 @@ const ctaFinal = cta ?? {
       Os resultados são estimativas com base na legislação e nas tabelas vigentes em 2026. Convenções coletivas, adicionais e
       situações específicas podem mudar os valores. Para decisões importantes, confirme com o RH, um contador ou o sindicato.
     </p>
+
+    <LeadMagnet />
 
     <aside class="service-cta tool-cta" aria-label="Serviços">
       <p class="service-cta__eyebrow">Para empresas</p>

@@ -9,6 +9,7 @@ import AdSlot from '../components/AdSlot.astro';
 import PostCard from '../components/PostCard.astro';
 import ServiceCTA from '../components/ServiceCTA.astro';
 import WhatsAppButton from '../components/WhatsAppButton.astro';
+import LeadMagnet from '../components/LeadMagnet.astro';
 import { AUTHOR_NAME, CATEGORIES, SITE_TITLE, SITE_URL, SOCIAL } from '../consts';
 
 interface Props {
@@ -92,6 +93,7 @@ const breadcrumb = {
           )
         }
         <slot />
+        {category !== 'ia-empresas' && <LeadMagnet />}
         <ServiceCTA category={category} tags={tags} />
         <AuthorBox />
       </article>

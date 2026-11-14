@@ -1,0 +1,75 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import LeadMagnet from '../components/LeadMagnet.astro';
+import { LEAD_MAGNET, PROMPT_SECTIONS, TOTAL_PROMPTS } from '../data/prompts-ia';
+
+const amostra = PROMPT_SECTIONS[1].prompts[1];
+const title = `${TOTAL_PROMPTS} prompts para ganhar dinheiro com IA (PDF grátis)`;
+const description =
+  'Baixe grátis 50 prompts prontos para ChatGPT, Gemini e Claude: descobrir sua ideia de renda, conseguir clientes, criar conteúdo, vender serviços de IA e cobrar o preço certo.';
+---
+
+<BaseLayout title={title} description={description} noads>
+  <section class="lm-hero">
+    <div>
+      <p class="lead-box__eyebrow">Material gratuito · PDF e versão online</p>
+      <h1>{TOTAL_PROMPTS} prompts para ganhar dinheiro com IA</h1>
+      <p class="lp-sub">{LEAD_MAGNET.subtitle}</p>
+      <ul class="lm-list">
+        <li>Prompts testados, em português, com os [campos] que você troca pelos seus dados</li>
+        <li>Para freelancers, criadores de conteúdo, lojistas e quem quer vender serviços de IA</li>
+        <li>Dica de uso em cada prompt e botão de copiar na versão online</li>
+        <li>Sem promessa de dinheiro fácil: são atalhos para trabalhar melhor e mais rápido</li>
+      </ul>
+    </div>
+    <LeadMagnet variant="hero" />
+  </section>
+
+  <section class="lp-block">
+    <h2>O que tem dentro</h2>
+    <ul class="lm-sections">
+      {
+        PROMPT_SECTIONS.map((s) => (
+          <li>
+            <strong>{s.title.replace(/^\d+\.\s*/, '')}</strong>
+            <span class="small muted">{s.prompts.map((p) => p.title).join(' · ')}</span>
+          </li>
+        ))
+      }
+    </ul>
+  </section>
+
+  <section class="lp-block prose">
+    <h2>Veja um dos prompts</h2>
+    <div class="lm-sample">
+      <p><strong>{amostra.title}.</strong> {amostra.use}</p>
+      <p>{amostra.prompt}</p>
+      {amostra.tip && <p class="small"><strong>Dica:</strong> {amostra.tip}</p>}
+    </div>
+    <p>
+      Os outros {TOTAL_PROMPTS - 1} seguem o mesmo formato: para que serve, o prompt pronto e uma dica de quem usa no dia a dia
+      para atender clientes e criar conteúdo.
+    </p>
+
+    <h2>Quem preparou</h2>
+    <p>
+      O material é do <a href="/sobre/">João Paulo</a>, que escreve o Renda Online e toca a
+      <a href="https://www.webmedula.com.br" rel="noopener">WebMedula</a>, empresa de Goiânia que cria sites, automações e
+      atendimento com IA para pequenos negócios. São os mesmos prompts que usamos para prospectar, escrever propostas e
+      montar automações para clientes.
+    </p>
+
+    <h2>Perguntas frequentes</h2>
+    <h3>É grátis mesmo?</h3>
+    <p>Sim. Você informa nome e e-mail e acessa o material na hora, em PDF e na versão online.</p>
+    <h3>Funciona no ChatGPT gratuito?</h3>
+    <p>Sim. Os prompts funcionam na versão gratuita do ChatGPT, do Gemini e do Claude.</p>
+    <h3>Vou receber spam?</h3>
+    <p>
+      Não. Mandamos conteúdo novo e, de vez em quando, uma oferta de serviço ou mentoria. Você pode pedir para sair a qualquer
+      momento, respondendo a mensagem ou pela <a href="/contato/">página de contato</a>.
+    </p>
+  </section>
+
+  <LeadMagnet heading="Pegue os 50 prompts agora" text="Preencha e acesse o material completo na hora, com o PDF para baixar." />
+</BaseLayout>

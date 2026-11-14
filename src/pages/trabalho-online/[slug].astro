@@ -1,6 +1,7 @@
 ---
 import { getCollection, render } from 'astro:content';
 import BaseLayout from '../../layouts/BaseLayout.astro';
+import LeadMagnet from '../../components/LeadMagnet.astro';
 import AuthorBox from '../../components/AuthorBox.astro';
 import Estrelas from '../../components/Estrelas.astro';
 import FormattedDate from '../../components/FormattedDate.astro';
@@ -107,6 +108,8 @@ const ld = [
       </p>
       <p class="service-cta__actions"><a class="btn" href="/mentoria/">Conhecer a mentoria</a><a href="/trabalho-online/">Ver todas as plataformas</a></p>
     </aside>
+
+    <LeadMagnet />
 
     <h2>Outras plataformas avaliadas</h2>
     <ul class="tool-grid">
