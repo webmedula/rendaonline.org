@@ -103,6 +103,13 @@ export const SERVICES = {
     includes: ['Pedidos sincronizados no Tiny', 'NF-e emitida sem digitação', 'Avisos no WhatsApp', 'Painel de devoluções opcional'],
     page: '/automacao-shopee-mercado-livre/',
   },
+  delivery: {
+    name: 'Delivery próprio sem comissão (WebTenda)',
+    price: 'a partir de R$ 49,90/mês',
+    summary: 'Cardápio digital com link próprio, pedidos de entrega e retirada e painel do lojista. Mensalidade fixa, sem taxa por pedido, 14 dias grátis.',
+    includes: ['Cardápio digital no seu link', 'Pedidos sem app e sem cadastro do cliente', 'Pix, dinheiro ou cartão direto com você', 'Painel no computador e no celular'],
+    page: '/delivery-sem-comissao/',
+  },
   manutencao: {
     name: 'Manutenção mensal de VPS e n8n',
     price: 'a partir de R$ 97/mês',
@@ -120,6 +127,7 @@ export function serviceForPost(category: string, tags: readonly string[] = []): 
   if (t.some((x) => ['vps', 'cyberpanel'].includes(x))) return 'vps';
   if (t.some((x) => ['ads.txt', 'adsense'].includes(x)) && !t.includes('criar blog')) return 'diagnostico';
   if (t.some((x) => ['whatsapp', 'chatbot'].includes(x))) return 'whatsapp';
+  if (t.some((x) => ['delivery', 'ifood', 'cardapio digital', 'restaurante'].includes(x))) return 'delivery';
   if (t.some((x) => ['shopee', 'mercado livre', 'tiny', 'nota fiscal'].includes(x))) return 'marketplace';
   if (t.some((x) => ['site profissional', 'quanto custa'].includes(x))) return 'site';
   if (t.includes('hospedagem')) return 'hospedagem';
@@ -127,6 +135,41 @@ export function serviceForPost(category: string, tags: readonly string[] = []): 
   // ia-empresas e demais caem em automação sob medida
   return 'automacao';
 }
+
+// WebTenda: sistema de delivery próprio do autor (www.webtenda.com.br). Preços conferidos no site em 14/11/2026.
+const WT_UTM = 'utm_source=rendaonline&utm_medium=referral';
+export const WEBTENDA = {
+  name: 'WebTenda',
+  url: `https://www.webtenda.com.br/?${WT_UTM}&utm_campaign=site`,
+  signup(campaign: string) {
+    return `https://app.webtenda.com.br/cadastro?${WT_UTM}&utm_campaign=${encodeURIComponent(campaign)}`;
+  },
+  trialDays: 14,
+  plans: [
+    {
+      name: 'Básico',
+      price: 'R$ 49,90',
+      value: 49.9,
+      summary: 'Para quem está começando o delivery.',
+      includes: ['Até 50 produtos', 'Até 300 pedidos por mês', 'Link próprio do cardápio', 'Painel de pedidos', 'Entrega e retirada'],
+    },
+    {
+      name: 'Profissional',
+      price: 'R$ 89,90',
+      value: 89.9,
+      summary: 'Para o negócio que já tem movimento.',
+      includes: ['Até 200 produtos', 'Pedidos ilimitados', 'Link próprio do cardápio', 'Painel de pedidos', 'Entrega e retirada'],
+      featured: true,
+    },
+    {
+      name: 'Completo',
+      price: 'R$ 149,90',
+      value: 149.9,
+      summary: 'Para cardápios grandes e mercadinhos.',
+      includes: ['Produtos ilimitados', 'Pedidos ilimitados', 'Link próprio do cardápio', 'Painel de pedidos', 'Entrega e retirada'],
+    },
+  ],
+} as const;
 
 export const SOCIAL = {
   instagram: 'https://www.instagram.com/rendaonlineorg/',
