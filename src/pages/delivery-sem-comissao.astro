@@ -1,0 +1,217 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import { AUTHOR_NAME, COMPANY_NAME, WEBTENDA, whatsappLink } from '../consts';
+
+const signup = WEBTENDA.signup('lp-delivery');
+const wa = whatsappLink('Olá! Vi a página do WebTenda no Renda Online e quero ajuda para montar o delivery da minha loja.');
+const pro = WEBTENDA.plans.find((p) => 'featured' in p)!;
+
+const faq = [
+  {
+    q: 'Preciso de cartão de crédito para testar?',
+    a: `Não. Você cria a loja e usa por ${WEBTENDA.trialDays} dias sem pagar nada. Só escolhe a forma de pagamento se decidir continuar.`,
+  },
+  {
+    q: 'O WebTenda cobra porcentagem dos pedidos?',
+    a: 'Não. Você paga apenas a mensalidade do plano escolhido, venda R$ 1 mil ou R$ 50 mil no mês. O valor dos pedidos é todo seu.',
+  },
+  {
+    q: 'Meu cliente precisa baixar aplicativo ou fazer cadastro?',
+    a: 'Não. O cardápio abre no navegador do celular pelo seu link. O cliente escolhe os itens, informa entrega ou retirada e o endereço, e finaliza.',
+  },
+  {
+    q: 'Como eu recebo o dinheiro dos pedidos?',
+    a: 'Direto com você: Pix na sua chave, dinheiro ou maquininha na entrega. O WebTenda não fica com nenhuma parte e não segura repasse.',
+  },
+  {
+    q: 'Posso trocar de plano ou cancelar?',
+    a: 'Sim. A troca de plano é feita no painel, e não existe fidelidade nem multa de cancelamento. A mensalidade pode ser paga por Pix, boleto ou cartão.',
+  },
+  {
+    q: 'Vale a pena sair do iFood?',
+    a: 'Na maioria dos casos o melhor é não sair de uma vez: use o app para ser encontrado por clientes novos e leve quem já compra de você para o seu link, onde não há comissão. Explicamos a conta neste guia sobre taxas do iFood e delivery próprio.',
+  },
+];
+
+const ld = [
+  {
+    '@context': 'https://schema.org',
+    '@type': 'SoftwareApplication',
+    name: 'WebTenda',
+    url: 'https://www.webtenda.com.br/',
+    applicationCategory: 'BusinessApplication',
+    operatingSystem: 'Web',
+    inLanguage: 'pt-BR',
+    description: 'Cardápio digital, pedidos por link e painel do lojista para pequenos negócios locais, com mensalidade fixa e sem comissão por pedido.',
+    offers: WEBTENDA.plans.map((p) => ({ '@type': 'Offer', name: p.name, price: p.value.toFixed(2), priceCurrency: 'BRL' })),
+  },
+  {
+    '@context': 'https://schema.org',
+    '@type': 'FAQPage',
+    mainEntity: faq.map((f) => ({ '@type': 'Question', name: f.q, acceptedAnswer: { '@type': 'Answer', text: f.a } })),
+  },
+];
+
+const tipos = ['Lanchonetes', 'Pizzarias', 'Hamburguerias', 'Padarias', 'Mercadinhos', 'Açaí e sorvetes', 'Marmitarias', 'Docerias', 'Adegas', 'Pastelarias', 'Hortifrútis', 'Pet shops'];
+---
+
+<BaseLayout
+  noads
+  title="Delivery próprio sem comissão: cardápio digital e pedidos no seu link"
+  description="Cardápio digital, pedidos por link e painel para lanchonetes, pizzarias e mercadinhos. Mensalidade fixa a partir de R$ 49,90, sem taxa por pedido. 14 dias grátis."
+>
+  <script slot="head" type="application/ld+json" set:html={JSON.stringify(ld)} />
+
+  <section class="lp-hero">
+    <p class="service-cta__eyebrow">WebTenda · delivery próprio</p>
+    <h1>Seus pedidos no seu link, sem comissão em cada venda</h1>
+    <p class="lp-sub">
+      Monte seu cardápio digital, receba pedidos de entrega e retirada e acompanhe tudo num painel simples. Você paga uma
+      mensalidade fixa e o lucro do pedido fica com você.
+    </p>
+    <p class="service-cta__actions">
+      <a class="btn btn-lg" href={signup} target="_blank" rel="noopener" data-wt="hero">Testar grátis por {WEBTENDA.trialDays} dias</a>
+      <span class="muted small">Sem cartão de crédito, sem fidelidade. Planos a partir de {WEBTENDA.plans[0].price}/mês.</span>
+    </p>
+  </section>
+
+  <section class="lp-block">
+    <h2>Isso acontece no seu delivery?</h2>
+    <ul class="lp-pains">
+      <li>Uma fatia de cada pedido fica com o aplicativo, e o preço no app precisa ser mais alto para fechar a conta.</li>
+      <li>O cliente que já conhece sua loja continua pedindo pelo app, e você paga comissão até sobre quem já é seu.</li>
+      <li>Pedidos pelo WhatsApp chegam bagunçados: item faltando, endereço pela metade, troco esquecido.</li>
+      <li>No fim do dia você não sabe quanto vendeu nem quais pedidos ainda estão abertos.</li>
+    </ul>
+  </section>
+
+  <section class="lp-block" id="simulador">
+    <h2>Quanto a comissão custa para você</h2>
+    <p>
+      Digite quanto você vende por mês em aplicativos de entrega e a porcentagem que paga (comissão mais taxa de pagamento
+      online). A conta é feita aqui no seu navegador.
+    </p>
+    <form class="calc-form" id="wt-form" onsubmit="return false">
+      <label>Vendas por mês nos apps (R$)<input id="wt-vendas" inputmode="decimal" value="8000" /></label>
+      <label>Comissão + taxas (%) <span class="hint">nos planos do iFood, em geral de 15% a 27% por pedido</span>
+        <input id="wt-pct" type="number" min="0" max="60" step="0.1" value="20" /></label>
+      <label>Parte que pode ir para o seu link (%) <span class="hint">clientes que já conhecem sua loja</span>
+        <input id="wt-parte" type="number" min="0" max="100" step="5" value="100" /></label>
+    </form>
+    <div class="lp-price" id="wt-out" aria-live="polite"></div>
+    <p class="small muted">
+      Simulação para orientar a decisão. O valor que você economiza depende de quantos clientes passam a pedir pelo seu link.
+      Compare com o plano {pro.name} ({pro.price}/mês, pedidos ilimitados).
+    </p>
+  </section>
+
+  <section class="lp-block">
+    <h2>O que você recebe</h2>
+    <ul class="service-grid">
+      <li class="service-card"><h3>Cardápio digital</h3><p>Uma página com o nome da loja, categorias, preços e se está aberta ou fechada.</p></li>
+      <li class="service-card"><h3>Pedido em poucos toques</h3><p>O cliente monta o carrinho, escolhe entrega ou retirada e informa o endereço. Sem cadastro e sem app.</p></li>
+      <li class="service-card"><h3>Aviso no WhatsApp</h3><p>O pedido cai no painel e o cliente pode mandar o resumo para o WhatsApp da loja com um toque.</p></li>
+      <li class="service-card"><h3>Pix, dinheiro ou cartão</h3><p>O cliente escolhe Pix, dinheiro com troco ou cartão na entrega. O dinheiro vai direto para você.</p></li>
+      <li class="service-card"><h3>Painel do lojista</h3><p>Pedidos de hoje, faturamento e pedidos abertos numa tela. Status em um clique: recebido, em preparo, saiu para entrega.</p></li>
+      <li class="service-card"><h3>Entrega e retirada</h3><p>Defina taxa de entrega e pedido mínimo. Funciona no computador do caixa e no celular.</p></li>
+    </ul>
+  </section>
+
+  <section class="lp-block">
+    <h2>Como começar</h2>
+    <ol class="lp-steps">
+      <li><strong>Crie sua loja</strong><span>Nome, WhatsApp, taxa de entrega e pedido mínimo.</span></li>
+      <li><strong>Monte o cardápio</strong><span>Categorias, descrições e preços.</span></li>
+      <li><strong>Divulgue seu link</strong><span>Na bio do Instagram, no status do WhatsApp e no perfil do Google.</span></li>
+    </ol>
+  </section>
+
+  <section class="lp-block">
+    <h2>Planos com mensalidade fixa</h2>
+    <p>Todos os planos começam com {WEBTENDA.trialDays} dias grátis. Sem taxa por pedido e sem multa para cancelar.</p>
+    <ul class="service-grid">
+      {
+        WEBTENDA.plans.map((p) => (
+          <li class={`service-card${'featured' in p ? ' service-card--featured' : ''}`}>
+            {'featured' in p && <p class="service-cta__eyebrow">Mais escolhido</p>}
+            <h3>{p.name}</h3>
+            <p class="service-cta__price">{p.price}/mês</p>
+            <p>{p.summary}</p>
+            <ul class="small">
+              {p.includes.map((i) => (
+                <li>{i}</li>
+              ))}
+            </ul>
+            <a class="btn" href={signup} target="_blank" rel="noopener" data-wt={`plano-${p.name}`}>Começar grátis</a>
+          </li>
+        ))
+      }
+    </ul>
+  </section>
+
+  <section class="lp-block prose">
+    <h2>Para quem é</h2>
+    <p>{tipos.join(', ')} e outros negócios locais que vendem por entrega ou retirada.</p>
+    <h2>Quem está por trás</h2>
+    <p>
+      O WebTenda é um sistema de {AUTHOR_NAME}, fundador da {COMPANY_NAME} e autor do Renda Online. Prefere que alguém monte a
+      loja com você? <a href={wa} target="_blank" rel="noopener">Chame no WhatsApp</a> que ajudamos a colocar o cardápio no ar.
+    </p>
+    <p>
+      Quer entender a conta antes? Leia <a href="/taxa-ifood-delivery-proprio/">quanto o iFood cobra e como ter delivery
+      próprio sem comissão</a>.
+    </p>
+  </section>
+
+  <section class="lp-block prose">
+    <h2>Perguntas frequentes</h2>
+    {
+      faq.map((f) => (
+        <details>
+          <summary>{f.q}</summary>
+          <p>{f.a}</p>
+        </details>
+      ))
+    }
+  </section>
+
+  <section class="lp-hero lp-final">
+    <h2>Seu delivery no seu link, ainda hoje</h2>
+    <a class="btn btn-lg" href={signup} target="_blank" rel="noopener" data-wt="final">Testar grátis por {WEBTENDA.trialDays} dias</a>
+    <p class="small muted"><a href={wa} target="_blank" rel="noopener">Tirar dúvidas no WhatsApp</a></p>
+  </section>
+</BaseLayout>
+
+<script define:vars={{ mensal: pro.value, plano: pro.name, precoPlano: pro.price }}>
+  const $ = (id) => document.getElementById(id);
+  const brl = (n) => n.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL', maximumFractionDigits: 0 });
+  const num = (el) => {
+    let s = (el.value || '').trim().replace(/[R$\s]/g, '');
+    if (s.includes(',')) s = s.replace(/\./g, '').replace(',', '.');
+    const n = parseFloat(s);
+    return Number.isFinite(n) && n > 0 ? n : 0;
+  };
+  function calc() {
+    const vendas = num($('wt-vendas'));
+    const pct = Math.min(60, num($('wt-pct')));
+    const parte = Math.min(100, num($('wt-parte')));
+    const comissao = vendas * (pct / 100);
+    const migra = comissao * (parte / 100);
+    const sobra = migra - mensal;
+    $('wt-out').innerHTML =
+      `<p class="muted small">Você paga hoje em comissão</p><p class="lp-price__value">${brl(comissao)}/mês</p>` +
+      `<p>Levando ${parte}% desses pedidos para o seu link, no plano ${plano} (${precoPlano}/mês):</p>` +
+      (sobra > 0
+        ? `<p class="lp-price__value">${brl(sobra)} a mais por mês</p><p class="small">${brl(sobra * 12)} em um ano.</p>`
+        : `<p><strong>Com esse volume a economia ainda é pequena.</strong> Comece pelo plano Básico ou use o link para os clientes que pedem pelo WhatsApp.</p>`);
+  }
+  ['wt-vendas', 'wt-pct', 'wt-parte'].forEach((id) => $(id).addEventListener('input', calc));
+  calc();
+  document.addEventListener('click', (e) => {
+    const a = e.target.closest && e.target.closest('a[data-wt]');
+    if (!a) return;
+    window.dataLayer = window.dataLayer || [];
+    window.dataLayer.push({ event: 'webtenda_signup_click', position: a.dataset.wt });
+    if (typeof window.gtag === 'function') window.gtag('event', 'webtenda_signup_click', { position: a.dataset.wt });
+  });
+</script>

@@ -385,9 +385,10 @@ const waDireto = whatsappLink('Olá! Vim do diagnóstico de automação do Renda
 
   function render() {
     const x = calcular(r, premissas);
-    const menor = Math.min(...x.recomendacoes.map((c) => c.precoMin));
+    const pagas = x.recomendacoes.filter((c) => c.key !== 'delivery');
+    const menor = pagas.length ? Math.min(...pagas.map((c) => c.precoMin)) : 0;
     const meses = x.totalMes > 0 ? menor / x.totalMes : 0;
-    const comparacao = x.totalMes > 0
+    const comparacao = x.totalMes > 0 && menor > 0
       ? `Para comparar: o projeto de entrada (${brl0(menor)}, pagamento único) equivale a ${meses < 1 ? 'menos de 1 mês' : `cerca de ${n1(meses)} meses`} da perda estimada. Cada solução resolve só uma parte da perda, por isso o plano começa pela que rende mais no seu caso.`
       : '';
     const semPerda = x.totalMes < 1;

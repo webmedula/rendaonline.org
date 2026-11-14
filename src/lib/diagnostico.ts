@@ -106,7 +106,7 @@ export function premissasPadrao(r: Pick<Respostas, 'resposta'>): Premissas {
 }
 
 export interface Recomendacao {
-  key: 'whatsapp' | 'marketplace' | 'automacao' | 'site' | 'agenda';
+  key: 'whatsapp' | 'marketplace' | 'automacao' | 'site' | 'agenda' | 'delivery';
   titulo: string;
   porque: string;
   preco: string;
@@ -130,6 +130,13 @@ export interface Resultado {
 }
 
 const REC: Record<Recomendacao['key'], Omit<Recomendacao, 'porque'>> = {
+  delivery: {
+    key: 'delivery',
+    titulo: 'Delivery próprio sem comissão (WebTenda)',
+    preco: 'a partir de R$ 49,90/mês',
+    precoMin: 49.9,
+    href: '/delivery-sem-comissao/',
+  },
   whatsapp: {
     key: 'whatsapp',
     titulo: 'Atendimento no WhatsApp com IA',
@@ -200,6 +207,8 @@ export function calcular(r: Respostas, p: Premissas = premissasPadrao(r)): Resul
   const t = new Set(r.tarefas);
   const atendimentoPesado = r.resposta === 'horas' || r.resposta === 'dia' || r.mensagens === '80' || r.mensagens === '150';
 
+  if (r.segmento === 'alimentacao')
+    add('delivery', 'Cardápio digital no seu link: o cliente pede sem app, paga direto a você e o pedido cai num painel. Mensalidade fixa, sem comissão por pedido, 14 dias grátis.');
   if (r.segmento === 'online' || (t.has('pedidos') && t.has('notas')))
     add('marketplace', 'Pedidos entram sozinhos no sistema, a nota fiscal sai automática e o cliente recebe o status no WhatsApp.');
   if (atendimentoPesado || t.has('perguntas') || r.dor === 'atendimento')
