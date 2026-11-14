@@ -1,0 +1,192 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import { COMPANY_NAME, SYSTEMS, SYSTEMS_COMBO, whatsappLink } from '../consts';
+
+const wa = whatsappLink('Olá! Vi a página de sistemas instalados no Renda Online e quero saber qual sistema serve para minha empresa.');
+const waCombo = whatsappLink(`Olá! Tenho interesse no ${SYSTEMS_COMBO.name} (${SYSTEMS_COMBO.items}).`);
+
+const faq = [
+  {
+    q: 'Por que não tem licença por usuário?',
+    a: 'Todos os sistemas desta página são de código aberto: o software em si é gratuito e pode ser instalado para empresas. Você paga pelo nosso trabalho de instalar, configurar, hospedar e manter tudo funcionando, não por cada atendente ou contato.',
+  },
+  {
+    q: 'O que a mensalidade cobre?',
+    a: 'Servidor, domínio com SSL, backups, atualizações de segurança e suporte pelo WhatsApp. No n8n, que fica na VPS da própria empresa, a mensalidade é de manutenção. A mensalidade é opcional: se você tem servidor e equipe técnica, pode contratar só a instalação.',
+  },
+  {
+    q: 'O WhatsApp pode bloquear meu número?',
+    a: 'O multiatendimento e a Evolution API conectam o WhatsApp por QR code, um jeito não oficial. Funciona bem no atendimento do dia a dia, mas o WhatsApp pode bloquear números que mandam mensagens em massa ou recebem muitas denúncias. Para disparos e grandes volumes, usamos a API oficial do WhatsApp (Cloud API), com custo por conversa cobrado pela Meta.',
+  },
+  {
+    q: 'Os dados ficam com quem?',
+    a: 'Com a sua empresa. O sistema roda num servidor dedicado ao seu uso, e se um dia quiser levar para outro servidor ou outra empresa, entregamos o backup completo.',
+  },
+  {
+    q: 'Quanto tempo leva para ficar pronto?',
+    a: 'De 2 a 5 dias úteis depois que recebemos o domínio e os acessos. O combo de atendimento completo leva até 10 dias úteis por causa do treinamento do assistente de IA.',
+  },
+  {
+    q: 'Vocês vendem o código ou scripts para eu revender?',
+    a: 'Não. Trabalhamos só com software de código aberto e com licenças oficiais. Não vendemos scripts de pacotes nem cópias de sistemas pagos de terceiros, porque isso deixa o cliente sem atualização, sem suporte do autor e exposto a problemas de licença.',
+  },
+];
+
+const ld = [
+  {
+    '@context': 'https://schema.org',
+    '@type': 'Service',
+    name: 'Instalação e hospedagem de sistemas de código aberto',
+    provider: { '@type': 'Organization', name: COMPANY_NAME },
+    areaServed: 'BR',
+    offerCatalog: {
+      '@type': 'OfferCatalog',
+      name: 'Sistemas instalados',
+      itemListElement: SYSTEMS.map((s) => ({
+        '@type': 'Offer',
+        itemOffered: { '@type': 'Service', name: `${s.name} (${s.tech})` },
+        price: s.setup.replace(/[^\d,]/g, '').replace(',', '.'),
+        priceCurrency: 'BRL',
+      })),
+    },
+  },
+  {
+    '@context': 'https://schema.org',
+    '@type': 'FAQPage',
+    mainEntity: faq.map((f) => ({ '@type': 'Question', name: f.q, acceptedAnswer: { '@type': 'Answer', text: f.a } })),
+  },
+];
+---
+
+<BaseLayout
+  noads
+  title="Sistemas instalados para sua empresa: WhatsApp, atendimento, e-mail e agenda"
+  description="Multiatendimento no WhatsApp, Chatwoot, Evolution API, n8n, Mautic e Cal.com instalados e hospedados para sua empresa. Sem licença por usuário. Instalação a partir de R$ 297."
+>
+  <script slot="head" type="application/ld+json" set:html={JSON.stringify(ld)} />
+
+  <section class="lp-hero">
+    <p class="service-cta__eyebrow">{COMPANY_NAME} · sistemas instalados</p>
+    <h1>Os sistemas que sua empresa precisa, instalados e funcionando</h1>
+    <p class="lp-sub">
+      WhatsApp com vários atendentes, central de atendimento, e-mail marketing, agenda online e automações. Tudo em software
+      de código aberto, sem licença por usuário, com os dados no seu servidor e a gente cuidando da parte técnica.
+    </p>
+    <p class="service-cta__actions">
+      <a class="btn btn-lg" href={wa} target="_blank" rel="noopener" data-sys="hero">Descobrir o sistema certo no WhatsApp</a>
+      <span class="muted small">Instalação a partir de R$ 297. Hospedagem e suporte opcionais.</span>
+    </p>
+  </section>
+
+  <section class="lp-block">
+    <h2>Por que instalar em vez de assinar</h2>
+    <ul class="lp-pains">
+      <li><strong>Sem pagar por atendente ou por contato.</strong> Ferramentas por assinatura cobram mais a cada pessoa ou lead novo. Aqui o preço não cresce com a equipe.</li>
+      <li><strong>Os dados são seus.</strong> Conversas, contatos e agenda ficam num servidor da sua empresa, não na conta de outra plataforma.</li>
+      <li><strong>Sem ficar preso.</strong> É código aberto: se quiser mudar de fornecedor, leva o sistema e o backup junto.</li>
+      <li><strong>Sem mexer em servidor.</strong> Instalamos, configuramos, treinamos sua equipe e mantemos atualizado.</li>
+    </ul>
+  </section>
+
+  <section class="lp-block">
+    <h2>Escolha o sistema</h2>
+    <ul class="service-grid">
+      {
+        SYSTEMS.map((s) => (
+          <li class="service-card" id={s.key}>
+            <p class="service-cta__eyebrow">{s.tech}</p>
+            <h3>{s.name}</h3>
+            <p class="service-cta__price">{s.setup} <span class="small muted">instalação</span></p>
+            <p class="small muted">
+              + {s.monthly} {'monthlyNote' in s ? s.monthlyNote : 'de hospedagem e suporte'} (opcional)
+            </p>
+            <p>{s.summary}</p>
+            <p class="small"><strong>Para quem:</strong> {s.forWho}</p>
+            <ul class="small">
+              {s.includes.map((i) => (
+                <li>{i}</li>
+              ))}
+            </ul>
+            {'whatsappUnofficial' in s && (
+              <p class="small muted">Conexão por QR code. Leia sobre bloqueio de número nas perguntas abaixo.</p>
+            )}
+            <a
+              class="btn"
+              href={whatsappLink(`Olá! Tenho interesse em instalar: ${s.name} (${s.tech}).`)}
+              target="_blank"
+              rel="noopener"
+              data-sys={s.key}
+            >
+              Quero este
+            </a>
+          </li>
+        ))
+      }
+    </ul>
+  </section>
+
+  <section class="lp-block">
+    <div class="lp-offer">
+      <div class="prose">
+        <h2>{SYSTEMS_COMBO.name}</h2>
+        <p>{SYSTEMS_COMBO.summary}</p>
+        <p class="small muted">{SYSTEMS_COMBO.items}</p>
+      </div>
+      <div class="lp-price">
+        <p class="muted small">Instalação</p>
+        <p class="lp-price__value">{SYSTEMS_COMBO.setup}</p>
+        <p>+ {SYSTEMS_COMBO.monthly} de hospedagem, IA e suporte</p>
+        <a class="btn" href={waCombo} target="_blank" rel="noopener" data-sys="combo">Quero o combo</a>
+      </div>
+    </div>
+  </section>
+
+  <section class="lp-block">
+    <h2>Como funciona</h2>
+    <ol class="lp-steps">
+      <li><strong>Conversa de 20 minutos</strong><span>Você conta como atende e vende hoje, e indicamos o sistema que resolve.</span></li>
+      <li><strong>Instalação</strong><span>Subimos o sistema com seu domínio e SSL, e configuramos usuários, setores e canais.</span></li>
+      <li><strong>Treinamento</strong><span>Chamada gravada com sua equipe para usar no dia a dia.</span></li>
+      <li><strong>Acompanhamento</strong><span>Backups, atualizações e suporte pelo WhatsApp, se contratar a mensalidade.</span></li>
+    </ol>
+  </section>
+
+  <section class="lp-block prose">
+    <p class="notice">
+      Quer atendimento com IA no número oficial da sua empresa? Veja o
+      <a href="/atendimento-whatsapp-com-ia/">atendimento no WhatsApp com IA</a>, feito na API oficial. Tem restaurante ou
+      lanchonete? O <a href="/delivery-sem-comissao/">WebTenda</a> resolve cardápio e pedidos sem comissão. Não sabe por onde
+      começar? Faça o <a href="/diagnostico-automacao/">diagnóstico grátis de 2 minutos</a>.
+    </p>
+  </section>
+
+  <section class="lp-block prose">
+    <h2>Perguntas frequentes</h2>
+    {
+      faq.map((f) => (
+        <details>
+          <summary>{f.q}</summary>
+          <p>{f.a}</p>
+        </details>
+      ))
+    }
+  </section>
+
+  <section class="lp-hero lp-final">
+    <h2>Fale com a gente e saia com o sistema certo</h2>
+    <a class="btn btn-lg" href={wa} target="_blank" rel="noopener" data-sys="final">Chamar no WhatsApp</a>
+    <p class="small muted"><a href="/servicos/">Ver todos os serviços</a></p>
+  </section>
+</BaseLayout>
+
+<script>
+  document.addEventListener('click', (e) => {
+    const t = e.target as HTMLElement | null;
+    const a = t?.closest?.('a[data-sys]') as HTMLAnchorElement | null;
+    if (!a) return;
+    const w = window as any;
+    w.dataLayer = w.dataLayer || [];
+    w.dataLayer.push({ event: 'sistemas_click', position: a.dataset.sys });
+    if (typeof w.gtag === 'function') w.gtag('event', 'sistemas_click', { position: a.dataset.sys });
+  });
+</script>
