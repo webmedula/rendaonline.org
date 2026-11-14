@@ -1,0 +1,522 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import { COMPANY_CITY, COMPANY_NAME, COMPANY_URL, SITE_URL, whatsappLink } from '../consts';
+import { DORES, EQUIPES, HORAS, MENSAGENS, RESPOSTA, SEGMENTOS, SITE, TAREFAS, calcular } from '../lib/diagnostico';
+
+const brl0 = (n: number) => n.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL', maximumFractionDigits: 0 });
+
+// Exemplo calculado no build, para o texto da página bater com a calculadora.
+const ex = calcular({
+  segmento: 'saude',
+  equipe: '2-5',
+  mensagens: '30',
+  resposta: 'horas',
+  tarefas: ['perguntas', 'agenda', 'cobranca'],
+  horas: '15',
+  salario: 2200,
+  pedidosSemana: 15,
+  ticket: 250,
+  fecha: 3,
+  site: 'parado',
+  dor: 'atendimento',
+});
+
+const faq = [
+  {
+    q: 'O diagnóstico é grátis mesmo?',
+    a: `Sim. O questionário é gratuito, não pede cadastro e mostra o resultado na hora. Se quiser, você manda o resultado para a ${COMPANY_NAME} pelo WhatsApp e recebe uma conversa de 20 minutos sem compromisso.`,
+  },
+  {
+    q: 'De onde vêm os números do resultado?',
+    a: 'Das suas próprias respostas. O custo do tempo usa o salário que você informou, com 50% a mais de encargos, 13º e férias, sobre 176 horas por mês. As vendas perdidas usam seus pedidos de orçamento, seu ticket médio e sua taxa de fechamento, com um percentual conservador de clientes que desistem quando a resposta demora. Você pode ver e mudar cada premissa no resultado.',
+  },
+  {
+    q: 'Quanto custa automatizar uma pequena empresa?',
+    a: 'Automações pontuais, como cobrança, orçamentos ou relatórios automáticos, começam em torno de R$ 800. Um atendimento no WhatsApp com IA ou a integração de pedidos e notas fiscais começam em R$ 1.500. Fora isso há custos mensais de ferramentas e servidor, que costumam ficar entre R$ 50 e R$ 300.',
+  },
+  {
+    q: 'Preciso trocar meu sistema ou meu WhatsApp?',
+    a: 'Na maioria dos casos não. A automação conecta o que você já usa: WhatsApp, planilhas Google, ERP como Tiny/Olist ou Bling, agenda, e-mail e formulários. O número de WhatsApp da empresa continua o mesmo.',
+  },
+  {
+    q: 'A automação substitui funcionários?',
+    a: 'O objetivo é tirar da equipe o trabalho repetitivo, como digitar, copiar e responder a mesma pergunta, para que ela atenda melhor, venda mais e não perca cliente por demora. Quem decide e resolve os casos difíceis continua sendo gente.',
+  },
+];
+
+const ld = [
+  {
+    '@context': 'https://schema.org',
+    '@type': 'WebApplication',
+    name: 'Diagnóstico de automação para empresas',
+    url: `${SITE_URL}/diagnostico-automacao/`,
+    applicationCategory: 'BusinessApplication',
+    operatingSystem: 'Any',
+    inLanguage: 'pt-BR',
+    offers: { '@type': 'Offer', price: '0', priceCurrency: 'BRL' },
+  },
+  {
+    '@context': 'https://schema.org',
+    '@type': 'FAQPage',
+    mainEntity: faq.map((f) => ({ '@type': 'Question', name: f.q, acceptedAnswer: { '@type': 'Answer', text: f.a } })),
+  },
+];
+
+const steps = 10;
+const waDireto = whatsappLink('Olá! Vim do diagnóstico de automação do Renda Online e quero conversar sobre o meu negócio.');
+---
+
+<BaseLayout
+  noads
+  title="Diagnóstico de automação grátis: quanto sua empresa perde sem automação"
+  description="Responda 10 perguntas em 2 minutos e veja quanto tempo e dinheiro sua empresa perde com tarefas manuais e atendimento lento, e o que automatizar primeiro."
+>
+  <script type="application/ld+json" slot="head" set:html={JSON.stringify(ld)} />
+
+  <div class="tool-head">
+    <p class="service-cta__eyebrow">Diagnóstico grátis para empresas</p>
+    <h1>Quanto sua empresa perde sem automação?</h1>
+    <p class="lead">
+      Responda 10 perguntas rápidas sobre o dia a dia do seu negócio. Em 2 minutos você vê quanto custa o trabalho manual, quantas
+      vendas escapam por demora no atendimento e o que automatizar primeiro.
+    </p>
+    <p class="small muted">Grátis · sem cadastro · o cálculo usa os seus números e mostra todas as premissas</p>
+  </div>
+
+  <section class="tool-box diag" aria-label="Questionário" id="diag">
+    <form id="dq" novalidate>
+      <div class="diag-progress" aria-hidden="true"><span id="dbar"></span></div>
+      <p class="diag-count small muted" id="dcount">Pergunta 1 de {steps}</p>
+
+      <fieldset class="diag-step" data-step="1">
+        <legend>Qual é o tipo do seu negócio?</legend>
+        <div class="diag-opts">
+          {Object.entries(SEGMENTOS).map(([v, l]) => <label class="diag-opt"><input type="radio" name="segmento" value={v} /><span>{l}</span></label>)}
+        </div>
+      </fieldset>
+
+      <fieldset class="diag-step" data-step="2" hidden>
+        <legend>Quantas pessoas trabalham na empresa?</legend>
+        <div class="diag-opts">
+          {Object.entries(EQUIPES).map(([v, l]) => <label class="diag-opt"><input type="radio" name="equipe" value={v} /><span>{l}</span></label>)}
+        </div>
+      </fieldset>
+
+      <fieldset class="diag-step" data-step="3" hidden>
+        <legend>Quantas mensagens de clientes chegam por dia no WhatsApp, Instagram e telefone?</legend>
+        <div class="diag-opts">
+          {Object.entries(MENSAGENS).map(([v, o]) => <label class="diag-opt"><input type="radio" name="mensagens" value={v} /><span>{o.label}</span></label>)}
+        </div>
+      </fieldset>
+
+      <fieldset class="diag-step" data-step="4" hidden>
+        <legend>Em quanto tempo um cliente novo costuma receber a primeira resposta?</legend>
+        <div class="diag-opts">
+          {Object.entries(RESPOSTA).map(([v, o]) => <label class="diag-opt"><input type="radio" name="resposta" value={v} /><span>{o.label}</span></label>)}
+        </div>
+      </fieldset>
+
+      <fieldset class="diag-step" data-step="5" hidden>
+        <legend>Quais destas tarefas sua equipe faz à mão hoje?</legend>
+        <p class="small muted">Marque todas que acontecem toda semana.</p>
+        <div class="diag-opts diag-opts--multi">
+          {Object.entries(TAREFAS).map(([v, l]) => <label class="diag-opt"><input type="checkbox" name="tarefas" value={v} /><span>{l}</span></label>)}
+        </div>
+        <button type="button" class="btn diag-next">Continuar</button>
+      </fieldset>
+
+      <fieldset class="diag-step" data-step="6" hidden>
+        <legend>Somando todo mundo, quantas horas por semana vão para essas tarefas?</legend>
+        <p class="small muted">Um chute razoável basta. Pense em quem responde, digita, confere e cobra.</p>
+        <div class="diag-opts">
+          {Object.entries(HORAS).map(([v, o]) => <label class="diag-opt"><input type="radio" name="horas" value={v} /><span>{o.label}</span></label>)}
+        </div>
+      </fieldset>
+
+      <fieldset class="diag-step" data-step="7" hidden>
+        <legend>Qual o salário médio de quem faz essas tarefas?</legend>
+        <p class="small muted">Se é você mesmo, coloque quanto você tira ou gostaria de tirar por mês.</p>
+        <div class="calc-form">
+          <label>Salário mensal (R$)
+            <input name="salario" inputmode="decimal" value="2.200" autocomplete="off" />
+          </label>
+        </div>
+        <button type="button" class="btn diag-next">Continuar</button>
+      </fieldset>
+
+      <fieldset class="diag-step" data-step="8" hidden>
+        <legend>Sobre clientes novos</legend>
+        <div class="calc-form">
+          <label>Pedidos de orçamento ou informação por semana
+            <input name="pedidos" type="number" min="0" inputmode="numeric" value="10" />
+          </label>
+          <label>Valor médio de uma venda (R$)
+            <input name="ticket" inputmode="decimal" value="300" autocomplete="off" />
+          </label>
+          <label>De cada 10 pedidos, quantos viram venda?
+            <select name="fecha">
+              {[1, 2, 3, 4, 5, 6, 7, 8, 9, 10].map((n) => <option value={n} selected={n === 3}>{n} de 10</option>)}
+            </select>
+          </label>
+        </div>
+        <button type="button" class="btn diag-next">Continuar</button>
+      </fieldset>
+
+      <fieldset class="diag-step" data-step="9" hidden>
+        <legend>E o site da empresa?</legend>
+        <div class="diag-opts">
+          {Object.entries(SITE).map(([v, l]) => <label class="diag-opt"><input type="radio" name="site" value={v} /><span>{l}</span></label>)}
+        </div>
+      </fieldset>
+
+      <fieldset class="diag-step" data-step="10" hidden>
+        <legend>O que mais incomoda hoje?</legend>
+        <div class="diag-opts">
+          {Object.entries(DORES).map(([v, l]) => <label class="diag-opt"><input type="radio" name="dor" value={v} /><span>{l}</span></label>)}
+        </div>
+      </fieldset>
+
+      <p class="calc-error" id="derr" hidden></p>
+      <p class="diag-nav"><button type="button" class="diag-back" id="dback" hidden>← Voltar</button></p>
+    </form>
+
+    <div id="dres" class="calc-result" hidden aria-live="polite"></div>
+  </section>
+
+  <article class="prose">
+    <h2>Como o diagnóstico calcula a perda</h2>
+    <p>
+      Não usamos médias de mercado genéricas. O resultado sai das suas respostas, em duas partes, e você pode mudar cada premissa
+      na tela de resultado:
+    </p>
+    <ol>
+      <li>
+        <strong>Tempo gasto em tarefas manuais.</strong> Horas por semana × 4,33 semanas × custo da hora. O custo da hora é o salário
+        informado com 50% a mais (encargos, 13º, férias e FGTS) dividido por 176 horas. Consideramos que 60% desse trabalho dá para
+        automatizar, que é o que costuma acontecer com atendimento repetitivo, digitação, cobrança e relatórios.
+      </li>
+      <li>
+        <strong>Vendas que escapam pela demora.</strong> Pedidos por mês × percentual que desiste por falta de resposta × sua taxa de
+        fechamento × valor médio da venda. Usamos 0% para quem responde em minutos, 5% em até 1 hora, 10% em algumas horas e 20%
+        quando a resposta fica para o dia seguinte. É uma estimativa conservadora: um estudo publicado na Harvard Business Review
+        mostrou que empresas que respondem em até 1 hora têm cerca de 7 vezes mais chance de qualificar o cliente do que as que
+        demoram mais.
+      </li>
+    </ol>
+
+    <h3>Exemplo</h3>
+    <p>
+      Uma clínica com 4 pessoas gasta 15 horas por semana respondendo as mesmas perguntas, agendando e cobrando, com salário médio
+      de R$ 2.200. Recebe 15 pedidos de informação por semana, responde em algumas horas, fecha 3 de cada 10 e o ticket médio é
+      R$ 250. O tempo que dá para automatizar vale <strong>{brl0(ex.economiaTempoMes)}</strong> por mês e as consultas perdidas pela
+      demora somam <strong>{brl0(ex.vendasPerdidasMes)}</strong>. No total, cerca de <strong>{brl0(ex.totalMes)} por mês</strong>,
+      ou {brl0(ex.totalAno)} por ano.
+    </p>
+
+    <h2>O que costuma dar mais retorno automatizar primeiro</h2>
+    <ul>
+      <li>
+        <strong>Atendimento no WhatsApp:</strong> responder na hora, 24 horas por dia, as perguntas que se repetem. Veja
+        <a href="/atendimento-whatsapp-com-ia/">como funciona o atendimento com IA</a> e
+        <a href="/chatbot-whatsapp-com-ia-para-empresas-quanto-custa/">quanto custa um chatbot de WhatsApp</a>.
+      </li>
+      <li>
+        <strong>Agendamentos e lembretes:</strong> menos faltas e menos telefone. Detalhamos em
+        <a href="/automacao-de-atendimento-para-clinicas/">automação de atendimento para clínicas</a>.
+      </li>
+      <li>
+        <strong>Pedidos e nota fiscal:</strong> para quem vende em marketplace, o pedido entra no ERP e a nota sai sozinha. Veja a
+        <a href="/automacao-shopee-mercado-livre/">automação para Shopee e Mercado Livre</a>.
+      </li>
+      <li>
+        <strong>Cobranças, orçamentos e relatórios:</strong> fluxos simples que tiram horas da semana. Comece por
+        <a href="/como-automatizar-tarefas-com-ia-sem-programar/">como automatizar tarefas com IA sem programar</a>.
+      </li>
+    </ul>
+
+    <h2>Quem está por trás</h2>
+    <p>
+      O diagnóstico foi feito pela <a href={COMPANY_URL} rel="noopener">{COMPANY_NAME}</a>, de {COMPANY_CITY}, a equipe que mantém o
+      Renda Online. Criamos sites, atendimento com IA e automações para pequenas e médias empresas no Brasil todo. Veja os
+      <a href="/servicos/">serviços com preço fechado</a> ou <a href={waDireto} target="_blank" rel="noopener">fale direto no WhatsApp</a>.
+    </p>
+
+    <h2>Perguntas frequentes</h2>
+    {
+      faq.map((f) => (
+        <details>
+          <summary>{f.q}</summary>
+          <p>{f.a}</p>
+        </details>
+      ))
+    }
+  </article>
+</BaseLayout>
+
+<script>
+  import {
+    DORES, EQUIPES, HORAS, MENSAGENS, RESPOSTA, SEGMENTOS, SITE, TAREFAS, SEMANAS_MES,
+    calcular, premissasPadrao, type Premissas, type Respostas, type Tarefa,
+  } from '../lib/diagnostico';
+  import { num as numUi } from '../lib/ui';
+  // Aceita "2.200" (milhar com ponto) além do que lib/ui já entende.
+  const num = (el: HTMLInputElement | null) => {
+    const v = el?.value.trim().replace(/[R$\s]/g, '') ?? '';
+    return /^\d{1,3}(\.\d{3})+$/.test(v) ? Number(v.replace(/\./g, '')) : numUi(el);
+  };
+  import { whatsappLink } from '../consts';
+
+  const TOTAL = 10;
+  const form = document.getElementById('dq') as HTMLFormElement;
+  const res = document.getElementById('dres') as HTMLElement;
+  const bar = document.getElementById('dbar') as HTMLElement;
+  const count = document.getElementById('dcount') as HTMLElement;
+  const back = document.getElementById('dback') as HTMLButtonElement;
+  const err = document.getElementById('derr') as HTMLElement;
+  const stepsEls = Array.from(form.querySelectorAll<HTMLFieldSetElement>('.diag-step'));
+  const box = document.getElementById('diag') as HTMLElement;
+  let atual = 1;
+  const historico: number[] = [];
+
+  const brl0 = (n: number) => n.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL', maximumFractionDigits: 0 });
+  const n1 = (n: number) => n.toLocaleString('pt-BR', { maximumFractionDigits: 1 });
+  const radio = (name: string) => (form.querySelector<HTMLInputElement>(`input[name="${name}"]:checked`)?.value ?? '');
+  const field = (name: string) => form.elements.namedItem(name) as HTMLInputElement;
+  const track = (event: string, extra: Record<string, unknown> = {}) => {
+    const w = window as unknown as { dataLayer?: unknown[]; gtag?: (...a: unknown[]) => void };
+    w.dataLayer = w.dataLayer || [];
+    w.dataLayer.push({ event, ...extra });
+    if (typeof w.gtag === 'function') w.gtag('event', event, extra);
+  };
+
+  function mostrar(n: number) {
+    atual = n;
+    stepsEls.forEach((s) => (s.hidden = Number(s.dataset.step) !== n));
+    bar.style.width = `${((n - 1) / TOTAL) * 100}%`;
+    count.textContent = `Pergunta ${n} de ${TOTAL}`;
+    back.hidden = n === 1;
+    err.hidden = true;
+    if (n === 2 && historico.length === 1) track('diagnostico_inicio');
+  }
+
+  function respostas(): Respostas {
+    return {
+      segmento: radio('segmento') as Respostas['segmento'],
+      equipe: radio('equipe') as Respostas['equipe'],
+      mensagens: radio('mensagens') as Respostas['mensagens'],
+      resposta: radio('resposta') as Respostas['resposta'],
+      tarefas: Array.from(form.querySelectorAll<HTMLInputElement>('input[name="tarefas"]:checked')).map((i) => i.value as Tarefa),
+      horas: (radio('horas') || '3') as Respostas['horas'],
+      salario: num(field('salario')),
+      pedidosSemana: num(field('pedidos')),
+      ticket: num(field('ticket')),
+      fecha: Number((form.elements.namedItem('fecha') as HTMLSelectElement).value),
+      site: radio('site') as Respostas['site'],
+      dor: radio('dor') as Respostas['dor'],
+    };
+  }
+
+  function validar(n: number): string {
+    if (n === 7 && num(field('salario')) <= 0) return 'Informe um salário mensal maior que zero.';
+    if (n === 8) {
+      if (num(field('pedidos')) < 0) return 'O número de pedidos não pode ser negativo.';
+      if (num(field('ticket')) < 0) return 'O valor médio da venda não pode ser negativo.';
+    }
+    return '';
+  }
+
+  function avancar() {
+    const e = validar(atual);
+    if (e) {
+      err.textContent = e;
+      err.hidden = false;
+      return;
+    }
+    historico.push(atual);
+    let prox = atual + 1;
+    // Sem tarefas manuais marcadas, pula a pergunta de horas.
+    if (prox === 6 && respostas().tarefas.length === 0) prox = 7;
+    if (prox > TOTAL) return concluir();
+    mostrar(prox);
+    stepsEls[prox - 1].querySelector<HTMLInputElement>('input, select')?.focus({ preventScroll: true });
+  }
+
+  form.addEventListener('change', (ev) => {
+    const t = ev.target as HTMLInputElement;
+    if (t.type === 'radio') setTimeout(avancar, 180);
+  });
+  form.addEventListener('keydown', (ev) => {
+    if (ev.key === 'Enter' && (ev.target as HTMLElement).tagName === 'INPUT') {
+      ev.preventDefault();
+      avancar();
+    }
+  });
+  form.querySelectorAll('.diag-next').forEach((b) => b.addEventListener('click', avancar));
+  back.addEventListener('click', () => {
+    const anterior = historico.pop();
+    if (anterior) mostrar(anterior);
+  });
+
+  // ---------- Resultado ----------
+  let premissas: Premissas;
+  let r: Respostas;
+
+  function mensagemWhatsApp(nome: string, empresa: string) {
+    const x = calcular(r, premissas);
+    const linhas = [
+      'Olá! Fiz o diagnóstico de automação no Renda Online.',
+      nome || empresa ? `${[nome, empresa].filter(Boolean).join(', ')}` : '',
+      '',
+      `• Negócio: ${SEGMENTOS[r.segmento]}`,
+      `• Equipe: ${EQUIPES[r.equipe]}`,
+      `• Mensagens: ${MENSAGENS[r.mensagens].label.toLowerCase()}`,
+      `• Primeira resposta: ${RESPOSTA[r.resposta].label.toLowerCase()}`,
+      `• Tarefas manuais: ${r.tarefas.length ? r.tarefas.map((t) => TAREFAS[t]).join('; ') : 'nenhuma marcada'}`,
+      r.tarefas.length ? `• Horas por semana nessas tarefas: ${HORAS[r.horas].label.toLowerCase()}` : '',
+      `• Pedidos de orçamento: ${r.pedidosSemana} por semana, venda média ${brl0(r.ticket)}, fecha ${r.fecha} de 10`,
+      `• Site: ${SITE[r.site].toLowerCase()}`,
+      `• Maior incômodo: ${DORES[r.dor].toLowerCase()}`,
+      '',
+      `Resultado: cerca de ${brl0(x.totalMes)}/mês (tempo ${brl0(x.economiaTempoMes)} + vendas ${brl0(x.vendasPerdidasMes)}). Oportunidade de automação: ${x.nivel.nome}.`,
+      `Quero entender: ${x.recomendacoes.map((c) => c.titulo).join(', ')}.`,
+    ];
+    return linhas.filter((l, i) => l !== '' || (i > 0 && linhas[i - 1] !== '')).join('\n');
+  }
+
+  function render() {
+    const x = calcular(r, premissas);
+    const menor = Math.min(...x.recomendacoes.map((c) => c.precoMin));
+    const meses = x.totalMes > 0 ? menor / x.totalMes : 0;
+    const comparacao = x.totalMes > 0
+      ? `Para comparar: o projeto de entrada (${brl0(menor)}, pagamento único) equivale a ${meses < 1 ? 'menos de 1 mês' : `cerca de ${n1(meses)} meses`} da perda estimada. Cada solução resolve só uma parte da perda, por isso o plano começa pela que rende mais no seu caso.`
+      : '';
+    const semPerda = x.totalMes < 1;
+    res.innerHTML = `
+      <div class="result-hero">
+        <p>Estimativa do que sua empresa perde por mês sem automação</p>
+        <strong>${brl0(x.totalMes)}</strong>
+        <p>${semPerda ? 'Com as respostas informadas, não aparece perda relevante. Veja abaixo onde ainda dá para ganhar tempo.' : `Cerca de ${brl0(x.totalAno)} por ano. Oportunidade de automação: <b>${x.nivel.nome}</b>.`}</p>
+      </div>
+      <p>${x.nivel.texto}</p>
+      <table class="result-table"><tbody>
+        <tr><td>Tempo que dá para automatizar (${premissas.pctAutomatizavel}% de ${n1(x.horasSemana)} h/semana, cerca de ${n1(x.horasMesAutomatizaveis)} h/mês a ${brl0(x.custoHora)}/h)</td><td>${brl0(x.economiaTempoMes)}/mês</td></tr>
+        <tr><td>Pedidos que escapam pela demora (${n1(x.pedidosPerdidosMes)} de ${n1(x.pedidosMes)} por mês, ${premissas.pctPerdido}%)</td><td>${brl0(x.vendasPerdidasMes)}/mês</td></tr>
+        <tr class="total"><td>Total estimado</td><td>${brl0(x.totalMes)}/mês</td></tr>
+      </tbody></table>
+
+      <details class="diag-premissas">
+        <summary>Ver e ajustar as premissas do cálculo</summary>
+        <div class="calc-form">
+          <label>Custo total do funcionário (× salário) <span class="hint">encargos, 13º, férias, FGTS</span>
+            <input data-p="encargos" inputmode="decimal" value="${String(premissas.encargos).replace('.', ',')}" /></label>
+          <label>Horas de trabalho por mês
+            <input data-p="horasMes" type="number" min="1" value="${premissas.horasMes}" /></label>
+          <label>% das tarefas que dá para automatizar
+            <input data-p="pctAutomatizavel" type="number" min="0" max="100" value="${premissas.pctAutomatizavel}" /></label>
+          <label>% dos pedidos perdidos pela demora <span class="hint">padrão pelo seu tempo de resposta</span>
+            <input data-p="pctPerdido" type="number" min="0" max="100" value="${premissas.pctPerdido}" /></label>
+        </div>
+        <p class="result-note">Semana = ${String(SEMANAS_MES).replace('.', ',')} por mês. Os valores são estimativas para orientar a decisão, não uma promessa de resultado.</p>
+      </details>
+
+      <h3 class="diag-h">O que automatizar primeiro</h3>
+      <ol class="diag-recs">
+        ${x.recomendacoes
+          .map(
+            (c) => `<li>
+              <strong>${c.titulo}</strong> <span class="service-cta__price">${c.preco}</span>
+              <span>${c.porque}</span>
+              <span class="small"><a href="${c.href}">Saiba mais</a></span>
+            </li>`,
+          )
+          .join('')}
+      </ol>
+      ${comparacao ? `<p class="result-note">${comparacao}</p>` : ''}
+
+      <div class="diag-cta">
+        <p class="service-cta__eyebrow">Próximo passo</p>
+        <p><strong>Mande este resultado para a WebMedula e receba um plano de automação com preço fechado.</strong> Conversa de 20 minutos pelo WhatsApp, sem compromisso. Suas respostas já vão na mensagem.</p>
+        <div class="calc-form">
+          <label>Seu nome <span class="hint">opcional</span><input id="dnome" autocomplete="name" /></label>
+          <label>Empresa <span class="hint">opcional</span><input id="dempresa" autocomplete="organization" /></label>
+        </div>
+        <p class="service-cta__actions">
+          <a class="btn btn-lg" id="dwa" href="#" target="_blank" rel="noopener">Receber meu plano no WhatsApp</a>
+          <button type="button" class="diag-back" id="drefazer">Refazer o diagnóstico</button>
+        </p>
+      </div>`;
+
+    const wa = res.querySelector<HTMLAnchorElement>('#dwa')!;
+    const nome = res.querySelector<HTMLInputElement>('#dnome')!;
+    const empresa = res.querySelector<HTMLInputElement>('#dempresa')!;
+    const atualizarLink = () => (wa.href = whatsappLink(mensagemWhatsApp(nome.value.trim(), empresa.value.trim())));
+    atualizarLink();
+    nome.addEventListener('input', atualizarLink);
+    empresa.addEventListener('input', atualizarLink);
+    wa.addEventListener('click', () => track('diagnostico_whatsapp', { total_mes: Math.round(x.totalMes) }));
+    res.querySelector('#drefazer')!.addEventListener('click', refazer);
+
+    res.querySelectorAll<HTMLInputElement>('[data-p]').forEach((inp) =>
+      inp.addEventListener('change', () => {
+        const k = inp.dataset.p as keyof Premissas;
+        const v = num(inp);
+        const lim: Record<keyof Premissas, [number, number]> = { encargos: [1, 3], horasMes: [1, 400], pctAutomatizavel: [0, 100], pctPerdido: [0, 100] };
+        premissas[k] = Math.min(lim[k][1], Math.max(lim[k][0], v || lim[k][0]));
+        const nm = nome.value, em = empresa.value;
+        render();
+        res.querySelector<HTMLDetailsElement>('.diag-premissas')!.open = true;
+        (res.querySelector('#dnome') as HTMLInputElement).value = nm;
+        (res.querySelector('#dempresa') as HTMLInputElement).value = em;
+        (res.querySelector('#dwa') as HTMLAnchorElement).href = whatsappLink(mensagemWhatsApp(nm.trim(), em.trim()));
+      }),
+    );
+  }
+
+  function concluir() {
+    r = respostas();
+    premissas = premissasPadrao(r);
+    form.hidden = true;
+    res.hidden = false;
+    render();
+    track('diagnostico_concluido', { total_mes: Math.round(calcular(r, premissas).totalMes), segmento: r.segmento });
+    box.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  }
+
+  function refazer() {
+    res.hidden = true;
+    res.innerHTML = '';
+    form.hidden = false;
+    historico.length = 0;
+    mostrar(1);
+    box.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  }
+
+  mostrar(1);
+</script>
+
+<style is:global>
+  .diag legend { font-size: 1.2rem; font-weight: 700; margin-bottom: 0.8rem; padding: 0; line-height: 1.3; }
+  .diag fieldset { border: 0; margin: 0; padding: 0; min-width: 0; }
+  .diag fieldset[hidden] { display: none; }
+  .diag-progress { height: 6px; background: var(--border); border-radius: 99px; overflow: hidden; }
+  .diag-progress span { display: block; height: 100%; width: 0; background: var(--accent); transition: width 0.25s; }
+  .diag-count { margin: 0.4rem 0 1rem; }
+  .diag-opts { display: grid; gap: 0.6rem; grid-template-columns: repeat(auto-fit, minmax(15rem, 1fr)); margin-bottom: 1rem; }
+  .diag-opt { display: flex; align-items: center; gap: 0.7rem; padding: 0.85em 1em; border: 1px solid var(--border); border-radius: 10px; background: var(--bg); cursor: pointer; min-height: 3rem; }
+  .diag-opt:hover { border-color: var(--accent); }
+  .diag-opt input { accent-color: var(--accent); width: 1.15rem; height: 1.15rem; flex: none; margin: 0; }
+  .diag-opt:has(input:checked) { border-color: var(--accent); box-shadow: inset 0 0 0 1px var(--accent); }
+  .diag-opt:has(input:focus-visible) { outline: 2px solid var(--accent); outline-offset: 2px; }
+  .diag .calc-form { margin-bottom: 1rem; }
+  .diag button.btn { font: inherit; border: 0; cursor: pointer; }
+  .diag-nav { margin: 0.8rem 0 0; }
+  .diag-back { font: inherit; background: none; border: 0; color: var(--text-muted); cursor: pointer; padding: 0.4em 0; text-decoration: underline; }
+  .diag-premissas { margin: 1rem 0; }
+  .diag-premissas .calc-form { margin-top: 0.8rem; }
+  .diag-h { margin: 1.5rem 0 0.6rem; }
+  .diag-recs { padding-left: 1.3em; display: grid; gap: 0.9rem; margin: 0 0 1.2rem; }
+  .diag-recs li { padding-left: 0.2em; }
+  .diag-recs li > span { display: block; margin-top: 0.2em; }
+  .diag-cta { border: 2px solid var(--accent); border-radius: 10px; padding: 1.1rem 1.2rem; background: var(--bg); }
+  .diag-cta p { margin-top: 0.3rem; }
+</style>
