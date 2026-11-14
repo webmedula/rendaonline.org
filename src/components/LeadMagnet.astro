@@ -1,0 +1,128 @@
+---
+// Caixa de captura da isca grátis (50 prompts). Envia para /api/lead.php e leva ao material.
+import { LEAD_MAGNET, TOTAL_PROMPTS } from '../data/prompts-ia';
+
+interface Props {
+  variant?: 'box' | 'hero';
+  heading?: string;
+  text?: string;
+}
+
+const {
+  variant = 'box',
+  heading = `Grátis: ${TOTAL_PROMPTS} prompts para ganhar dinheiro com IA`,
+  text = 'Prompts prontos para copiar no ChatGPT, Gemini ou Claude: achar sua ideia, conseguir clientes, criar conteúdo, vender e cobrar o preço certo. Receba o PDF agora.',
+} = Astro.props;
+const id = `lm-${Math.random().toString(36).slice(2, 8)}`;
+---
+
+<section class={`lead-box lead-box--${variant}`} aria-labelledby={`${id}-t`}>
+  <div class="lead-box__copy">
+    <p class="lead-box__eyebrow">Material gratuito</p>
+    {variant === 'hero' ? <h2 id={`${id}-t`} class="sr-only">{heading}</h2> : <h2 id={`${id}-t`}>{heading}</h2>}
+    {variant === 'box' && <p>{text}</p>}
+  </div>
+  <form class="lead-form" data-lead-form data-isca={LEAD_MAGNET.slug} data-destino={LEAD_MAGNET.page} novalidate>
+    <label>
+      <span>Seu nome</span>
+      <input name="nome" type="text" autocomplete="given-name" required minlength="2" maxlength="80" placeholder="Como quer ser chamado" />
+    </label>
+    <label>
+      <span>Seu melhor e-mail</span>
+      <input name="email" type="email" autocomplete="email" inputmode="email" required maxlength="160" placeholder="voce@email.com" />
+    </label>
+    <label>
+      <span>WhatsApp com DDD <small>(opcional)</small></span>
+      <input name="whatsapp" type="tel" autocomplete="tel" inputmode="tel" maxlength="20" placeholder="(62) 99999-9999" />
+    </label>
+    <label class="lead-form__hp" aria-hidden="true">
+      Não preencha <input name="site" type="text" tabindex="-1" autocomplete="off" />
+    </label>
+    <label class="lead-form__check">
+      <input name="consentimento" type="checkbox" value="1" required />
+      <span>
+        Aceito receber o material e também dicas e ofertas do Renda Online e da WebMedula por e-mail e WhatsApp. Posso
+        cancelar quando quiser. <a href="/politica-de-privacidade/#contatos" target="_blank">Como usamos seus dados</a>.
+      </span>
+    </label>
+    <button class="btn btn-lg" type="submit">Quero os prompts grátis</button>
+    <p class="lead-form__msg" role="alert" aria-live="polite"></p>
+  </form>
+</section>
+
+<script>
+  function utm() {
+    const p = new URLSearchParams(location.search);
+    return ['utm_source', 'utm_medium', 'utm_campaign', 'utm_content']
+      .filter((k) => p.get(k))
+      .map((k) => `${k}=${p.get(k)}`)
+      .join('&');
+  }
+
+  document.querySelectorAll<HTMLFormElement>('form[data-lead-form]').forEach((form) => {
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const msg = form.querySelector<HTMLElement>('.lead-form__msg')!;
+      const btn = form.querySelector<HTMLButtonElement>('button[type=submit]')!;
+      const fd = new FormData(form);
+      const nome = String(fd.get('nome') || '').trim();
+      const email = String(fd.get('email') || '').trim();
+      const whatsapp = String(fd.get('whatsapp') || '').replace(/\D+/g, '');
+      const ok = fd.get('consentimento') === '1';
+
+      let erro = '';
+      if (nome.length < 2) erro = 'Informe seu nome.';
+      else if (!/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(email)) erro = 'Confira o e-mail.';
+      else if (whatsapp && (whatsapp.length < 10 || whatsapp.length > 13)) erro = 'WhatsApp com DDD, só números.';
+      else if (!ok) erro = 'Marque a caixa de aceite para receber o material.';
+      if (erro) {
+        msg.textContent = erro;
+        return;
+      }
+
+      btn.disabled = true;
+      btn.textContent = 'Enviando...';
+      msg.textContent = '';
+      const payload = {
+        nome,
+        email,
+        whatsapp,
+        consentimento: '1',
+        quer_whatsapp: whatsapp ? '1' : '0',
+        isca: form.dataset.isca,
+        origem: location.pathname,
+        utm: utm(),
+        site: String(fd.get('site') || ''),
+      };
+
+      let salvo = false;
+      try {
+        const r = await fetch('/api/lead.php', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(payload),
+        });
+        const j = await r.json().catch(() => ({}));
+        if (r.status === 422 && j.erro) {
+          msg.textContent = j.erro;
+          btn.disabled = false;
+          btn.textContent = 'Quero os prompts grátis';
+          return;
+        }
+        salvo = r.ok && j.ok;
+      } catch {
+        salvo = false;
+      }
+
+      const w = window as any;
+      w.dataLayer = w.dataLayer || [];
+      w.dataLayer.push({ event: 'generate_lead', lead_source: form.dataset.isca, page: location.pathname });
+      if (typeof w.gtag === 'function') w.gtag('event', 'generate_lead', { lead_source: form.dataset.isca });
+
+      try {
+        localStorage.setItem('ro_lead', JSON.stringify({ nome, isca: form.dataset.isca, salvo, t: Date.now() }));
+      } catch {}
+      location.href = `${form.dataset.destino}?n=${encodeURIComponent(nome.split(' ')[0])}${salvo ? '' : '&s=0'}`;
+    });
+  });
+</script>

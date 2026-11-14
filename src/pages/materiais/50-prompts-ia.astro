@@ -1,0 +1,128 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import { LEAD_MAGNET, PROMPT_SECTIONS, TOTAL_PROMPTS } from '../../data/prompts-ia';
+import { whatsappLink } from '../../consts';
+
+let n = 0;
+const sections = PROMPT_SECTIONS.map((s) => ({ ...s, prompts: s.prompts.map((p) => ({ ...p, n: ++n })) }));
+const waReceber = whatsappLink('Oi! Baixei os 50 prompts de IA no Renda Online e quero receber as novidades por aqui.');
+const waAjuda = whatsappLink('Oi! Baixei os 50 prompts de IA no Renda Online e queria ajuda para aplicar no meu negócio.');
+---
+
+<BaseLayout title={LEAD_MAGNET.title} description="Material completo: 50 prompts prontos para ganhar dinheiro com IA." noindex noads>
+  <article class="prose">
+    <div class="print-cover">
+      <img src="/logo.png" alt="Renda Online" width="181" height="56" />
+      <p class="lead-box__eyebrow">Material gratuito · {LEAD_MAGNET.version}</p>
+      <p class="print-cover__title">{TOTAL_PROMPTS} prompts para ganhar dinheiro com IA</p>
+      <p class="print-cover__sub">{LEAD_MAGNET.subtitle}</p>
+      <p class="print-cover__by">Por João Paulo · rendaonline.org</p>
+    </div>
+    <p class="lead-box__eyebrow">Renda Online · {LEAD_MAGNET.version}</p>
+    <h1>{LEAD_MAGNET.title}</h1>
+    <p class="lp-sub">{LEAD_MAGNET.subtitle}</p>
+
+    <div class="mat-welcome" id="boas-vindas" hidden>
+      <p><strong id="mat-oi">Pronto, o material é seu!</strong></p>
+      <p>
+        Salve esta página nos favoritos ou baixe o PDF. Quer receber os próximos materiais pelo WhatsApp? Mande um oi para a
+        gente:
+      </p>
+      <p><a class="btn" href={waReceber} target="_blank" rel="noopener">Receber novidades no WhatsApp</a></p>
+    </div>
+
+    <div class="mat-toolbar">
+      <a class="btn" href={LEAD_MAGNET.pdf} download>Baixar PDF</a>
+      <a class="btn btn-outline" href="#como-usar">Como usar</a>
+    </div>
+
+    <h2 id="como-usar">Como usar estes prompts</h2>
+    <ol>
+      <li><strong>Troque tudo o que está entre [colchetes]</strong> pelos seus dados. Quanto mais específico, melhor a resposta.</li>
+      <li><strong>Converse, não peça uma vez só.</strong> Depois da primeira resposta, peça para encurtar, mudar o tom, dar exemplos ou refazer uma parte.</li>
+      <li><strong>Confira números e fatos.</strong> A IA erra preços, leis e estatísticas com confiança. Use a resposta como rascunho e revise.</li>
+      <li><strong>Coloque a sua experiência.</strong> Texto 100% gerado por IA soa igual ao dos concorrentes. O que diferencia você é o que você viveu.</li>
+      <li><strong>Funciona em qualquer IA.</strong> ChatGPT, Gemini, Claude ou Copilot, inclusive nas versões gratuitas.</li>
+    </ol>
+    <p class="small muted">
+      Aviso honesto: nenhum prompt gera dinheiro sozinho. Eles economizam tempo e melhoram o seu trabalho; o resultado depende de
+      você aplicar, oferecer e vender.
+    </p>
+
+    <h2>Índice</h2>
+    <ol class="mat-toc">
+      {sections.map((s) => <li><a href={`#${s.id}`}>{s.title.replace(/^\d+\.\s*/, '')}</a></li>)}
+    </ol>
+
+    {
+      sections.map((s) => (
+        <section class="mat-section" id={s.id}>
+          <h2>{s.title}</h2>
+          <p>{s.intro}</p>
+          {s.prompts.map((p) => (
+            <div class="prompt-card">
+              <h3>
+                <span class="prompt-card__num">#{p.n}</span>
+                {p.title}
+              </h3>
+              <p class="prompt-card__use">{p.use}</p>
+              <pre class="prompt-card__text">{p.prompt}</pre>
+              <button class="copy-btn" type="button" data-copy>
+                Copiar prompt
+              </button>
+              {p.tip && (
+                <p class="prompt-card__tip">
+                  <strong>Dica:</strong> {p.tip}
+                </p>
+              )}
+            </div>
+          ))}
+        </section>
+      ))
+    }
+
+    <section class="mat-section">
+      <h2>Próximos passos</h2>
+      <p>Escolha <strong>um</strong> caminho e use os prompts dele por 30 dias. Quem tenta tudo ao mesmo tempo não termina nada.</p>
+      <ul>
+        <li>Quer aprender a montar sites e automações e vender isso para clientes? Veja a <a href="/mentoria/">mentoria</a>.</li>
+        <li>Tem um negócio e prefere que a gente monte a automação ou o atendimento com IA? Veja os <a href="/servicos/">serviços da WebMedula</a> ou <a href={waAjuda} target="_blank" rel="noopener">chame no WhatsApp</a>.</li>
+        <li>Quer saber quanto cobrar? Use a <a href="/ferramentas/quanto-cobrar-por-hora-freelancer/">calculadora de valor-hora</a>.</li>
+        <li>Continue aprendendo com os tutoriais de <a href="/categoria/automacao/">automação</a> e <a href="/categoria/ia-conteudo/">IA para conteúdo</a>.</li>
+      </ul>
+      <p class="small muted">© Renda Online (rendaonline.org). Pode compartilhar o link da página <a href={LEAD_MAGNET.landing}>{`rendaonline.org${LEAD_MAGNET.landing}`}</a> com quem quiser.</p>
+    </section>
+  </article>
+</BaseLayout>
+
+<script>
+  document.querySelectorAll<HTMLButtonElement>('[data-copy]').forEach((b) => {
+    b.addEventListener('click', async () => {
+      const t = b.previousElementSibling?.textContent || '';
+      try {
+        await navigator.clipboard.writeText(t);
+      } catch {
+        const r = document.createRange();
+        r.selectNodeContents(b.previousElementSibling!);
+        const s = getSelection();
+        s?.removeAllRanges();
+        s?.addRange(r);
+        document.execCommand('copy');
+      }
+      b.textContent = 'Copiado!';
+      b.classList.add('is-done');
+      setTimeout(() => {
+        b.textContent = 'Copiar prompt';
+        b.classList.remove('is-done');
+      }, 1800);
+    });
+  });
+
+  const p = new URLSearchParams(location.search);
+  const nome = p.get('n');
+  if (nome) {
+    const box = document.getElementById('boas-vindas')!;
+    box.hidden = false;
+    document.getElementById('mat-oi')!.textContent = `Pronto, ${nome.slice(0, 30)}! O material é seu.`;
+  }
+</script>
