@@ -25,6 +25,13 @@ const cat = CATEGORIES[categoria];
   <section class="hero">
     <h1>{cat.name}</h1>
     <p>{cat.description}</p>
+    {
+      categoria === 'ia-empresas' && (
+        <p class="service-cta__actions">
+          <a class="btn" href="/diagnostico-automacao/">Quanto sua empresa perde sem automação? Faça o diagnóstico grátis</a>
+        </p>
+      )
+    }
   </section>
   {
     posts.length === 0 ? (
