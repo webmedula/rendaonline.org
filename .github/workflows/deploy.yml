@@ -36,3 +36,10 @@ jobs:
             --exclude='.well-known' \
             -e "ssh -i ~/.ssh/deploy_key -p ${{ secrets.VPS_PORT || 22 }}" \
             dist/ "${{ secrets.VPS_USER }}@${{ secrets.VPS_HOST }}:${{ secrets.VPS_PATH }}/"
+
+      - name: Conferir captura de contatos
+        run: |
+          sleep 5
+          r=$(curl -s "https://rendaonline.org/api/lead.php?status=1&t=$(date +%s)")
+          echo "$r"
+          echo "$r" | grep -q '"gravavel":true' || { echo "::warning::A captura de contatos (api/lead.php) não está gravando no servidor"; }

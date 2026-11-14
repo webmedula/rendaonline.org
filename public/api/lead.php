@@ -21,6 +21,13 @@ function responder(int $status, array $body): void {
     exit;
 }
 
+// Verificação rápida usada pelo deploy: o PHP roda e a pasta de contatos aceita gravação?
+if (($_SERVER['REQUEST_METHOD'] ?? '') === 'GET' && isset($_GET['status'])) {
+    $dir = dirname(__DIR__, 2) . '/leads';
+    if (!is_dir($dir)) @mkdir($dir, 0750, true);
+    responder(200, ['ok' => true, 'gravavel' => is_dir($dir) && is_writable($dir)]);
+}
+
 if (($_SERVER['REQUEST_METHOD'] ?? '') !== 'POST') {
     responder(405, ['ok' => false, 'erro' => 'Use POST.']);
 }
