@@ -1,0 +1,63 @@
+name: Redes sociais (Facebook e Instagram)
+
+# Posta 1 conteúdo por vez no Facebook e no Instagram, 4 vezes ao dia.
+# Artigo novo fura a fila; depois vêm calculadoras, páginas e artigos antigos (ver src/lib/social.ts).
+# Sem o segredo META_PAGE_TOKEN, roda sem postar nada e mostra no resumo o que postaria.
+on:
+  schedule:
+    - cron: '40 11 * * *' # 08:40 em Brasília
+    - cron: '10 15 * * *' # 12:10
+    - cron: '40 20 * * *' # 17:40
+    - cron: '40 23 * * *' # 20:40
+  workflow_dispatch:
+    inputs:
+      modo:
+        description: 'teste = só mostra; publicar = posta de verdade'
+        type: choice
+        options: [teste, publicar]
+        default: teste
+      plataformas:
+        description: 'facebook,instagram'
+        default: 'facebook,instagram'
+      item:
+        description: 'id de um conteúdo específico (opcional, ver /social/fila.json)'
+        required: false
+
+concurrency:
+  group: redes-sociais
+  cancel-in-progress: false
+
+permissions:
+  contents: write
+
+jobs:
+  postar:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      - name: Postar
+        env:
+          META_PAGE_TOKEN: ${{ secrets.META_PAGE_TOKEN }}
+          MODO: ${{ inputs.modo || 'publicar' }}
+          PLATAFORMAS: ${{ inputs.plataformas || 'facebook,instagram' }}
+          ITEM: ${{ inputs.item }}
+        run: node scripts/social/publicar.mjs
+
+      - name: Registrar o que foi postado
+        if: always()
+        run: |
+          git diff --quiet social/publicados.json && exit 0
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add social/publicados.json
+          git commit -m "Redes sociais: registra postagens [skip ci]"
+          for i in 1 2 3 4; do
+            git pull --rebase -q origin main && git push -q origin HEAD:main && exit 0
+            sleep $((i * 5))
+          done
+          exit 1

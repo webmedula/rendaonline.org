@@ -11,6 +11,8 @@ const blog = defineCollection({
     category: z.enum(['ia-conteudo', 'automacao', 'ferramentas', 'criar-site', 'ia-empresas']),
     tags: z.array(z.string()).default([]),
     image: z.string().optional(),
+    // Título curto para a imagem das redes sociais (opcional; senão usa o título).
+    socialTitle: z.string().optional(),
     imageAlt: z.string().optional(),
     affiliate: z.boolean().default(false),
     draft: z.boolean().default(false),

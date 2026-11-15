@@ -13,7 +13,11 @@ export default defineConfig({
   },
   integrations: [
     sitemap({
-      filter: (page) => !page.includes('/page/') && !page.includes('/materiais/') && !page.includes('/quiz-renda-extra/resultado/'),
+      filter: (page) =>
+        !page.includes('/page/') &&
+        !page.includes('/materiais/') &&
+        !page.includes('/quiz-renda-extra/resultado/') &&
+        !page.endsWith('/links/'),
     }),
   ],
   markdown: {

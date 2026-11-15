@@ -54,7 +54,7 @@ const ctaFinal = cta ?? {
 };
 ---
 
-<BaseLayout title={title} description={description}>
+<BaseLayout title={title} description={description} image={`/social/${slug}/og.jpg`}>
   <script type="application/ld+json" slot="head" set:html={JSON.stringify(ld)} />
   <div class="tool-head">
     <nav class="breadcrumb" aria-label="Você está em">

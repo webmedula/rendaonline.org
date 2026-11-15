@@ -50,3 +50,24 @@ Segredos necessários no repositório (Settings → Secrets and variables → Ac
 | `VPS_SSH_KEY` | Chave privada SSH (a pública vai em `~/.ssh/authorized_keys` na VPS) |
 
 Redirecionamentos de URLs antigas ficam em `public/.htaccess`.
+
+## Redes sociais (postagem automática)
+
+Cada artigo, calculadora, página de destaque e review de plataforma vira post sozinho. Tudo é gerado no build a partir de `src/lib/social.ts`:
+
+| Endereço | Para que serve |
+| --- | --- |
+| `/social/<id>/instagram.jpg` | Imagem 1080x1350 do post (Instagram e Facebook) |
+| `/social/<id>/pinterest.jpg` | Imagem vertical 1000x1500 (Pinterest) |
+| `/social/<id>/og.jpg` | Imagem 1200x630 que aparece ao compartilhar o link (WhatsApp, Facebook) |
+| `/social/fila.json` | Fila com legendas prontas, lida pelo robô |
+| `/pinterest.xml` | Feed que o Pinterest lê sozinho (publicação automática por RSS) |
+| `/links/` | Página do link da bio do Instagram |
+
+O workflow `.github/workflows/redes-sociais.yml` roda 4 vezes ao dia e posta 1 conteúdo no Facebook e no Instagram pela API oficial da Meta. Artigo novo passa na frente; depois vem a fila por prioridade, e o que já foi postado volta a circular depois de 30 dias. O que já saiu fica registrado em `social/publicados.json`.
+
+- Segredo necessário: `META_PAGE_TOKEN` (token da Página do Facebook, que não expira). Sem ele o robô só mostra o que postaria.
+- Testar sem postar: Actions → "Redes sociais" → Run workflow → modo `teste`.
+- Postar um item específico agora: Run workflow → modo `publicar` → `item` = id da fila.
+- Título mais curto na imagem de um artigo: campo opcional `socialTitle` no frontmatter.
+- Ganchos das calculadoras e textos das páginas ficam em `src/lib/social.ts`.
