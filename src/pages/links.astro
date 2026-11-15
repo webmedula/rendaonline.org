@@ -1,0 +1,50 @@
+---
+// Página do link da bio do Instagram: o que é mais útil, sempre atualizado.
+import BaseLayout from '../layouts/BaseLayout.astro';
+import { getCollection } from 'astro:content';
+import { TOOLS, whatsappLink } from '../consts';
+
+const posts = (await getCollection('blog', ({ data }) => !data.draft))
+  .sort((a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf())
+  .slice(0, 8);
+const utm = '?utm_source=instagram&utm_medium=social&utm_campaign=bio';
+const destaques = [
+  { href: '/50-prompts-ia/', label: '🎁 50 prompts para ganhar dinheiro com IA (PDF grátis)' },
+  { href: '/ferramentas/', label: '🧮 Calculadoras grátis: salário, 13º, rescisão, férias, MEI' },
+  { href: '/trabalho-online/', label: '💵 Sites para trabalhar online e ganhar em dólar' },
+  { href: '/diagnostico-automacao/', label: '⚙️ Diagnóstico grátis de automação para empresas' },
+];
+---
+
+<BaseLayout title="Links" description="Os links do Renda Online: materiais grátis, calculadoras, guias novos e contato." noindex noads>
+  <article class="prose links-page">
+    <h1>Renda Online</h1>
+    <p class="muted">IA, automação e ferramentas para ganhar dinheiro online.</p>
+
+    <h2>Comece por aqui</h2>
+    <ul class="links-list">
+      {destaques.map((d) => <li><a class="links-btn" href={d.href + utm}>{d.label}</a></li>)}
+    </ul>
+
+    <h2>Guias mais recentes</h2>
+    <ul class="links-list">
+      {posts.map((p) => <li><a class="links-btn links-btn--soft" href={`/${p.id}/${utm}`}>{p.data.title}</a></li>)}
+    </ul>
+
+    <h2>Calculadoras</h2>
+    <ul class="links-list">
+      {TOOLS.map((t) => <li><a class="links-btn links-btn--soft" href={`/ferramentas/${t.slug}/${utm}`}>{t.name}</a></li>)}
+    </ul>
+
+    <p><a class="links-btn" href={whatsappLink('Olá! Vim pelo Instagram do Renda Online.')} target="_blank" rel="noopener">💬 Falar no WhatsApp</a></p>
+  </article>
+</BaseLayout>
+
+<style>
+  .links-page { max-width: 34rem; margin: 0 auto; text-align: center; }
+  .links-list { list-style: none; padding: 0; display: grid; gap: 0.7rem; margin: 0 0 1.5rem; }
+  .links-btn { display: block; padding: 0.9em 1.1em; border-radius: 12px; background: var(--accent); color: var(--on-accent); font-weight: 700; text-decoration: none; }
+  .links-btn:hover { background: var(--accent-dark); color: var(--on-accent); }
+  .links-btn--soft { background: var(--bg-soft); color: var(--text); border: 1px solid var(--border); font-weight: 600; }
+  .links-btn--soft:hover { background: var(--bg-soft); color: var(--accent); border-color: var(--accent); }
+</style>

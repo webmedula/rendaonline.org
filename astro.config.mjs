@@ -13,7 +13,7 @@ export default defineConfig({
   },
   integrations: [
     sitemap({
-      filter: (page) => !page.includes('/page/') && !page.includes('/materiais/'),
+      filter: (page) => !page.includes('/page/') && !page.includes('/materiais/') && !page.endsWith('/links/'),
     }),
   ],
   markdown: {

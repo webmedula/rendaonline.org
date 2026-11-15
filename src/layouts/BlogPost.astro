@@ -21,13 +21,14 @@ const { post, related } = Astro.props;
 const { title, description, pubDate, updatedDate, category, tags, image, imageAlt, affiliate } = post.data;
 const cat = CATEGORIES[category];
 const url = `${SITE_URL}/${post.id}/`;
+const shareImage = image ?? `/social/${post.id}/og.jpg`;
 
 const jsonLd = {
   '@context': 'https://schema.org',
   '@type': 'BlogPosting',
   headline: title,
   description,
-  image: image ? new URL(image, SITE_URL).toString() : `${SITE_URL}/og-default.png`,
+  image: new URL(shareImage, SITE_URL).toString(),
   datePublished: pubDate.toISOString(),
   dateModified: (updatedDate ?? pubDate).toISOString(),
   inLanguage: 'pt-BR',
@@ -56,7 +57,7 @@ const breadcrumb = {
 <!doctype html>
 <html lang="pt-BR">
   <head>
-    <BaseHead title={title} description={description} image={image} type="article" publishedTime={pubDate} modifiedTime={updatedDate} />
+    <BaseHead title={title} description={description} image={shareImage} type="article" publishedTime={pubDate} modifiedTime={updatedDate} />
     <script type="application/ld+json" set:html={JSON.stringify(jsonLd)} />
     <script type="application/ld+json" set:html={JSON.stringify(breadcrumb)} />
   </head>
