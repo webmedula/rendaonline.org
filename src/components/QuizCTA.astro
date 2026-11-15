@@ -1,0 +1,30 @@
+---
+// Chamada para o quiz de renda extra. Usada na home, em Trabalho online e nas calculadoras.
+import { QUIZ_PATH } from '../data/quiz-renda-extra';
+
+interface Props {
+  compact?: boolean;
+}
+const { compact = false } = Astro.props;
+---
+
+<aside class:list={['quiz-cta', { 'quiz-cta--compact': compact }]}>
+  <span class="quiz-cta__emoji" aria-hidden="true">🧭</span>
+  <div class="quiz-cta__txt">
+    <p class="quiz-cta__t">Não sabe por onde começar?</p>
+    <p>Faça o quiz <strong>Qual renda extra online combina com você?</strong> São 7 perguntas de clique e você recebe um plano para os próximos 7 dias.</p>
+  </div>
+  <a class="btn" href={QUIZ_PATH}>Fazer o quiz grátis</a>
+</aside>
+
+<style>
+  .quiz-cta { display: flex; flex-wrap: wrap; align-items: center; gap: 0.8rem 1.2rem; border: 2px solid var(--accent); border-radius: 14px; padding: 1.1rem 1.3rem; margin: 2rem 0; background: var(--bg-soft); }
+  .quiz-cta__emoji { font-size: 2.4rem; line-height: 1; }
+  .quiz-cta__txt { flex: 1 1 18rem; }
+  .quiz-cta__txt p { margin: 0; }
+  .quiz-cta__t { font-weight: 700; font-size: 1.15rem; margin-bottom: 0.2rem !important; }
+  .quiz-cta .btn { flex: none; }
+  .quiz-cta--compact { padding: 0.9rem 1.1rem; margin: 1.5rem 0; }
+  .quiz-cta--compact .quiz-cta__emoji { font-size: 1.8rem; }
+  @media (max-width: 30rem) { .quiz-cta .btn { width: 100%; text-align: center; } }
+</style>

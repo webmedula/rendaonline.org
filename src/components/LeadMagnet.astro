@@ -6,23 +6,29 @@ interface Props {
   variant?: 'box' | 'hero';
   heading?: string;
   text?: string;
+  /** Identificador gravado na planilha de contatos (padrão: a isca dos 50 prompts). */
+  isca?: string;
+  button?: string;
+  id?: string;
 }
 
 const {
   variant = 'box',
   heading = `Grátis: ${TOTAL_PROMPTS} prompts para ganhar dinheiro com IA`,
   text = 'Prompts prontos para copiar no ChatGPT, Gemini ou Claude: achar sua ideia, conseguir clientes, criar conteúdo, vender e cobrar o preço certo. Receba o PDF agora.',
+  isca = LEAD_MAGNET.slug,
+  button = 'Quero os prompts grátis',
+  id = `lm-${Math.random().toString(36).slice(2, 8)}`,
 } = Astro.props;
-const id = `lm-${Math.random().toString(36).slice(2, 8)}`;
 ---
 
-<section class={`lead-box lead-box--${variant}`} aria-labelledby={`${id}-t`}>
+<section class={`lead-box lead-box--${variant}`} aria-labelledby={`${id}-t`} id={id}>
   <div class="lead-box__copy">
     <p class="lead-box__eyebrow">Material gratuito</p>
     {variant === 'hero' ? <h2 id={`${id}-t`} class="sr-only">{heading}</h2> : <h2 id={`${id}-t`}>{heading}</h2>}
     {variant === 'box' && <p>{text}</p>}
   </div>
-  <form class="lead-form" data-lead-form data-isca={LEAD_MAGNET.slug} data-destino={LEAD_MAGNET.page} novalidate>
+  <form class="lead-form" data-lead-form data-isca={isca} data-destino={LEAD_MAGNET.page} novalidate>
     <label>
       <span>Seu nome</span>
       <input name="nome" type="text" autocomplete="given-name" required minlength="2" maxlength="80" placeholder="Como quer ser chamado" />
@@ -45,7 +51,7 @@ const id = `lm-${Math.random().toString(36).slice(2, 8)}`;
         cancelar quando quiser. <a href="/politica-de-privacidade/#contatos" target="_blank">Como usamos seus dados</a>.
       </span>
     </label>
-    <button class="btn btn-lg" type="submit">Quero os prompts grátis</button>
+    <button class="btn btn-lg" type="submit">{button}</button>
     <p class="lead-form__msg" role="alert" aria-live="polite"></p>
   </form>
 </section>
@@ -80,6 +86,7 @@ const id = `lm-${Math.random().toString(36).slice(2, 8)}`;
         return;
       }
 
+      const rotulo = btn.textContent || '';
       btn.disabled = true;
       btn.textContent = 'Enviando...';
       msg.textContent = '';
@@ -106,7 +113,7 @@ const id = `lm-${Math.random().toString(36).slice(2, 8)}`;
         if (r.status === 422 && j.erro) {
           msg.textContent = j.erro;
           btn.disabled = false;
-          btn.textContent = 'Quero os prompts grátis';
+          btn.textContent = rotulo;
           return;
         }
         salvo = r.ok && j.ok;

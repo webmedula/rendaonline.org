@@ -1,0 +1,53 @@
+---
+// Página compartilhável de cada resultado do quiz. É o que abre quando alguém manda o resultado
+// no WhatsApp ou no Facebook: mostra o caminho e convida a pessoa a fazer o quiz também.
+import BaseLayout from '../../../layouts/BaseLayout.astro';
+import QuizResultado from '../../../components/QuizResultado.astro';
+import LeadMagnet from '../../../components/LeadMagnet.astro';
+import { PERFIS, PERFIL_KEYS, QUIZ_PATH, resultadoPath, type PerfilKey } from '../../../data/quiz-renda-extra';
+
+export function getStaticPaths() {
+  return PERFIL_KEYS.map((perfil) => ({ params: { perfil } }));
+}
+
+const perfil = Astro.params.perfil as PerfilKey;
+const p = PERFIS[perfil];
+const outros = PERFIL_KEYS.filter((k) => k !== perfil);
+---
+
+<BaseLayout
+  noads
+  noindex
+  title={`Deu ${p.nome}: qual renda extra online combina com você?`}
+  description={`${p.chamada} Faça o quiz grátis de 7 perguntas e descubra o seu caminho de renda extra online.`}
+  image={`/quiz/og-${perfil}.png`}
+>
+  <div class="quiz-convite">
+    <p>Alguém compartilhou este resultado com você. <strong>Qual é o seu?</strong></p>
+    <a class="btn" href={QUIZ_PATH}>Fazer o quiz (1 minuto)</a>
+  </div>
+
+  <div class="tool-box quiz-pagina">
+    <QuizResultado perfil={perfil} modo="pagina" />
+  </div>
+
+  <LeadMagnet
+    isca={`quiz-${perfil}`}
+    heading="Comece hoje: 50 prompts grátis para ganhar dinheiro com IA"
+    text="Prompts prontos para copiar no ChatGPT, Gemini ou Claude: achar sua ideia, montar o perfil, conseguir os primeiros clientes e cobrar o preço certo."
+    button="Quero os 50 prompts grátis"
+  />
+
+  <section class="prose">
+    <h2>Os outros caminhos do quiz</h2>
+    <ul>
+      {outros.map((k) => <li><a href={resultadoPath(k)}>{PERFIS[k].emoji} {PERFIS[k].nome}</a>: {PERFIS[k].chamada}</li>)}
+    </ul>
+  </section>
+</BaseLayout>
+
+<style>
+  .quiz-convite { max-width: var(--content); margin: 1.2rem auto 0; display: flex; flex-wrap: wrap; gap: 0.6rem 1rem; align-items: center; justify-content: space-between; background: var(--bg-soft); border: 1px dashed var(--accent); border-radius: 12px; padding: 0.8rem 1rem; }
+  .quiz-convite p { margin: 0; }
+  .quiz-pagina { margin-top: 1rem; }
+</style>
