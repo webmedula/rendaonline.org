@@ -7,13 +7,17 @@ import { redirectsRedes } from './redirects-redes.mjs';
 export default defineConfig({
   site: 'https://rendaonline.org',
   trailingSlash: 'always',
-  redirects: redirectsRedes,
+  redirects: { ...redirectsRedes, '/quiz/': '/quiz-renda-extra/' },
   build: {
     format: 'directory',
   },
   integrations: [
     sitemap({
-      filter: (page) => !page.includes('/page/') && !page.includes('/materiais/') && !page.endsWith('/links/'),
+      filter: (page) =>
+        !page.includes('/page/') &&
+        !page.includes('/materiais/') &&
+        !page.includes('/quiz-renda-extra/resultado/') &&
+        !page.endsWith('/links/'),
     }),
   ],
   markdown: {

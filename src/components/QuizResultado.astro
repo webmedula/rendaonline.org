@@ -1,0 +1,158 @@
+---
+// Um resultado do quiz de renda extra. Usado na página do quiz (os 6 ficam escondidos e o
+// script mostra o certo) e nas páginas de resultado compartilháveis.
+import { PERFIS, QUIZ_PATH, resultadoPath, type PerfilKey } from '../data/quiz-renda-extra';
+import { SITE_URL } from '../consts';
+
+interface Props {
+  perfil: PerfilKey;
+  modo: 'quiz' | 'pagina';
+}
+
+const { perfil, modo } = Astro.props;
+const p = PERFIS[perfil];
+const shareUrl = `${SITE_URL}${resultadoPath(perfil)}`;
+const shareText = `Fiz o quiz "Qual renda extra online combina com você?" e deu: ${p.emoji} ${p.nome}. Faz aí e me conta o seu (leva 1 minuto):`;
+---
+
+<article class="qr" data-perfil={perfil} style={`--qr-cor: ${p.cor}`} hidden={modo === 'quiz'}>
+  <header class="qr-head">
+    <span class="qr-emoji" aria-hidden="true">{p.emoji}</span>
+    <p class="qr-eyebrow">{modo === 'quiz' ? 'Seu resultado' : 'Resultado do quiz de renda extra'}</p>
+    {modo === 'quiz' ? <h2 class="qr-nome">{p.nome}</h2> : <h1 class="qr-nome">{p.nome}</h1>}
+    <p class="qr-chamada">{p.chamada}</p>
+  </header>
+
+  {modo === 'quiz' && <div class="qr-compat" data-compat aria-label="Combinação com cada caminho"></div>}
+
+  <p>{p.resumo}</p>
+
+  <h3>Por que combina com você</h3>
+  <ul class="qr-porque">
+    {p.porque.map((x) => <li>{x}</li>)}
+  </ul>
+
+  <div class="qr-fatos">
+    <div><strong>Quanto dá para ganhar</strong><p>{p.ganhos}</p></div>
+    <div><strong>Em quanto tempo</strong><p>{p.prazo}</p></div>
+  </div>
+
+  <h3>Seu plano para os próximos 7 dias</h3>
+  <ol class="qr-passos">
+    {p.passos.map((x) => <li>{x}</li>)}
+  </ol>
+
+  <h3>Leia a seguir</h3>
+  <ul class="qr-links">
+    {p.links.map((l) => <li><a href={l.href}>{l.texto}</a></li>)}
+  </ul>
+
+  {
+    p.cta && (
+      <div class="qr-cta">
+        <p class="qr-cta__t">{p.cta.titulo}</p>
+        <p>{p.cta.texto}</p>
+        <a class="btn" href={p.cta.href} data-quiz-cta={perfil}>{p.cta.botao}</a>
+      </div>
+    )
+  }
+
+  {modo === 'quiz' && <p class="qr-segundo" data-segundo hidden></p>}
+
+  <div class="qr-share" data-share-box data-url={shareUrl} data-text={shareText} data-perfil={perfil}>
+    <p class="qr-share__t">{modo === 'quiz' ? 'Compartilhe seu resultado e veja o que dá para os amigos' : 'Mande para quem também quer uma renda extra'}</p>
+    <div class="qr-share__btns">
+      <a class="qr-btn qr-btn--wa" data-share="whatsapp" href="#" target="_blank" rel="noopener">WhatsApp</a>
+      <a class="qr-btn qr-btn--fb" data-share="facebook" href="#" target="_blank" rel="noopener">Facebook</a>
+      <button type="button" class="qr-btn" data-share="copiar">Copiar link</button>
+      <button type="button" class="qr-btn" data-share="nativo" hidden>Mais opções</button>
+    </div>
+  </div>
+
+  {
+    modo === 'pagina' && (
+      <div class="qr-cta qr-cta--quiz">
+        <p class="qr-cta__t">E você, qual renda extra combina com o seu perfil?</p>
+        <p>7 perguntas de clique, 1 minuto, resultado na hora e sem cadastro.</p>
+        <a class="btn btn-lg" href={QUIZ_PATH}>Fazer o quiz grátis</a>
+      </div>
+    )
+  }
+</article>
+
+<script>
+  const track = (event: string, extra: Record<string, unknown> = {}) => {
+    const w = window as unknown as { dataLayer?: unknown[]; gtag?: (...a: unknown[]) => void };
+    w.dataLayer = w.dataLayer || [];
+    w.dataLayer.push({ event, ...extra });
+    if (typeof w.gtag === 'function') w.gtag('event', event, extra);
+  };
+  const comUtm = (url: string, fonte: string) =>
+    `${url}?utm_source=${fonte}&utm_medium=social&utm_campaign=quiz-renda-extra`;
+
+  document.querySelectorAll<HTMLElement>('[data-share-box]').forEach((box) => {
+    const url = box.dataset.url!;
+    const text = box.dataset.text!;
+    const perfil = box.dataset.perfil;
+    const wa = box.querySelector<HTMLAnchorElement>('[data-share="whatsapp"]')!;
+    const fb = box.querySelector<HTMLAnchorElement>('[data-share="facebook"]')!;
+    const copiar = box.querySelector<HTMLButtonElement>('[data-share="copiar"]')!;
+    const nativo = box.querySelector<HTMLButtonElement>('[data-share="nativo"]')!;
+    wa.href = `https://wa.me/?text=${encodeURIComponent(`${text} ${comUtm(url, 'whatsapp')}`)}`;
+    fb.href = `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(comUtm(url, 'facebook'))}`;
+    wa.addEventListener('click', () => track('quiz_compartilhar', { canal: 'whatsapp', perfil }));
+    fb.addEventListener('click', () => track('quiz_compartilhar', { canal: 'facebook', perfil }));
+    copiar.addEventListener('click', async () => {
+      const link = comUtm(url, 'link');
+      try {
+        await navigator.clipboard.writeText(`${text} ${link}`);
+        copiar.textContent = 'Link copiado!';
+      } catch {
+        window.prompt('Copie o link:', link);
+      }
+      track('quiz_compartilhar', { canal: 'copiar', perfil });
+      setTimeout(() => (copiar.textContent = 'Copiar link'), 2500);
+    });
+    if (typeof navigator.share === 'function') {
+      nativo.hidden = false;
+      nativo.addEventListener('click', () => {
+        navigator.share({ title: 'Qual renda extra online combina com você?', text, url: comUtm(url, 'nativo') }).catch(() => {});
+        track('quiz_compartilhar', { canal: 'nativo', perfil });
+      });
+    }
+  });
+</script>
+
+<style is:global>
+  .qr[hidden] { display: none; }
+  .qr h3 { margin: 1.6rem 0 0.5rem; font-size: 1.15rem; }
+  .qr-head { text-align: center; background: var(--bg); border: 2px solid var(--qr-cor); border-radius: 14px; padding: 1.4rem 1.1rem 1.2rem; margin-bottom: 1rem; }
+  .qr-emoji { font-size: 3rem; line-height: 1; display: block; }
+  .qr-eyebrow { text-transform: uppercase; letter-spacing: 0.06em; font-size: 0.75rem; font-weight: 700; color: var(--text-muted); margin: 0.6rem 0 0; }
+  .qr-nome { margin: 0.15rem 0 0.4rem; font-size: clamp(1.6rem, 6vw, 2.2rem); line-height: 1.15; color: var(--qr-cor); }
+  @media (prefers-color-scheme: dark) { .qr-nome { color: var(--text); } .qr-head { border-color: var(--accent); } }
+  .qr-chamada { margin: 0; font-size: 1.08rem; }
+  .qr-compat { display: grid; gap: 0.45rem; margin: 0 0 1.2rem; }
+  .qr-compat__row { display: grid; grid-template-columns: minmax(8rem, 13rem) 1fr 3rem; gap: 0.6rem; align-items: center; font-size: 0.9rem; }
+  .qr-compat__bar { height: 10px; border-radius: 99px; background: var(--border); overflow: hidden; }
+  .qr-compat__bar span { display: block; height: 100%; background: var(--accent); border-radius: 99px; transition: width 0.6s ease; }
+  .qr-compat__row b { text-align: right; font-variant-numeric: tabular-nums; }
+  @media (max-width: 30rem) { .qr-compat__row { grid-template-columns: 1fr 2.6rem; } .qr-compat__bar { grid-column: 1 / -1; grid-row: 2; } }
+  .qr-porque, .qr-passos, .qr-links { padding-left: 1.3em; display: grid; gap: 0.4rem; }
+  .qr-fatos { display: grid; gap: 0.8rem; grid-template-columns: repeat(auto-fit, minmax(14rem, 1fr)); margin: 1.2rem 0; }
+  .qr-fatos > div { background: var(--bg); border: 1px solid var(--border); border-radius: 10px; padding: 0.9rem 1rem; }
+  .qr-fatos p { margin: 0.3rem 0 0; font-size: 0.95rem; }
+  .qr-cta { border: 2px solid var(--accent); border-radius: 12px; padding: 1.1rem 1.2rem; margin: 1.5rem 0; background: var(--bg); }
+  .qr-cta p { margin: 0 0 0.8rem; }
+  .qr-cta__t { font-weight: 700; font-size: 1.1rem; }
+  .qr-cta--quiz { text-align: center; }
+  .qr-segundo { background: var(--bg); border-left: 4px solid var(--accent); padding: 0.8rem 1rem; border-radius: 0 8px 8px 0; }
+  .qr-share { margin: 1.5rem 0 0.5rem; text-align: center; }
+  .qr-share__t { font-weight: 700; margin: 0 0 0.7rem; }
+  .qr-share__btns { display: flex; flex-wrap: wrap; gap: 0.5rem; justify-content: center; }
+  .qr-btn { font: inherit; font-weight: 600; display: inline-flex; align-items: center; justify-content: center; min-height: 2.9rem; padding: 0.6em 1.1em; border-radius: 99px; border: 2px solid var(--border); background: var(--bg); color: var(--text); text-decoration: none; cursor: pointer; flex: 1 1 8rem; max-width: 14rem; }
+  .qr-btn[hidden] { display: none; }
+  .qr-btn--wa { background: #0f7a3f; border-color: #0f7a3f; color: #fff; }
+  .qr-btn--fb { background: #0d65d9; border-color: #0d65d9; color: #fff; }
+  .qr-btn:hover { filter: brightness(1.05); border-color: var(--accent); }
+</style>

@@ -3,6 +3,7 @@ import { getCollection } from 'astro:content';
 import BaseLayout from '../layouts/BaseLayout.astro';
 import PostCard from '../components/PostCard.astro';
 import LeadMagnet from '../components/LeadMagnet.astro';
+import QuizCTA from '../components/QuizCTA.astro';
 import { CATEGORIES, SITE_DESCRIPTION, SITE_TITLE, TOOLS } from '../consts';
 
 const posts = (await getCollection('blog', ({ data }) => !data.draft)).sort(
@@ -18,7 +19,10 @@ const latest = posts.slice(0, 9);
       Tutoriais passo a passo, testados de verdade, para quem quer usar inteligência artificial e automação para trabalhar,
       criar conteúdo e montar uma renda na internet.
     </p>
-    <a class="btn" href="/categoria/ferramentas/">Comece pelas ferramentas gratuitas</a>
+    <p class="hero-actions">
+      <a class="btn" href="/quiz-renda-extra/">Descubra sua renda extra ideal (quiz)</a>
+      <a class="btn btn-outline" href="/categoria/ferramentas/">Ferramentas gratuitas</a>
+    </p>
   </section>
 
   <LeadMagnet />
@@ -38,6 +42,8 @@ const latest = posts.slice(0, 9);
       }
     </ul>
   </section>
+
+  <QuizCTA />
 
   <section>
     <h2>Últimos artigos</h2>

@@ -118,6 +118,19 @@ const FERRAMENTAS: Record<string, { gancho: string; texto: string; titulo: strin
 // Páginas fixas que valem divulgar de tempos em tempos.
 const PAGINAS: Omit<SocialItem, 'tipo' | 'repetir'>[] = [
   {
+    id: 'quiz-renda-extra',
+    path: '/quiz-renda-extra/',
+    selo: 'Quiz grátis',
+    titulo: 'Qual renda extra online combina com você?',
+    subtitulo: '7 perguntas rápidas e um plano para os seus primeiros 7 dias.',
+    cta: 'Faça o quiz',
+    gancho: '🧩 Qual renda extra online combina com você? Faça o teste em 1 minuto.',
+    texto: 'Responda 7 perguntas sobre o seu tempo, o que você sabe fazer e a sua urgência e descubra o caminho certo para começar, com um plano para os primeiros 7 dias. Depois, marque um amigo para ele fazer também.',
+    hashtags: ['#rendaextra', '#trabalhoonline', '#ganhardinheiro', '#quiz', '#rendaextraonline'],
+    data: '2026-11-15',
+    prioridade: 0.5,
+  },
+  {
     id: '50-prompts-ia',
     path: '/50-prompts-ia/',
     selo: 'PDF grátis',

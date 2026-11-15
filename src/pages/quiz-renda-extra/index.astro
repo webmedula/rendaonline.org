@@ -1,0 +1,294 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import QuizResultado from '../../components/QuizResultado.astro';
+import LeadMagnet from '../../components/LeadMagnet.astro';
+import { SITE_URL } from '../../consts';
+import { PERFIS, PERFIL_KEYS, PERGUNTAS, QUIZ_PATH, resultadoPath } from '../../data/quiz-renda-extra';
+
+const total = PERGUNTAS.length;
+
+const faq = [
+  {
+    q: 'O quiz é grátis? Precisa de cadastro?',
+    a: 'É grátis e não pede cadastro. Você responde 7 perguntas de clique e vê o resultado na hora. No final, se quiser, pode receber de graça os 50 prompts de IA para começar.',
+  },
+  {
+    q: 'Como o resultado é calculado?',
+    a: 'Cada resposta soma pontos para seis caminhos de renda extra online, conforme o tempo que você tem, a urgência, suas habilidades, o equipamento, o inglês e o que você procura. O caminho com mais pontos é o seu resultado, e você também vê o quanto combina com os outros.',
+  },
+  {
+    q: 'Qual a renda extra online mais rápida?',
+    a: 'Pesquisas pagas e testes de sites são os mais rápidos para começar, mas pagam pouco. Para ganhar mais em poucas semanas, os melhores caminhos são treinar inteligência artificial (pago em dólar) e vender um serviço como freelancer.',
+  },
+  {
+    q: 'Dá para ter renda extra só com o celular?',
+    a: 'Dá, mas as opções são mais limitadas: apps de pesquisa, alguns testes de sites e criação de conteúdo para redes sociais. Com um computador, mesmo simples, abrem-se freelas, treinamento de IA e serviços para empresas, que pagam bem melhor.',
+  },
+  {
+    q: 'Precisa investir dinheiro para começar?',
+    a: 'Não. Todos os caminhos do quiz começam com ferramentas gratuitas. Desconfie de qualquer site ou grupo que cobre taxa para você começar a trabalhar: plataformas sérias não fazem isso.',
+  },
+];
+
+const ld = [
+  {
+    '@context': 'https://schema.org',
+    '@type': 'Quiz',
+    name: 'Qual renda extra online combina com você?',
+    url: `${SITE_URL}${QUIZ_PATH}`,
+    inLanguage: 'pt-BR',
+    educationalUse: 'Orientação',
+    about: 'Renda extra online',
+    isAccessibleForFree: true,
+  },
+  {
+    '@context': 'https://schema.org',
+    '@type': 'FAQPage',
+    mainEntity: faq.map((f) => ({ '@type': 'Question', name: f.q, acceptedAnswer: { '@type': 'Answer', text: f.a } })),
+  },
+];
+---
+
+<BaseLayout
+  noads
+  title="Quiz: qual renda extra online combina com você?"
+  description="Responda 7 perguntas rápidas e descubra o caminho de renda extra online certo para o seu tempo, suas habilidades e sua urgência, com um plano para os primeiros 7 dias."
+  image="/quiz/og-quiz.png"
+>
+  <script type="application/ld+json" slot="head" set:html={JSON.stringify(ld)} />
+
+  <div class="tool-head quiz-head" id="quiz-topo">
+    <p class="service-cta__eyebrow">Quiz grátis · 1 minuto</p>
+    <h1>Qual renda extra online combina com você?</h1>
+    <p class="lead">
+      Responda 7 perguntas de clique e descubra entre 6 caminhos qual faz mais sentido para o seu tempo, suas habilidades e a sua
+      pressa, com um plano do que fazer nos próximos 7 dias.
+    </p>
+    <p class="small muted">Sem cadastro · resultado na hora · sem promessa de dinheiro fácil</p>
+  </div>
+
+  <section class="tool-box diag quiz" aria-label="Quiz" id="quiz">
+    <form id="qf" novalidate>
+      <div class="diag-progress" aria-hidden="true"><span id="qbar"></span></div>
+      <p class="diag-count small muted" id="qcount">Pergunta 1 de {total}</p>
+      {
+        PERGUNTAS.map((p, i) => (
+          <fieldset class="diag-step" data-step={i + 1} hidden={i > 0}>
+            <legend>{p.titulo}</legend>
+            {p.dica && <p class="small muted">{p.dica}</p>}
+            <div class="diag-opts">
+              {p.opcoes.map((o) => (
+                <label class="diag-opt">
+                  <input type="radio" name={p.id} value={o.v} />
+                  <span>{o.label}</span>
+                </label>
+              ))}
+            </div>
+          </fieldset>
+        ))
+      }
+      <p class="diag-nav"><button type="button" class="diag-back" id="qback" hidden>← Voltar</button></p>
+    </form>
+
+    <div id="qres" hidden aria-live="polite">
+      {PERFIL_KEYS.map((k) => <QuizResultado perfil={k} modo="quiz" />)}
+      <p class="quiz-refazer"><button type="button" class="diag-back" id="qrefazer">Refazer o quiz</button></p>
+    </div>
+  </section>
+
+  <div id="quiz-lead" hidden>
+    <LeadMagnet
+      id="quiz-lm"
+      isca="quiz-renda-extra"
+      heading="Comece hoje: 50 prompts grátis para ganhar dinheiro com IA"
+      text="Prompts prontos para copiar no ChatGPT, Gemini ou Claude que servem para qualquer caminho: achar sua ideia, montar o perfil, conseguir os primeiros clientes e cobrar o preço certo."
+      button="Quero os 50 prompts grátis"
+    />
+  </div>
+
+  <article class="prose">
+    <h2>Os 6 caminhos de renda extra do quiz</h2>
+    <p>
+      Não existe uma renda extra que serve para todo mundo. Quem tem 2 horas por semana e só o celular precisa de um caminho
+      diferente de quem tem tarde livre e computador. O quiz cruza as suas respostas com estes seis caminhos:
+    </p>
+    <ul>
+      {
+        PERFIL_KEYS.map((k) => (
+          <li>
+            <strong>{PERFIS[k].emoji} {PERFIS[k].nome}:</strong> {PERFIS[k].chamada} <a href={resultadoPath(k)}>Ver o caminho completo</a>.
+          </li>
+        ))
+      }
+    </ul>
+
+    <h2>O que o quiz leva em conta</h2>
+    <ol>
+      <li><strong>Sua situação</strong>: quem tem um negócio, por exemplo, ganha mais vendendo melhor do que arranjando outro trabalho.</li>
+      <li><strong>Tempo por semana</strong>: com menos de 3 horas, só caminhos que cabem em minutos soltos fazem sentido.</li>
+      <li><strong>Urgência</strong>: conteúdo e blog pagam bem, mas demoram meses; pesquisas e tarefas pagam pouco, mas começam já.</li>
+      <li><strong>Habilidades</strong>: escrever, mexer com tecnologia, criar vídeo ou vender levam a caminhos diferentes.</li>
+      <li><strong>Equipamento e inglês</strong>: o computador abre os caminhos que pagam mais; o inglês ajuda, mas não é obrigatório.</li>
+    </ol>
+    <p>
+      Os valores de cada resultado são faixas reais que vemos nas plataformas e nos projetos, não promessas. Se alguém prometer
+      salário alto sem esforço ou cobrar taxa para você começar, desconfie. Veja também nossas
+      <a href="/trabalho-online/">avaliações de sites de trabalho online</a> e as <a href="/ferramentas/">calculadoras grátis</a>.
+    </p>
+
+    <h2>Perguntas frequentes</h2>
+    {
+      faq.map((f) => (
+        <details>
+          <summary>{f.q}</summary>
+          <p>{f.a}</p>
+        </details>
+      ))
+    }
+  </article>
+</BaseLayout>
+
+<script>
+  import { PERFIS, PERGUNTAS, pontuar, type PerfilKey } from '../../data/quiz-renda-extra';
+
+  const TOTAL = PERGUNTAS.length;
+  const form = document.getElementById('qf') as HTMLFormElement;
+  const res = document.getElementById('qres') as HTMLElement;
+  const bar = document.getElementById('qbar') as HTMLElement;
+  const count = document.getElementById('qcount') as HTMLElement;
+  const back = document.getElementById('qback') as HTMLButtonElement;
+  const box = document.getElementById('quiz') as HTMLElement;
+  const lead = document.getElementById('quiz-lead') as HTMLElement;
+  const steps = Array.from(form.querySelectorAll<HTMLFieldSetElement>('.diag-step'));
+  const historico: number[] = [];
+  let atual = 1;
+  let iniciou = false;
+
+  const track = (event: string, extra: Record<string, unknown> = {}) => {
+    const w = window as unknown as { dataLayer?: unknown[]; gtag?: (...a: unknown[]) => void };
+    w.dataLayer = w.dataLayer || [];
+    w.dataLayer.push({ event, ...extra });
+    if (typeof w.gtag === 'function') w.gtag('event', event, extra);
+  };
+
+  function mostrar(n: number) {
+    atual = n;
+    steps.forEach((s) => (s.hidden = Number(s.dataset.step) !== n));
+    bar.style.width = `${((n - 1) / TOTAL) * 100}%`;
+    count.textContent = `Pergunta ${n} de ${TOTAL}`;
+    back.hidden = n === 1;
+  }
+
+  function respostas() {
+    const r: Record<string, string> = {};
+    for (const p of PERGUNTAS) r[p.id] = form.querySelector<HTMLInputElement>(`input[name="${p.id}"]:checked`)?.value ?? '';
+    return r;
+  }
+
+  function concluir() {
+    const r = respostas();
+    const x = pontuar(r);
+    form.hidden = true;
+    res.hidden = false;
+    lead.hidden = false;
+    res.querySelectorAll<HTMLElement>('.qr').forEach((el) => (el.hidden = el.dataset.perfil !== x.principal));
+    const art = res.querySelector<HTMLElement>(`.qr[data-perfil="${x.principal}"]`)!;
+
+    // Barras de combinação com os 3 primeiros caminhos.
+    const compat = art.querySelector<HTMLElement>('[data-compat]');
+    if (compat) {
+      compat.innerHTML = x.ranking
+        .slice(0, 3)
+        .map((k: PerfilKey) => {
+          const v = x.pct(k);
+          return `<div class="qr-compat__row"><span>${PERFIS[k].emoji} ${PERFIS[k].nome}</span><span class="qr-compat__bar"><span style="width:0" data-w="${v}%"></span></span><b>${v}%</b></div>`;
+        })
+        .join('');
+      requestAnimationFrame(() =>
+        setTimeout(() => compat.querySelectorAll<HTMLElement>('[data-w]').forEach((b) => (b.style.width = b.dataset.w!)), 60),
+      );
+    }
+
+    // Segundo caminho, quando ele também combina bem.
+    const seg = art.querySelector<HTMLElement>('[data-segundo]');
+    if (seg) {
+      const s = PERFIS[x.segundo];
+      if (x.pct(x.segundo) >= 70) {
+        seg.innerHTML = `<strong>Também combina com você:</strong> ${s.emoji} ${s.nome}. ${s.chamada} <a href="/quiz-renda-extra/resultado/${s.key}/">Ver esse caminho</a>.`;
+        seg.hidden = false;
+      } else seg.hidden = true;
+    }
+
+    const lm = document.querySelector<HTMLFormElement>('#quiz-lm form[data-lead-form]');
+    if (lm) lm.dataset.isca = `quiz-${x.principal}`;
+
+    try {
+      localStorage.setItem('ro_quiz', JSON.stringify({ perfil: x.principal, t: Date.now() }));
+    } catch {}
+    track('quiz_concluido', { perfil: x.principal, segundo: x.segundo });
+    history.replaceState(null, '', `#resultado-${x.principal}`);
+    box.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  }
+
+  function avancar() {
+    if (!iniciou) {
+      iniciou = true;
+      track('quiz_inicio');
+    }
+    historico.push(atual);
+    if (atual >= TOTAL) return concluir();
+    mostrar(atual + 1);
+    const topo = box.getBoundingClientRect().top;
+    if (topo < 0) box.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  }
+
+  form.addEventListener('change', (ev) => {
+    const t = ev.target as HTMLInputElement;
+    if (t.type === 'radio') setTimeout(avancar, 200);
+  });
+  back.addEventListener('click', () => {
+    const anterior = historico.pop();
+    if (anterior) mostrar(anterior);
+  });
+  document.getElementById('qrefazer')!.addEventListener('click', () => {
+    form.reset();
+    res.hidden = true;
+    lead.hidden = true;
+    form.hidden = false;
+    historico.length = 0;
+    history.replaceState(null, '', location.pathname + location.search);
+    mostrar(1);
+    box.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  });
+  document.querySelectorAll<HTMLAnchorElement>('[data-quiz-cta]').forEach((a) =>
+    a.addEventListener('click', () => track('quiz_cta', { perfil: a.dataset.quizCta, destino: a.getAttribute('href') })),
+  );
+
+  mostrar(1);
+</script>
+
+<style is:global>
+  /* Reaproveita o visual do diagnóstico (.diag-*), definido aqui também porque aquele estilo é da outra página. */
+  .diag legend { font-size: 1.2rem; font-weight: 700; margin-bottom: 0.8rem; padding: 0; line-height: 1.3; }
+  .diag fieldset { border: 0; margin: 0; padding: 0; min-width: 0; }
+  .diag fieldset[hidden] { display: none; }
+  .diag-progress { height: 6px; background: var(--border); border-radius: 99px; overflow: hidden; }
+  .diag-progress span { display: block; height: 100%; width: 0; background: var(--accent); transition: width 0.25s; }
+  .diag-count { margin: 0.4rem 0 1rem; }
+  .diag-opts { display: grid; gap: 0.6rem; grid-template-columns: repeat(auto-fit, minmax(15rem, 1fr)); margin-bottom: 1rem; }
+  .diag-opt { display: flex; align-items: center; gap: 0.7rem; padding: 0.85em 1em; border: 1px solid var(--border); border-radius: 10px; background: var(--bg); cursor: pointer; min-height: 3.2rem; }
+  .diag-opt:hover { border-color: var(--accent); }
+  .diag-opt input { accent-color: var(--accent); width: 1.15rem; height: 1.15rem; flex: none; margin: 0; }
+  .diag-opt:has(input:checked) { border-color: var(--accent); box-shadow: inset 0 0 0 1px var(--accent); }
+  .diag-opt:has(input:focus-visible) { outline: 2px solid var(--accent); outline-offset: 2px; }
+  .diag-nav { margin: 0.8rem 0 0; }
+  .diag-back { font: inherit; background: none; border: 0; color: var(--text-muted); cursor: pointer; padding: 0.4em 0; text-decoration: underline; }
+  .quiz form[hidden], #qres[hidden], #quiz-lead[hidden] { display: none; }
+  .quiz { scroll-margin-top: 1rem; }
+  .quiz-refazer { text-align: center; margin: 1rem 0 0; }
+  @media (max-width: 40rem) {
+    .quiz-head .lead { font-size: 1rem; }
+    .quiz-head .small { display: none; }
+    .quiz.tool-box { padding: 1rem 0.85rem; }
+  }
+</style>

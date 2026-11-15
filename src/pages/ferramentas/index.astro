@@ -1,5 +1,6 @@
 ---
 import BaseLayout from '../../layouts/BaseLayout.astro';
+import QuizCTA from '../../components/QuizCTA.astro';
 import { SITE_URL, TOOLS } from '../../consts';
 import { ANO_TABELAS, ATUALIZADO_EM } from '../../lib/calc';
 
@@ -46,6 +47,8 @@ const ld = {
       ))
     }
   </ul>
+
+  <QuizCTA compact />
 
   <section class="prose">
     <h2>Por que confiar nestas calculadoras</h2>
