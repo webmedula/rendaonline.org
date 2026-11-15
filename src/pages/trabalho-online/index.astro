@@ -2,6 +2,7 @@
 import { getCollection } from 'astro:content';
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import LeadMagnet from '../../components/LeadMagnet.astro';
+import QuizCTA from '../../components/QuizCTA.astro';
 import AuthorBox from '../../components/AuthorBox.astro';
 import Estrelas from '../../components/Estrelas.astro';
 import { SITE_URL, TIPOS_TRABALHO, type TipoTrabalho } from '../../consts';
@@ -61,6 +62,8 @@ const ld = [
       plataforma, sem custo para você. Isso não muda as notas: avaliamos do mesmo jeito plataformas com e sem indicação, e deixamos de fora
       as que não recomendamos, mesmo tendo programa de indicação.
     </p>
+
+    <QuizCTA compact />
 
     <h2>Resumo: qual escolher</h2>
     <div class="table-scroll">

@@ -701,3 +701,7 @@ button.btn { border: 0; cursor: pointer; font: inherit; font-weight: 600; }
   .prompt-card__text { background: #f3f5f4; }
   a { color: #0a664a; }
 }
+
+/* Botões lado a lado no topo da home */
+.hero-actions { display: flex; flex-wrap: wrap; gap: 0.6rem; justify-content: inherit; margin: 1rem 0 0; }
+.hero-actions .btn { margin: 0; }

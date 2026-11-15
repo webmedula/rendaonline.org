@@ -25,6 +25,7 @@ RewriteRule ^tag/.*$ /blog/ [R=301,L]
 RewriteRule ^author/.*$ /sobre/ [R=301,L]
 RewriteRule ^page/[0-9]+/?$ /blog/ [R=301,L]
 RewriteRule ^feed/?$ /rss.xml [R=301,L]
+RewriteRule ^quiz/?$ /quiz-renda-extra/ [R=301,L]
 RewriteRule ^sitemap_index\.xml$ /sitemap-index.xml [R=301,L]
 RewriteRule ^(post|page|category|post_tag|author|project)-sitemap\.xml$ /sitemap-index.xml [R=301,L]
 
