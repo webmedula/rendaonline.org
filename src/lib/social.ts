@@ -33,6 +33,8 @@ export interface SocialItem {
   prioridade: number;
   /** Pode voltar a ser postado depois de um tempo. */
   repetir: boolean;
+  /** false = só gera a imagem de compartilhamento (og), fora da fila do robô e do Pinterest. */
+  fila?: boolean;
 }
 
 export const FORMATOS = {
@@ -210,6 +212,47 @@ const PAGINAS: Omit<SocialItem, 'tipo' | 'repetir'>[] = [
   },
 ];
 
+// Páginas que só precisam da imagem de compartilhamento (WhatsApp, Facebook, LinkedIn),
+// sem entrar na fila de postagem automática.
+const SO_COMPARTILHAMENTO: Omit<SocialItem, 'tipo' | 'repetir' | 'fila' | 'prioridade' | 'hashtags' | 'gancho' | 'texto'>[] = [
+  {
+    id: 'mentoria',
+    path: '/mentoria/',
+    selo: 'Mentoria ao vivo',
+    titulo: 'Aprenda a criar sites e automações com IA',
+    subtitulo: 'E a vender esses serviços para empresas, com quem faz isso todo dia.',
+    cta: 'Conheça a mentoria',
+    data: '2026-11-13',
+  },
+  {
+    id: 'servicos',
+    path: '/servicos/',
+    selo: 'Serviços',
+    titulo: 'Sites, automações e IA para o seu negócio',
+    subtitulo: 'n8n instalado, VPS configurada, blogs prontos e atendimento com IA.',
+    cta: 'Veja os serviços',
+    data: '2026-11-12',
+  },
+  {
+    id: 'automacao-shopee-mercado-livre',
+    path: '/automacao-shopee-mercado-livre/',
+    selo: 'Para lojistas',
+    titulo: 'Automação para Shopee e Mercado Livre',
+    subtitulo: 'Pedidos no Tiny e nota fiscal emitida sem digitação.',
+    cta: 'Saiba mais',
+    data: '2026-11-13',
+  },
+  {
+    id: 'ferramentas',
+    path: '/ferramentas/',
+    selo: 'Calculadoras grátis',
+    titulo: 'Calculadoras grátis de salário, rescisão, férias e MEI',
+    subtitulo: 'Atualizadas com as tabelas de 2026. Sem cadastro.',
+    cta: 'Calcule grátis',
+    data: '2026-11-13',
+  },
+];
+
 let cache: SocialItem[] | undefined;
 
 export async function getSocialItems(): Promise<SocialItem[]> {
@@ -285,6 +328,9 @@ export async function getSocialItems(): Promise<SocialItem[]> {
     .filter((i) => i.tipo === 'artigo')
     .sort((a, b) => b.data.localeCompare(a.data))
     .forEach((i, n) => (i.prioridade = 1.5 + n * 1.5));
+
+  for (const p of SO_COMPARTILHAMENTO)
+    itens.push({ ...p, tipo: 'pagina', gancho: p.titulo, texto: p.subtitulo, hashtags: [], prioridade: 99, repetir: false, fila: false, data: new Date(p.data + 'T12:00:00Z').toISOString() });
 
   for (const i of itens) i.hashtags = [...new Set([...i.hashtags, ...BASE_TAGS])];
   cache = itens;

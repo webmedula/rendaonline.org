@@ -5,6 +5,7 @@ import { COMPANY_CITY, COMPANY_NAME, COMPANY_URL, whatsappLink } from '../consts
 export interface Props {
   title: string;
   description: string;
+  image?: string;
   eyebrow: string;
   headline: string;
   subhead: string;
@@ -28,7 +29,7 @@ const faqLd = {
 };
 ---
 
-<BaseLayout title={p.title} description={p.description} noads>
+<BaseLayout title={p.title} description={p.description} image={p.image} noads>
   <script slot="head" type="application/ld+json" set:html={JSON.stringify(faqLd)} />
   <section class="lp-hero">
     <p class="service-cta__eyebrow">{p.eyebrow}</p>

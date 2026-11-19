@@ -32,7 +32,7 @@ const ld = [
     dateModified: (d.updatedDate ?? d.pubDate).toISOString(),
     inLanguage: 'pt-BR',
     mainEntityOfPage: url,
-    image: `${SITE_URL}/og-default.png`,
+    image: `${SITE_URL}/social/plataforma-${p.id}/og.jpg`,
     author: { '@type': 'Person', name: AUTHOR_NAME, url: `${SITE_URL}/sobre/` },
     publisher: { '@type': 'Organization', name: SITE_TITLE, logo: { '@type': 'ImageObject', url: `${SITE_URL}/icon-512.png` } },
   },
@@ -48,7 +48,7 @@ const ld = [
 ];
 ---
 
-<BaseLayout title={d.title} description={d.description}>
+<BaseLayout title={d.title} description={d.description} image={`/social/plataforma-${p.id}/og.jpg`}>
   <script type="application/ld+json" slot="head" set:html={JSON.stringify(ld)} />
   <article class="prose">
     <nav class="meta small" aria-label="Você está em">

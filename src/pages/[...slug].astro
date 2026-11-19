@@ -7,9 +7,13 @@ import BlogPost from '../layouts/BlogPost.astro';
 export async function getStaticPaths() {
   const posts = await getCollection('blog', ({ data }) => !data.draft);
   return posts.map((post) => {
+    // 3 relacionados: mesma categoria primeiro, depois mais tags em comum, depois os mais novos.
+    const tags = new Set(post.data.tags);
+    const score = (p: (typeof posts)[number]) =>
+      (p.data.category === post.data.category ? 100 : 0) + p.data.tags.filter((t) => tags.has(t)).length * 10;
     const related = posts
-      .filter((p) => p.id !== post.id && p.data.category === post.data.category)
-      .sort((a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf())
+      .filter((p) => p.id !== post.id)
+      .sort((a, b) => score(b) - score(a) || b.data.pubDate.valueOf() - a.data.pubDate.valueOf())
       .slice(0, 3);
     return { params: { slug: post.id }, props: { post, related } };
   });

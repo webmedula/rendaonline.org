@@ -8,7 +8,7 @@ const posts = (await getCollection('blog', ({ data }) => !data.draft)).sort(
 );
 ---
 
-<BaseLayout title="Todos os artigos" description="Todos os tutoriais e reviews do Renda Online, do mais recente ao mais antigo.">
+<BaseLayout title="Todos os artigos" description="Todos os guias do Renda Online, do mais recente ao mais antigo: inteligência artificial, automação com n8n, criar e monetizar sites e IA para pequenas empresas.">
   <section class="hero">
     <h1>Todos os artigos</h1>
     <p>{posts.length} artigos, do mais recente ao mais antigo.</p>
