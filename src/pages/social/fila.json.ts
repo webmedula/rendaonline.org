@@ -4,7 +4,7 @@ import { SITE_URL } from '../../consts';
 import { getSocialItems, legendas } from '../../lib/social';
 
 export const GET: APIRoute = async () => {
-  const itens = (await getSocialItems()).map((i) => ({
+  const itens = (await getSocialItems()).filter((i) => i.fila !== false).map((i) => ({
     id: i.id,
     tipo: i.tipo,
     url: `${SITE_URL}${i.path}`,

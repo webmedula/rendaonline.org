@@ -1,0 +1,50 @@
+---
+// Links internos automáticos no fim de cada artigo: calculadoras ligadas ao tema
+// e o quiz (ou o diagnóstico, nos artigos para empresas).
+import QuizCTA from './QuizCTA.astro';
+import { TOOLS, type CategorySlug, type ToolSlug } from '../consts';
+
+interface Props {
+  category: CategorySlug;
+}
+const { category } = Astro.props;
+
+const POR_CATEGORIA: Record<CategorySlug, ToolSlug[]> = {
+  'ia-conteudo': ['quanto-cobrar-por-hora-freelancer', 'calculadora-das-mei'],
+  automacao: ['quanto-cobrar-por-hora-freelancer', 'calculadora-das-mei'],
+  ferramentas: ['quanto-cobrar-por-hora-freelancer', 'calculadora-juros-compostos'],
+  'criar-site': ['quanto-cobrar-por-hora-freelancer', 'calculadora-das-mei'],
+  'ia-empresas': ['calculadora-das-mei', 'calculadora-rescisao'],
+};
+const tools = POR_CATEGORIA[category].map((s) => TOOLS.find((t) => t.slug === s)!).filter(Boolean);
+const empresa = category === 'ia-empresas';
+---
+
+<aside class="continue" aria-label="Ferramentas grátis">
+  <p class="continue__t">Ferramentas grátis do Renda Online</p>
+  <ul>
+    {
+      empresa && (
+        <li>
+          <a href="/diagnostico-automacao/">Diagnóstico de automação</a>: veja em 2 minutos quanto tempo e dinheiro sua empresa perde com tarefas manuais.
+        </li>
+      )
+    }
+    {
+      tools.map((t) => (
+        <li>
+          <a href={`/ferramentas/${t.slug}/`}>{t.name}</a>: {t.summary}
+        </li>
+      ))
+    }
+    <li><a href="/ferramentas/">Todas as calculadoras</a></li>
+  </ul>
+</aside>
+{!empresa && <QuizCTA compact />}
+
+<style>
+  .continue { border: 1px solid var(--border); border-radius: 14px; padding: 1rem 1.3rem; margin: 2rem 0 1rem; background: var(--bg-soft); }
+  .continue__t { font-weight: 700; margin: 0 0 0.4rem; }
+  .continue ul { margin: 0; padding-left: 1.2rem; }
+  .continue li { margin: 0.3rem 0; }
+</style>

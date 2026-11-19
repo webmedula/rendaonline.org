@@ -8,7 +8,7 @@ import { renderSocialImage } from '../lib/social-image';
 const esc = (s: string) => s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
 
 export const GET: APIRoute = async () => {
-  const itens = (await getSocialItems()).slice().sort((a, b) => b.data.localeCompare(a.data));
+  const itens = (await getSocialItems()).filter((i) => i.fila !== false).sort((a, b) => b.data.localeCompare(a.data));
   const xml: string[] = [];
   for (const i of itens) {
     const img = `${SITE_URL}/social/${i.id}/pinterest.jpg`;
