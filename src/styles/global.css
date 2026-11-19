@@ -295,6 +295,28 @@ th {
   gap: 0.4rem;
 }
 
+.post-card__img {
+  display: block;
+  margin: -1.1rem -1.2rem 0.2rem;
+}
+
+.post-card__img img {
+  display: block;
+  width: 100%;
+  height: auto;
+  aspect-ratio: 1200 / 630;
+  object-fit: cover;
+  border-radius: 10px 10px 0 0;
+}
+
+.post-hero {
+  display: block;
+  width: 100%;
+  height: auto;
+  aspect-ratio: 1200 / 630;
+  margin: 0.5rem 0 1.2rem;
+}
+
 .post-card h2,
 .post-card h3 {
   font-size: 1.1rem;

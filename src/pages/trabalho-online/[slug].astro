@@ -60,6 +60,8 @@ const ld = [
       <span>Atualizado em <FormattedDate date={d.updatedDate ?? d.pubDate} /></span>
     </p>
 
+    <img class="post-hero" src={`/social/plataforma-${p.id}/og.jpg`} alt={`${d.name}: avaliação do Renda Online`} width="1200" height="630" fetchpriority="high" decoding="async" />
+
     <section class="plat-box" aria-label={`Resumo: ${d.name}`}>
       <p class="plat-box__nota"><Estrelas nota={d.nota} /> <span class="muted small">nossa nota · {tipo.short}</span></p>
       <dl class="plat-facts">
