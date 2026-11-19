@@ -14,6 +14,9 @@ const cat = CATEGORIES[post.data.category];
 ---
 
 <li class="post-card">
+  <a class="post-card__img" href={`/${post.id}/`} tabindex="-1" aria-hidden="true">
+    <img src={post.data.image ?? `/social/${post.id}/og.jpg`} alt="" width="1200" height="630" loading="lazy" decoding="async" />
+  </a>
   <span class="badge">{cat.name}</span>
   <Heading><a href={`/${post.id}/`}>{post.data.title}</a></Heading>
   <p>{post.data.description}</p>
