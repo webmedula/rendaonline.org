@@ -1,6 +1,7 @@
 ---
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import QuizCTA from '../../components/QuizCTA.astro';
+import CurriculoCTA from '../../components/CurriculoCTA.astro';
 import { SITE_URL, TOOLS } from '../../consts';
 import { ANO_TABELAS, ATUALIZADO_EM } from '../../lib/calc';
 
@@ -48,6 +49,8 @@ const ld = {
       ))
     }
   </ul>
+
+  <CurriculoCTA campaign="ferramentas" title="Currículo profissional pelo WhatsApp" />
 
   <QuizCTA compact />
 

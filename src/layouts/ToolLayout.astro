@@ -1,6 +1,7 @@
 ---
 import BaseLayout from './BaseLayout.astro';
 import LeadMagnet from '../components/LeadMagnet.astro';
+import CurriculoCTA from '../components/CurriculoCTA.astro';
 import { SITE_URL, TOOLS, COMPANY_NAME, whatsappLink, type ToolSlug } from '../consts';
 import { ATUALIZADO_EM } from '../lib/calc';
 
@@ -70,6 +71,15 @@ const ctaFinal = cta ?? {
   </section>
 
   <article class="prose">
+    {
+      slug === 'calculadora-rescisao' && (
+        <CurriculoCTA
+          campaign="calc-rescisao"
+          title="Saiu da empresa? Já deixe o currículo pronto"
+          text="Enquanto o acerto não cai, adiante a próxima vaga: o CurrículoZap monta seu currículo profissional em PDF pelo WhatsApp em uns 5 minutos, com prévia grátis antes de pagar."
+        />
+      )
+    }
     <slot />
 
     <h2>Perguntas frequentes</h2>
