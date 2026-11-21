@@ -1,29 +1,81 @@
 ---
 import { CATEGORIES } from '../consts';
 const path = Astro.url.pathname;
+const inConteudos = path.startsWith('/categoria/') || path.startsWith('/blog/');
+const cur = (match: boolean) => (match ? 'page' : undefined);
 ---
 
 <header class="site-header">
-  <div class="container">
+  <div class="container header-bar">
     <a class="brand" href="/" aria-label="Renda Online, página inicial">
       <picture>
         <source srcset="/logo-branco.png" media="(prefers-color-scheme: dark)" width="233" height="73" />
         <img src="/logo.png" alt="Renda Online" fetchpriority="high" width="181" height="56" class="brand-logo" />
       </picture>
     </a>
-    <nav class="nav" aria-label="Principal">
-      {
-        Object.entries(CATEGORIES).map(([slug, cat]) => (
-          <a href={`/categoria/${slug}/`} aria-current={path.startsWith(`/categoria/${slug}/`) ? 'page' : undefined}>
-            {cat.name}
-          </a>
-        ))
-      }
-      <a href="/trabalho-online/" aria-current={path.startsWith('/trabalho-online/') ? 'page' : undefined}>Trabalho online</a>
-      <a href="/ferramentas/" aria-current={path.startsWith('/ferramentas/') ? 'page' : undefined}>Calculadoras</a>
-      <a href="/servicos/" class="nav-cta" aria-current={path === '/servicos/' ? 'page' : undefined}>Serviços</a>
-      <a href="/mentoria/" aria-current={path === '/mentoria/' ? 'page' : undefined}>Mentoria</a>
-      <a href="/sobre/" aria-current={path === '/sobre/' ? 'page' : undefined}>Sobre</a>
+
+    <button class="menu-toggle" type="button" aria-expanded="false" aria-controls="menu-principal">
+      <svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path class="i-open" d="M4 7h16M4 12h16M4 17h16"/><path class="i-close" d="M6 6l12 12M18 6L6 18"/></svg>
+      <span>Menu</span>
+    </button>
+
+    <nav class="nav" id="menu-principal" aria-label="Principal">
+      <ul class="nav-list">
+        <li class="nav-item has-sub">
+          <button class="nav-link sub-toggle" type="button" aria-expanded="false" aria-controls="sub-conteudos" aria-current={cur(inConteudos)}>
+            Conteúdos
+            <svg viewBox="0 0 24 24" width="14" height="14" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg>
+          </button>
+          <ul class="sub" id="sub-conteudos">
+            {
+              Object.entries(CATEGORIES).map(([slug, cat]) => (
+                <li>
+                  <a href={`/categoria/${slug}/`} aria-current={cur(path.startsWith(`/categoria/${slug}/`))}>
+                    <strong>{cat.name}</strong>
+                    <small>{cat.description}</small>
+                  </a>
+                </li>
+              ))
+            }
+            <li class="sub-all"><a href="/blog/" aria-current={cur(path.startsWith('/blog/'))}>Ver todos os artigos →</a></li>
+          </ul>
+        </li>
+        <li class="nav-item"><a class="nav-link" href="/trabalho-online/" aria-current={cur(path.startsWith('/trabalho-online/'))}>Trabalho online</a></li>
+        <li class="nav-item"><a class="nav-link" href="/ferramentas/" aria-current={cur(path.startsWith('/ferramentas/'))}>Calculadoras</a></li>
+        <li class="nav-item"><a class="nav-link" href="/mentoria/" aria-current={cur(path === '/mentoria/')}>Mentoria</a></li>
+        <li class="nav-item nav-item-cta"><a class="nav-cta" href="/servicos/" aria-current={cur(path === '/servicos/')}>Serviços</a></li>
+      </ul>
     </nav>
   </div>
 </header>
+
+<script is:inline>
+  (function () {
+    var header = document.currentScript.previousElementSibling;
+    var menuBtn = header.querySelector('.menu-toggle');
+    var subBtn = header.querySelector('.sub-toggle');
+    var item = subBtn.parentElement;
+    function setSub(open) {
+      subBtn.setAttribute('aria-expanded', String(open));
+      item.classList.toggle('open', open);
+    }
+    menuBtn.addEventListener('click', function () {
+      var open = menuBtn.getAttribute('aria-expanded') !== 'true';
+      menuBtn.setAttribute('aria-expanded', String(open));
+      header.classList.toggle('menu-open', open);
+    });
+    subBtn.addEventListener('click', function (e) {
+      e.stopPropagation();
+      setSub(subBtn.getAttribute('aria-expanded') !== 'true');
+    });
+    document.addEventListener('click', function (e) {
+      if (!item.contains(e.target)) setSub(false);
+    });
+    document.addEventListener('keydown', function (e) {
+      if (e.key === 'Escape') {
+        if (item.classList.contains('open')) { setSub(false); subBtn.focus(); }
+        else if (header.classList.contains('menu-open')) { menuBtn.click(); menuBtn.focus(); }
+      }
+    });
+  })();
+</script>
