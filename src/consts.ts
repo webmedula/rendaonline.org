@@ -41,6 +41,12 @@ export const COMPANY_EMAIL = 'contato@webmedula.com.br';
 export const COMPANY_INSTAGRAM = 'https://www.instagram.com/webmedula/';
 export const COMPANY_CITY = 'Goiânia (GO)';
 
+// CurrículoZap (curriculo.rendaonline.org): currículo profissional feito pelo WhatsApp.
+export const CURRICULO_URL = 'https://curriculo.rendaonline.org/';
+export function curriculoLink(campaign: string) {
+  return `${CURRICULO_URL}?utm_source=rendaonline&utm_medium=site&utm_campaign=${encodeURIComponent(campaign)}`;
+}
+
 export function whatsappLink(message: string) {
   return `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(message)}`;
 }

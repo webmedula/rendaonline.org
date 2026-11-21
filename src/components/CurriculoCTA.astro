@@ -1,0 +1,43 @@
+---
+// Chamada para o CurrículoZap (currículo pelo WhatsApp). Usada em /ferramentas/, na calculadora de rescisão e na página de links.
+import { curriculoLink } from '../consts';
+
+interface Props {
+  campaign: string;
+  title?: string;
+  text?: string;
+}
+const {
+  campaign,
+  title = 'Precisa de um currículo novo?',
+  text = 'O CurrículoZap monta um currículo profissional em PDF pelo WhatsApp: você responde algumas perguntas por texto ou áudio e vê a prévia grátis antes de pagar.',
+} = Astro.props;
+---
+
+<aside class="cv-cta" aria-label="Currículo pelo WhatsApp">
+  <span class="cv-cta__emoji" aria-hidden="true">📄</span>
+  <div class="cv-cta__txt">
+    <p class="cv-cta__t">{title}</p>
+    <p>{text}</p>
+  </div>
+  <a class="btn" href={curriculoLink(campaign)} target="_blank" rel="noopener" data-event="curriculo_click">Fazer meu currículo</a>
+</aside>
+
+<script>
+  document.querySelectorAll<HTMLAnchorElement>('a[data-event="curriculo_click"]').forEach((a) =>
+    a.addEventListener('click', () => {
+      const w = window as unknown as { gtag?: (...args: unknown[]) => void };
+      if (typeof w.gtag === 'function') w.gtag('event', 'curriculo_click', { page_path: location.pathname });
+    }),
+  );
+</script>
+
+<style>
+  .cv-cta { display: flex; flex-wrap: wrap; align-items: center; gap: 0.8rem 1.2rem; border: 2px solid var(--accent); border-radius: 14px; padding: 1.1rem 1.3rem; margin: 2rem 0; background: var(--bg-soft); }
+  .cv-cta__emoji { font-size: 2.2rem; line-height: 1; }
+  .cv-cta__txt { flex: 1 1 18rem; }
+  .cv-cta__txt p { margin: 0; }
+  .cv-cta__t { font-weight: 700; font-size: 1.15rem; margin-bottom: 0.2rem !important; }
+  .cv-cta .btn { flex: none; }
+  @media (max-width: 30rem) { .cv-cta .btn { width: 100%; text-align: center; } }
+</style>

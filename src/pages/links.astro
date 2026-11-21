@@ -2,7 +2,7 @@
 // Página do link da bio do Instagram: o que é mais útil, sempre atualizado.
 import BaseLayout from '../layouts/BaseLayout.astro';
 import { getCollection } from 'astro:content';
-import { TOOLS, whatsappLink } from '../consts';
+import { TOOLS, whatsappLink, CURRICULO_URL } from '../consts';
 
 const posts = (await getCollection('blog', ({ data }) => !data.draft))
   .sort((a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf())
@@ -11,6 +11,7 @@ const utm = '?utm_source=instagram&utm_medium=social&utm_campaign=bio';
 const destaques = [
   { href: '/quiz-renda-extra/', label: '🧩 Quiz: qual renda extra online combina com você?' },
   { href: '/50-prompts-ia/', label: '🎁 50 prompts para ganhar dinheiro com IA (PDF grátis)' },
+  { href: CURRICULO_URL, label: '📄 Currículo profissional pelo WhatsApp em 5 minutos', external: true },
   { href: '/ferramentas/', label: '🧮 Calculadoras grátis: salário, 13º, rescisão, férias, MEI' },
   { href: '/trabalho-online/', label: '💵 Sites para trabalhar online e ganhar em dólar' },
   { href: '/diagnostico-automacao/', label: '⚙️ Diagnóstico grátis de automação para empresas' },
@@ -24,7 +25,7 @@ const destaques = [
 
     <h2>Comece por aqui</h2>
     <ul class="links-list">
-      {destaques.map((d) => <li><a class="links-btn" href={d.href + utm}>{d.label}</a></li>)}
+      {destaques.map((d) => <li><a class="links-btn" href={d.href + utm} target={d.external ? '_blank' : undefined} rel={d.external ? 'noopener' : undefined}>{d.label}</a></li>)}
     </ul>
 
     <h2>Guias mais recentes</h2>
