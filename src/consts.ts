@@ -227,6 +227,12 @@ export const TOOLS = [
     summary: 'Descubra quanto cai na conta depois do INSS e do Imposto de Renda, já com a isenção até R$ 5 mil.',
   },
   {
+    slug: 'calculadora-juros-divida',
+    name: 'Calculadora de juros da dívida e portabilidade',
+    short: 'Juros da dívida',
+    summary: 'Descubra a taxa real do seu empréstimo, quanto ainda vai pagar de juros e quanto economiza com portabilidade.',
+  },
+  {
     slug: 'calculadora-rescisao',
     name: 'Calculadora de rescisão',
     short: 'Rescisão',

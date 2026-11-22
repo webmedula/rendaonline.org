@@ -18,6 +18,7 @@ export function num(el: HTMLInputElement | null): number {
   if (!el) return 0;
   let s = el.value.trim().replace(/[R$\s]/g, '');
   if (s.includes(',')) s = s.replace(/\./g, '').replace(',', '.');
+  else if (/^\d{1,3}(\.\d{3})+$/.test(s)) s = s.replace(/\./g, ''); // "10.000" = dez mil
   const n = parseFloat(s);
   return Number.isFinite(n) ? n : 0;
 }
