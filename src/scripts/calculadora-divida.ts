@@ -274,6 +274,17 @@ function calcRotativo(t: Taxa) {
   return html + compartilhar;
 }
 
+// Link vindo da página de taxas (?tipo=...): só escolhe o tipo, sem calcular ainda.
+{
+  const q = new URLSearchParams(location.search);
+  const tipo = q.get('tipo');
+  if (tipo && [...q.keys()].length === 1 && tipo in TAXAS) {
+    el('tipo').value = tipo;
+    history.replaceState(null, '', location.pathname);
+    sync();
+  }
+}
+
 bind(f, r, () => {
   const t = sync();
   return t.modo === 'rotativo' ? calcRotativo(t) : calcParcelas(t);

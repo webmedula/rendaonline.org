@@ -9,7 +9,7 @@ import bcb from './taxas-bcb.json';
 
 const MESES = ['janeiro', 'fevereiro', 'março', 'abril', 'maio', 'junho', 'julho', 'agosto', 'setembro', 'outubro', 'novembro', 'dezembro'];
 /** "2026-09" -> "setembro de 2026" */
-const mesExtenso = (ym: string) => `${MESES[Number(ym.slice(5, 7)) - 1]} de ${ym.slice(0, 4)}`;
+export const mesExtenso = (ym: string) => `${MESES[Number(ym.slice(5, 7)) - 1]} de ${ym.slice(0, 4)}`;
 
 export type TipoDivida =
   | 'consignado-inss'
@@ -135,7 +135,10 @@ const RESERVA: Record<TipoDivida, Taxa> = {
   },
 };
 
-type Bcb = { atualizadoEm: string | null; series: Record<string, { valor: number; mes: string }> };
+type Bcb = {
+  atualizadoEm: string | null;
+  series: Record<string, { valor: number; mes: string; dia?: string; hist?: [string, number][] }>;
+};
 const dados = bcb as Bcb;
 
 /** Taxas finais: média mais recente buscada no BC, ou a reserva acima. */
@@ -151,6 +154,15 @@ export const TAXAS = Object.fromEntries(
 
 /** Mês em que as taxas foram conferidas pela última vez. */
 export const ATUALIZACAO_TAXAS = dados.atualizadoEm ? mesExtenso(dados.atualizadoEm.slice(0, 7)) : 'novembro de 2026';
+
+/** Últimos meses da média do BC para um tipo ([["2026-09", 1.76], ...]), do mais antigo ao mais novo. */
+export function historico(k: TipoDivida): [string, number][] {
+  const c = RESERVA[k].sgs;
+  return (c && dados.series[String(c)]?.hist) || [];
+}
+
+/** Meta da Selic (% ao ano) e a data da consulta, se o robô já buscou. */
+export const SELIC = dados.series['432'] ? { valor: dados.series['432'].valor, dia: dados.series['432'].dia ?? '' } : null;
 
 /** Opções para trocar uma dívida cara por outra mais barata (mostradas para rotativo, cheque especial e parcelamentos caros). */
 export const TROCAS: TipoDivida[] = ['pessoal', 'consignado-privado', 'consignado-inss'];

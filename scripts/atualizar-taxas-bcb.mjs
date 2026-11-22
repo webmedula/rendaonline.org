@@ -21,7 +21,9 @@ const SERIES = {
   25477: ['pessoas fisicas', 'cartao de credito', 'rotativo'],
   25478: ['pessoas fisicas', 'cartao de credito', 'parcelado'],
   25497: ['pessoas fisicas', 'imobiliario'],
+  432: ['meta selic'], // Selic (% a.a.), série diária: guardamos só o último valor
 };
+const SELIC = '432';
 
 const norm = (s) => s.normalize('NFD').replace(/[̀-ͯ]/g, '').toLowerCase();
 
@@ -63,16 +65,26 @@ for (const [codigo, palavras] of Object.entries(SERIES)) {
     const faltam = palavras.filter((w) => !norm(t).includes(w));
     if (faltam.length) throw new Error(`o nome oficial não bate (${t}); faltou: ${faltam.join(', ')}`);
 
-    const dados = await getJson(`https://api.bcb.gov.br/dados/serie/bcdata.sgs.${codigo}/dados/ultimos/1?formato=json`);
-    const ult = Array.isArray(dados) ? dados[dados.length - 1] : null;
-    const valor = Number(String(ult?.valor ?? '').replace(',', '.'));
-    const [, mm, aaaa] = String(ult?.data ?? '').split('/');
-    if (!Number.isFinite(valor) || valor < 0.1 || valor > 40) throw new Error(`valor fora da faixa: ${ult?.valor}`);
-    if (!/^\d{2}$/.test(mm ?? '') || !/^\d{4}$/.test(aaaa ?? '')) throw new Error(`data inválida: ${ult?.data}`);
+    const selic = codigo === SELIC;
+    // Séries mensais: últimos 13 meses (para o histórico da página /taxas-de-juros/).
+    const dados = await getJson(`https://api.bcb.gov.br/dados/serie/bcdata.sgs.${codigo}/dados/ultimos/${selic ? 1 : 13}?formato=json`);
+    if (!Array.isArray(dados) || !dados.length) throw new Error('resposta vazia');
+    const pontos = dados.map((d) => {
+      const v = Number(String(d?.valor ?? '').replace(',', '.'));
+      const [dd, mm, aaaa] = String(d?.data ?? '').split('/');
+      if (!Number.isFinite(v) || v < 0.1 || v > 40) throw new Error(`valor fora da faixa: ${d?.valor}`);
+      if (!/^\d{2}$/.test(mm ?? '') || !/^\d{4}$/.test(aaaa ?? '')) throw new Error(`data inválida: ${d?.data}`);
+      return { valor: Math.round(v * 100) / 100, mes: `${aaaa}-${mm}`, dia: `${aaaa}-${mm}-${dd}` };
+    });
+    const ult = pontos[pontos.length - 1];
+    const valor = ult.valor;
+    const [aaaa, mm] = ult.mes.split('-');
     const antes = series[codigo];
-    series[codigo] = { valor: Math.round(valor * 100) / 100, mes: `${aaaa}-${mm}` };
+    series[codigo] = selic
+      ? { valor, mes: ult.mes, dia: ult.dia }
+      : { valor, mes: ult.mes, hist: pontos.map((x) => [x.mes, x.valor]) };
     ok++;
-    linhas.push(`| ${codigo} | ${t} | ${valor.toFixed(2)}% a.m. | ${mm}/${aaaa} | ${antes ? `${antes.valor}% (${antes.mes})` : 'novo'} |`);
+    linhas.push(`| ${codigo} | ${t} | ${valor.toFixed(2)}% ${selic ? 'a.a.' : 'a.m.'} | ${mm}/${aaaa} | ${antes ? `${antes.valor}% (${antes.mes})` : 'novo'} |`);
   } catch (e) {
     linhas.push(`| ${codigo} | ⚠️ ${e.message} | mantido | | ${series[codigo] ? `${series[codigo].valor}% (${series[codigo].mes})` : 'reserva do código'} |`);
   }

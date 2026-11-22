@@ -1,0 +1,233 @@
+---
+// Taxas médias de juros do mês, por tipo de crédito. Os números vêm de src/data/taxas-bcb.json,
+// atualizado sozinho pelo robô .github/workflows/taxas-bcb.yml (API pública do Banco Central).
+import BaseLayout from '../layouts/BaseLayout.astro';
+import LeadMagnet from '../components/LeadMagnet.astro';
+import { SITE_URL } from '../consts';
+import { brl } from '../lib/calc';
+import { pct, anual, parcela } from '../lib/divida';
+import { TAXAS, SELIC, historico, mesExtenso, type TipoDivida } from '../data/taxas-juros';
+
+const ORDEM: TipoDivida[] = [
+  'imobiliario',
+  'consignado-inss',
+  'consignado-publico',
+  'veiculos',
+  'consignado-privado',
+  'pessoal',
+  'cheque-especial',
+  'cartao-parcelado',
+  'cartao-rotativo',
+];
+
+type Linha = {
+  k: TipoDivida;
+  nome: string;
+  m: number;
+  aa: number;
+  ref: string;
+  hist: [string, number][];
+  varMes: number | null;
+  var12: number | null;
+  spark: string;
+  jurosMil: number;
+  teto: boolean;
+};
+
+const linhas: Linha[] = ORDEM.map((k) => {
+  const t = TAXAS[k];
+  const m = (t.mensal ?? 0) * 0.01;
+  const hist = historico(k);
+  const n = hist.length;
+  const varMes = n >= 2 ? hist[n - 1][1] - hist[n - 2][1] : null;
+  const var12 = n >= 13 ? hist[n - 1][1] - hist[0][1] : null;
+  let spark = '';
+  if (n >= 3) {
+    const vals = hist.map((h) => h[1]);
+    const lo = Math.min(...vals);
+    const hi = Math.max(...vals);
+    const span = hi - lo || 1;
+    spark = vals.map((v, i) => `${((i / (n - 1)) * 100).toFixed(1)},${(26 - ((v - lo) / span) * 22).toFixed(1)}`).join(' ');
+  }
+  return {
+    k,
+    nome: t.nome,
+    m,
+    aa: anual(m),
+    ref: t.ref.split(' (')[0],
+    hist,
+    varMes,
+    var12,
+    spark,
+    jurosMil: parcela(1000, m, 12) * 12 - 1000,
+    teto: k.startsWith('cartao') && parcela(1000, m, 12) * 12 - 1000 > 1000,
+  };
+});
+
+const maxM = Math.max(...linhas.map((l) => l.m));
+const mesRef = (() => {
+  const meses = linhas.map((l) => l.hist.at(-1)?.[0]).filter(Boolean) as string[];
+  return meses.length ? mesExtenso(meses.sort().at(-1)!) : linhas.find((l) => l.k === 'pessoal')!.ref.replace('média de ', '');
+})();
+const pp = (v: number) => `${v > 0 ? '+' : v < 0 ? '−' : ''}${Math.abs(v).toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })} p.p.`;
+const selicTxt = SELIC ? `${SELIC.valor.toLocaleString('pt-BR', { maximumFractionDigits: 2 })}% ao ano` : null;
+const fmtDia = (d: string) => d.split('-').reverse().join('/');
+const inss = linhas.find((l) => l.k === 'consignado-inss')!;
+const rot = linhas.find((l) => l.k === 'cartao-rotativo')!;
+
+const title = `Taxas de juros hoje: média de cada tipo de crédito (${mesRef})`;
+const description = `Taxa média de juros do consignado, empréstimo pessoal, cheque especial, cartão de crédito e financiamentos em ${mesRef}, segundo o Banco Central. Atualizado automaticamente.`;
+
+const faq = [
+  {
+    q: 'Qual é a taxa média do consignado do INSS hoje?',
+    a: `Pelo último dado do Banco Central (${inss.ref}), a média do consignado de aposentados e pensionistas do INSS é de ${pct(inss.m)} ao mês, ou ${pct(inss.aa, 1)} ao ano.`,
+  },
+  {
+    q: 'Qual é o crédito mais caro do Brasil?',
+    a: `O rotativo do cartão de crédito, com média de ${pct(rot.m)} ao mês (${pct(rot.aa, 0)} ao ano). Em seguida vêm o parcelamento da fatura e o cheque especial. O mais barato para pessoa física é o financiamento imobiliário, seguido do consignado.`,
+  },
+  {
+    q: 'De onde vêm esses números?',
+    a: 'Das estatísticas de crédito do Banco Central do Brasil (Sistema Gerenciador de Séries Temporais). Os bancos informam ao BC as taxas de todos os contratos novos, e o BC publica a média de cada modalidade no fim do mês seguinte. Esta página busca os dados sozinha duas vezes por semana.',
+  },
+  {
+    q: 'Por que a taxa que o banco me ofereceu é diferente da média?',
+    a: 'A média junta clientes com perfis bem diferentes. A sua taxa depende do seu histórico, da sua renda, do relacionamento com o banco e de garantias. Use a média como régua: se a sua estiver muito acima, vale negociar, comparar ou fazer portabilidade.',
+  },
+  {
+    q: 'O que é taxa ao mês e taxa ao ano?',
+    a: 'Os juros são compostos: os juros de um mês entram na conta do mês seguinte. Por isso 2% ao mês não são 24% ao ano, e sim cerca de 26,8% ao ano. Nesta página, a taxa anual é a equivalente composta da taxa mensal.',
+  },
+];
+
+const ld = [
+  {
+    '@context': 'https://schema.org',
+    '@type': 'Dataset',
+    name: `Taxas médias de juros para pessoa física (${mesRef})`,
+    description,
+    url: `${SITE_URL}/taxas-de-juros/`,
+    inLanguage: 'pt-BR',
+    isBasedOn: 'https://www.bcb.gov.br/estatisticas/estatisticasmonetariascredito',
+    creator: { '@type': 'Organization', name: 'Renda Online' },
+  },
+  {
+    '@context': 'https://schema.org',
+    '@type': 'FAQPage',
+    mainEntity: faq.map((f) => ({ '@type': 'Question', name: f.q, acceptedAnswer: { '@type': 'Answer', text: f.a } })),
+  },
+];
+---
+
+<BaseLayout title={title} description={description} image="/social/taxas-de-juros/og.jpg">
+  <script type="application/ld+json" slot="head" set:html={JSON.stringify(ld)} />
+  <div class="tool-head">
+    <nav class="breadcrumb" aria-label="Você está em"><a href="/">Início</a> › <a href="/ferramentas/">Ferramentas</a> › Taxas de juros</nav>
+    <h1>Taxas de juros hoje: quanto cada tipo de crédito cobra</h1>
+    <p class="lead">
+      A média de juros que os bancos cobraram de pessoas físicas em <strong>{mesRef}</strong>, segundo o Banco Central. Use como régua antes de
+      contratar, negociar ou levar a sua dívida para outro banco.
+    </p>
+    <p class="small muted">Fonte: Banco Central do Brasil · atualizado automaticamente · {selicTxt && <>Selic: {selicTxt}{SELIC?.dia && ` (em ${fmtDia(SELIC.dia)})`}</>}</p>
+  </div>
+
+  <section class="tx-grid" aria-label="Taxas médias por tipo de crédito">
+    {
+      linhas.map((l) => (
+        <article class="tx-card">
+          <h2>{l.nome}</h2>
+          <p class="tx-rate">
+            <strong>{pct(l.m)}</strong> <span>ao mês</span>
+          </p>
+          <p class="tx-year">{pct(l.aa, 1)} ao ano</p>
+          {l.varMes !== null && (
+            <p class={`tx-var ${l.varMes > 0 ? 'up' : l.varMes < 0 ? 'down' : ''}`}>
+              {l.varMes > 0 ? '▲' : l.varMes < 0 ? '▼' : '='} {pp(l.varMes)} no mês{l.var12 !== null && <> · {pp(l.var12)} em 12 meses</>}
+            </p>
+          )}
+          {l.spark && (
+            <svg class="tx-spark" viewBox="0 0 100 28" preserveAspectRatio="none" role="img" aria-label={`Evolução nos últimos ${l.hist.length} meses`}>
+              <polyline points={l.spark} fill="none" stroke="currentColor" stroke-width="2" vector-effect="non-scaling-stroke" />
+            </svg>
+          )}
+          <p class="tx-ref">{l.ref}</p>
+          <a class="tx-link" href={`/ferramentas/calculadora-juros-divida/?tipo=${l.k}`}>Comparar com a minha taxa →</a>
+        </article>
+      ))
+    }
+  </section>
+
+  <article class="prose">
+    <h2>Do mais barato ao mais caro</h2>
+    <p>Mesma régua para todos: a barra mostra a taxa média ao mês de cada modalidade.</p>
+    <ul class="tx-bars">
+      {
+        linhas.map((l) => (
+          <li>
+            <span class="tx-bars__n">{l.nome}</span>
+            <span class="tx-bars__b">
+              <i style={`width:${Math.max(2, (l.m / maxM) * 100)}%`} class={l.m > 0.05 ? 'hot' : l.m > 0.025 ? 'mid' : ''} />
+            </span>
+            <span class="tx-bars__v">{pct(l.m)}</span>
+          </li>
+        ))
+      }
+    </ul>
+
+    <h2>Quanto custam R$ 1.000 em 12 parcelas</h2>
+    <p>Para ter noção do peso de cada taxa: um empréstimo de R$ 1.000 pago em 12 parcelas fixas, na taxa média de cada modalidade.</p>
+    <div class="table-scroll">
+      <table>
+        <thead><tr><th>Tipo de crédito</th><th>Parcela</th><th>Juros no total</th></tr></thead>
+        <tbody>
+          {
+            linhas.map((l) => (
+              <tr>
+                <td>{l.nome}</td>
+                <td>{l.teto ? brl(2000 / 12) : brl(parcela(1000, l.m, 12))}</td>
+                <td>{l.teto ? `${brl(1000)}*` : brl(l.jurosMil)}</td>
+              </tr>
+            ))
+          }
+        </tbody>
+      </table>
+    </div>
+    {linhas.some((l) => l.teto) && <p class="small muted">* Na taxa cheia, os juros passariam de R$ 1.000, mas a Lei 14.690/2023 limita os juros e encargos do rotativo e do parcelamento da fatura a 100% da dívida original.</p>}
+    <p>
+      A diferença entre o consignado e o cartão é enorme. Se você tem dívida no rotativo ou no cheque especial, trocar por um crédito mais
+      barato costuma ser o primeiro passo. Veja <a href="/como-sair-do-rotativo-do-cartao/">como sair do rotativo do cartão</a>{' e '}<a href="/trocar-cheque-especial-por-emprestimo-pessoal/">quando vale trocar o cheque especial por empréstimo</a>.
+    </p>
+
+    <aside class="tx-cta">
+      <p><strong>Sua taxa está acima da média?</strong> Coloque o valor, a parcela e o prazo da sua dívida e veja a taxa real, quanto ainda vai pagar de juros e quanto economizaria com portabilidade.</p>
+      <a class="btn" href="/ferramentas/calculadora-juros-divida/">Calcular os juros da minha dívida</a>
+    </aside>
+
+    <h2>Como usar estas taxas</h2>
+    <ul>
+      <li><strong>Antes de contratar:</strong> compare a proposta com a média. Se estiver bem acima, pesquise em outros bancos.</li>
+      <li><strong>Para negociar:</strong> mostre ao seu banco que a média do mercado é menor. Muitos baixam a taxa para não perder o cliente.</li>
+      <li><strong>Para fazer portabilidade:</strong> empréstimo pessoal, consignado e financiamentos podem ir para outro banco. Veja o <a href="/portabilidade-de-credito-como-funciona/">passo a passo da portabilidade</a>.</li>
+      <li><strong>Para renegociar dívidas atrasadas:</strong> veja <a href="/como-renegociar-dividas-desenrola/">como renegociar e o que mudou no Desenrola</a>.</li>
+    </ul>
+
+    <h2>Perguntas frequentes</h2>
+    {
+      faq.map((f) => (
+        <details>
+          <summary><strong>{f.q}</strong></summary>
+          <p>{f.a}</p>
+        </details>
+      ))
+    }
+
+    <p class="notice small">
+      Taxas médias de juros das operações de crédito para pessoas físicas, publicadas pelo Banco Central do Brasil (séries SGS 25463, 25464,
+      25466, 25467, 25468, 25471, 25477, 25478 e 25497; Selic: série 432). Atualizadas automaticamente quando o BC divulga um novo mês. Conteúdo
+      educativo: o Renda Online não oferece nem intermedeia crédito.
+    </p>
+
+    <LeadMagnet />
+  </article>
+</BaseLayout>
