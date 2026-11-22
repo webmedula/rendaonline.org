@@ -80,4 +80,19 @@ const fullTitle = title === SITE_TITLE ? title : `${title} - ${SITE_TITLE}`;
   crossorigin="anonymous"
   is:inline></script>}
 
+<script is:inline>
+  // Contador de visitas por campanha (links com UTM das artes e textos de divulgação). Sem cookies e sem IP.
+  (function () {
+    try {
+      var q = new URLSearchParams(location.search), s = q.get('utm_source');
+      if (!s || !navigator.sendBeacon) return;
+      var c = q.get('utm_campaign') || '', k = 'utm:' + s + ':' + c + ':' + location.pathname;
+      if (sessionStorage.getItem(k)) return;
+      sessionStorage.setItem(k, '1');
+      var r = ''; try { r = document.referrer ? new URL(document.referrer).hostname : ''; } catch (e) {}
+      navigator.sendBeacon('/api/visita.php', JSON.stringify({ s: s, m: q.get('utm_medium') || '', c: c, p: location.pathname, r: r }));
+    } catch (e) {}
+  })();
+</script>
+
 {Astro.url.pathname === '/' && <script type="application/ld+json" set:html={JSON.stringify(orgLd)} />}
