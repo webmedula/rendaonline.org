@@ -195,7 +195,7 @@ th {
 
 .site-header {
   position: relative;
-  z-index: 50;
+  z-index: 1000;
 }
 
 .header-bar {
@@ -274,9 +274,21 @@ th {
   border: 1px solid var(--border);
   border-radius: 12px;
   box-shadow: 0 12px 32px rgba(0, 0, 0, 0.14);
+  z-index: 1001;
 }
 
 .nav-item.open > .sub { display: block; }
+
+/* Ponte invisível entre o botão e o submenu, para o hover não fechar no caminho */
+.sub::before { content: ''; position: absolute; left: 0; right: 0; top: -0.6rem; height: 0.6rem; }
+
+/* Desktop com mouse: abre também ao passar o mouse ou focar com o teclado (funciona sem JavaScript) */
+@media (hover: hover) and (min-width: 52.01rem) {
+  .has-sub:hover > .sub,
+  .has-sub:focus-within > .sub { display: block; }
+  .has-sub:hover > .sub-toggle { background: var(--bg-soft); }
+  .has-sub:hover > .sub-toggle svg { transform: rotate(180deg); }
+}
 
 .sub a {
   display: block;
