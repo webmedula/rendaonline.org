@@ -1,0 +1,49 @@
+name: Taxas de juros do Banco Central
+
+# Atualiza as taxas médias usadas pela calculadora de juros da dívida (/ferramentas/calculadora-juros-divida/).
+# O BC publica as médias do mês anterior no fim de cada mês; o robô confere duas vezes por semana
+# e só faz commit e novo deploy quando algum valor muda.
+on:
+  schedule:
+    - cron: '17 12 * * 1,4' # segunda e quinta, 09:17 em Brasília
+  workflow_dispatch:
+
+concurrency:
+  group: taxas-bcb
+  cancel-in-progress: false
+
+permissions:
+  contents: write
+  actions: write
+
+jobs:
+  atualizar:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      - name: Buscar taxas na API do Banco Central
+        run: node scripts/atualizar-taxas-bcb.mjs
+
+      - name: Salvar e publicar se mudou
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          git diff --quiet src/data/taxas-bcb.json && { echo "Sem mudança nas taxas."; exit 0; }
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add src/data/taxas-bcb.json
+          git commit -m "Taxas de juros: atualiza médias do Banco Central"
+          for i in 1 2 3 4; do
+            if git pull --rebase -q origin main && git push -q origin HEAD:main; then
+              # Commits feitos pelo robô não disparam o deploy sozinhos; chamamos ele aqui.
+              gh workflow run deploy.yml --ref main
+              exit 0
+            fi
+            sleep $((i * 5))
+          done
+          exit 1
