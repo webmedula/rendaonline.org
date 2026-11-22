@@ -8,6 +8,8 @@ import { linksCurtos } from './links-curtos.mjs';
 export default defineConfig({
   site: 'https://rendaonline.org',
   trailingSlash: 'always',
+  // Mantém o espaço entre texto e link quando o link começa numa linha nova ("Veja<a" colava as palavras).
+  compressHTML: false,
   redirects: { ...redirectsRedes, ...linksCurtos, '/quiz/': '/quiz-renda-extra/' },
   build: {
     format: 'directory',

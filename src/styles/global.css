@@ -964,3 +964,29 @@ button.btn { border: 0; cursor: pointer; font: inherit; font-weight: 600; }
 .dv-share { margin: 0; }
 .dv-share .btn { width: 100%; text-align: center; }
 @media (min-width: 640px) { .dv-share .btn { width: auto; } }
+
+/* ---------- Taxas de juros do mês (/taxas-de-juros/) ---------- */
+.tx-grid { max-width: var(--max); margin: 1.5rem auto; display: grid; gap: 0.8rem; grid-template-columns: repeat(auto-fill, minmax(15rem, 1fr)); }
+.tx-card { border: 1px solid var(--border); border-radius: 12px; padding: 0.9rem 1rem; background: var(--bg-soft); display: flex; flex-direction: column; gap: 0.15rem; }
+.tx-card h2 { font-size: 0.98rem; margin: 0 0 0.3rem; line-height: 1.3; }
+.tx-rate { margin: 0; }
+.tx-rate strong { font-size: 1.9rem; color: var(--accent); font-variant-numeric: tabular-nums; }
+.tx-rate span { color: var(--text-muted); font-size: 0.9rem; }
+.tx-year { margin: 0; font-weight: 600; font-size: 0.95rem; }
+.tx-var { margin: 0.2rem 0 0; font-size: 0.82rem; color: var(--text-muted); }
+.tx-var.up { color: var(--dv-bad); }
+.tx-var.down { color: var(--accent); }
+.tx-spark { width: 100%; height: 28px; color: var(--accent); margin: 0.35rem 0 0.1rem; }
+.tx-ref { margin: 0.2rem 0 0; font-size: 0.78rem; color: var(--text-muted); }
+.tx-link { margin-top: auto; padding-top: 0.5rem; font-size: 0.88rem; font-weight: 600; }
+.tx-bars { list-style: none; padding: 0; margin: 0 0 1rem; display: grid; gap: 0.45rem; }
+.tx-bars li { display: grid; grid-template-columns: 1fr 4.2rem; grid-template-areas: 'n v' 'b b'; gap: 0.15rem 0.6rem; align-items: center; font-size: 0.9rem; }
+@media (min-width: 640px) { .tx-bars li { grid-template-columns: 15rem 1fr 4.2rem; grid-template-areas: 'n b v'; } }
+.tx-bars__n { grid-area: n; }
+.tx-bars__b { grid-area: b; height: 12px; background: var(--bg-soft); border: 1px solid var(--border); border-radius: 999px; overflow: hidden; }
+.tx-bars__b i { display: block; height: 100%; background: var(--accent); border-radius: 999px; }
+.tx-bars__b i.mid { background: var(--dv-warn); }
+.tx-bars__b i.hot { background: var(--dv-bad); }
+.tx-bars__v { grid-area: v; text-align: right; font-variant-numeric: tabular-nums; font-weight: 600; }
+.tx-cta { border: 2px solid var(--accent); border-radius: 12px; padding: 1rem 1.1rem; margin: 1.5rem 0; background: var(--bg-soft); }
+.tx-cta p { margin: 0 0 0.8rem; }
