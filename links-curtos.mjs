@@ -10,6 +10,7 @@ export const LINKS_CURTOS = {
   '/dolar/': ['/trabalho-online/', 'trabalho-dolar'],
   '/prompts/': ['/50-prompts-ia/', '50-prompts'],
   '/curriculo/': ['/como-fazer-curriculo-pelo-celular/', 'curriculo'],
+  '/divida/': ['/ferramentas/calculadora-juros-divida/', 'juros-divida'],
 };
 
 export const linksCurtos = Object.fromEntries(
