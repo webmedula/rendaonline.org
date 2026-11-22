@@ -1,0 +1,242 @@
+---
+import ToolLayout from '../../layouts/ToolLayout.astro';
+import { brl } from '../../lib/calc';
+import { parcela, taxaImplicita, valorPresente, anual, pct } from '../../lib/divida';
+import { TAXAS, ATUALIZACAO_TAXAS, type TipoDivida } from '../../data/taxas-juros';
+
+// Exemplo calculado na hora do build (aparece no texto da página).
+const exV = 10000;
+const exN = 84;
+const exP = 260;
+const exPagas = 12;
+const exI = taxaImplicita(exV, exP, exN) ?? 0;
+const exSaldo = valorPresente(exP, exI, exN - exPagas);
+const exJuros = exP * (exN - exPagas) - exSaldo;
+const exAlvo = (TAXAS['consignado-inss'].mensal ?? 0) * 0.01;
+const exNova = parcela(exSaldo, exAlvo, exN - exPagas);
+const exEconomia = (exP - exNova) * (exN - exPagas);
+
+const linhas = (Object.keys(TAXAS) as TipoDivida[])
+  .filter((k) => TAXAS[k].mensal !== null)
+  .map((k) => {
+    const m = (TAXAS[k].mensal ?? 0) * 0.01;
+    return { nome: TAXAS[k].nome, mes: pct(m), ano: pct(anual(m), 1), ref: TAXAS[k].ref.split(' (')[0] };
+  });
+
+const tetoInss = (TAXAS['consignado-inss'].teto?.valor ?? 0).toLocaleString('pt-BR');
+const aviso =
+  'Simulação para fins educativos. Os valores são estimativas pela tabela Price e podem diferir do contrato por datas de vencimento, carência, seguros e arredondamentos. Taxas médias do mercado: Banco Central do Brasil (séries SGS), atualizadas em ' +
+  ATUALIZACAO_TAXAS +
+  '. O Renda Online não oferece, não intermedeia e não recomenda crédito, e não é correspondente bancário. Antes de contratar ou transferir uma dívida, peça o CET por escrito ao banco.';
+
+const faq = [
+  {
+    q: 'Como saber a taxa de juros real do meu empréstimo?',
+    a: 'Com três números: o valor que caiu na sua conta, o valor da parcela e a quantidade de parcelas. A calculadora encontra a taxa que faz essas parcelas valerem exatamente o que você recebeu. Essa é a taxa que você paga de verdade, já com IOF, seguros e tarifas que o banco embutiu no contrato. O nome técnico dela é Custo Efetivo Total (CET).',
+  },
+  {
+    q: 'O que é portabilidade de crédito?',
+    a: 'É levar o seu empréstimo ou financiamento para outro banco que cobre juros menores. O novo banco quita a dívida no banco atual e você passa a pagar a ele, com parcela menor ou prazo menor. É um direito garantido pela Resolução CMN 4.292/2013: o banco atual não pode se recusar nem cobrar tarifa para isso.',
+  },
+  {
+    q: 'Quais dívidas podem ir para outro banco?',
+    a: 'Empréstimo pessoal, consignado (INSS, servidor público e CLT), financiamento de veículo e financiamento imobiliário. Rotativo do cartão e cheque especial não têm portabilidade, mas dá para trocar por um empréstimo mais barato e quitar de uma vez.',
+  },
+  {
+    q: 'O banco atual pode cobrir a proposta do outro banco?',
+    a: 'Pode, e isso costuma acontecer. Depois do pedido, o banco atual tem até 5 dias úteis para concluir a transferência e costuma usar esse prazo para oferecer uma taxa menor. Muita gente consegue reduzir a taxa sem mudar de banco, só mostrando a oferta do concorrente.',
+  },
+  {
+    q: 'Qual é a taxa de juros máxima do consignado do INSS?',
+    a:
+      'O Conselho Nacional de Previdência Social define um teto para o consignado de aposentados e pensionistas. A última resolução que consultamos fixou ' +
+      tetoInss +
+      '% ao mês para empréstimo. Se a sua taxa real ficar acima disso, vale questionar o banco e pedir o detalhamento do CET.',
+  },
+  {
+    q: 'Quanto de juros o cartão de crédito pode cobrar?',
+    a: 'Desde 2024, pela Lei 14.690/2023, os juros e encargos do rotativo e do parcelamento da fatura não podem passar de 100% do valor original da dívida. Uma dívida de R$ 1.000 pode virar no máximo R$ 2.000. Mesmo assim, o rotativo é o crédito mais caro do país, com média acima de 15% ao mês.',
+  },
+  {
+    q: 'Vale a pena quitar a dívida antes do prazo?',
+    a: 'Sim, se você tem o dinheiro e não precisa dele como reserva. Na quitação antecipada o banco é obrigado a tirar os juros das parcelas futuras (Código de Defesa do Consumidor, art. 52). Peça o valor de quitação no app ou na agência e compare com o saldo devedor que a calculadora mostra.',
+  },
+  {
+    q: 'Esta calculadora pede meus dados ou oferece empréstimo?',
+    a: 'Não. Você não informa CPF, nome nem banco, e as contas são feitas no seu próprio celular: nada é enviado para servidores. O Renda Online não oferece nem intermedeia crédito. A ferramenta serve para você entender a sua dívida e negociar melhor.',
+  },
+];
+---
+
+<ToolLayout
+  slug="calculadora-juros-divida"
+  title="Calculadora de juros de empréstimo e portabilidade: quanto você paga?"
+  description="Descubra a taxa de juros real do seu empréstimo, consignado, financiamento ou cartão, quanto ainda vai pagar de juros, a média do Banco Central e quanto economiza com portabilidade."
+  h1="Calculadora de juros da dívida e portabilidade"
+  lead="Informe o valor, a parcela e o prazo da sua dívida. Em segundos você vê a taxa que paga de verdade, quanto ainda vai de juros, se está acima da média do mercado e quanto economizaria levando a dívida para outro banco."
+  selo="Taxas médias do Banco Central"
+  aviso={aviso}
+  faq={faq}
+>
+  <Fragment slot="calc">
+    <form class="calc-form dv-form" id="f" novalidate>
+      <label class="full">Tipo de dívida
+        <select name="tipo">
+          <optgroup label="Consignado">
+            <option value="consignado-inss">Consignado INSS (aposentado ou pensionista)</option>
+            <option value="consignado-publico">Consignado de servidor público</option>
+            <option value="consignado-privado">Consignado CLT (Crédito do Trabalhador)</option>
+          </optgroup>
+          <optgroup label="Empréstimos e financiamentos">
+            <option value="pessoal" selected>Empréstimo pessoal</option>
+            <option value="veiculos">Financiamento de veículo</option>
+            <option value="imobiliario">Financiamento imobiliário</option>
+            <option value="outro">Outro empréstimo</option>
+          </optgroup>
+          <optgroup label="Cartão e conta">
+            <option value="cartao-parcelado">Parcelamento da fatura do cartão</option>
+            <option value="cartao-rotativo">Rotativo do cartão (fatura não paga)</option>
+            <option value="cheque-especial">Cheque especial</option>
+          </optgroup>
+        </select>
+      </label>
+
+      <input type="hidden" name="sei" value="contrato" />
+      <div class="full dv-seg" data-show="parcelas" role="group" aria-label="O que você sabe sobre a dívida">
+        <span class="dv-seg__label">O que você sabe?</span>
+        <div class="dv-seg__btns">
+          <button type="button" data-sei="contrato" aria-pressed="true">Quanto peguei emprestado</button>
+          <button type="button" data-sei="saldo" aria-pressed="false">Quanto ainda devo</button>
+        </div>
+      </div>
+
+      <label data-show="contrato">Valor que caiu na sua conta (R$)
+        <span class="hint">o dinheiro que você recebeu, não o valor do contrato</span>
+        <input name="valor" inputmode="decimal" placeholder="Ex.: 10.000,00" autocomplete="off" />
+      </label>
+      <label data-show="saldo">Saldo devedor hoje (R$)
+        <span class="hint">valor para quitar, no app do banco</span>
+        <input name="saldo" inputmode="decimal" placeholder="Ex.: 8.500,00" autocomplete="off" />
+      </label>
+      <label data-show="parcelas">Valor da parcela (R$)
+        <input name="parcela" inputmode="decimal" placeholder="Ex.: 350,00" autocomplete="off" />
+      </label>
+      <label data-show="contrato">Total de parcelas do contrato
+        <input name="total" type="number" min="1" max="600" inputmode="numeric" placeholder="Ex.: 48" />
+      </label>
+      <label data-show="contrato">Parcelas já pagas
+        <input name="pagas" type="number" min="0" max="600" inputmode="numeric" placeholder="0" />
+      </label>
+      <label data-show="saldo">Parcelas que faltam
+        <input name="faltam" type="number" min="1" max="600" inputmode="numeric" placeholder="Ex.: 36" />
+      </label>
+      <label data-show="parcelas">Taxa do contrato (% ao mês) <span class="hint">opcional; para comparar com a taxa real</span>
+        <input name="taxac" inputmode="decimal" placeholder="Ex.: 1,85" autocomplete="off" />
+      </label>
+
+      <label data-show="rotativo">Valor da dívida hoje (R$)
+        <span class="hint">fatura em aberto ou saldo negativo da conta</span>
+        <input name="divida" inputmode="decimal" placeholder="Ex.: 3.000,00" autocomplete="off" />
+      </label>
+      <label data-show="rotativo">Quanto você consegue pagar por mês (R$)
+        <input name="pagto" inputmode="decimal" placeholder="Ex.: 400,00" autocomplete="off" />
+      </label>
+      <label data-show="rotativo">Taxa cobrada (% ao mês) <span class="hint">na fatura ou no extrato; vazio usa a média</span>
+        <input name="taxar" inputmode="decimal" placeholder="" autocomplete="off" />
+      </label>
+
+      <details class="full dv-more" data-show="portavel">
+        <summary>Recebeu uma proposta de outro banco?</summary>
+        <label>Taxa da proposta (% ao mês) <span class="hint">vazio: simulamos com a média do mercado</span>
+          <input name="proposta" inputmode="decimal" placeholder="Ex.: 1,60" autocomplete="off" />
+        </label>
+      </details>
+
+      <button class="btn full" type="submit">Ver quanto pago de juros</button>
+      <p class="full small muted dv-privacy">🔒 Sem CPF, sem cadastro. As contas são feitas no seu aparelho e nada é enviado.</p>
+    </form>
+    <div class="calc-result dv-result" id="r" hidden aria-live="polite"></div>
+  </Fragment>
+
+  <h2>Como a calculadora descobre quanto você paga de juros</h2>
+  <p>
+    O banco anuncia uma taxa, mas o que pesa no bolso é a <strong>taxa real</strong>: aquela que faz as parcelas que você paga valerem
+    exatamente o dinheiro que entrou na sua conta. Ela já inclui IOF, seguro prestamista, tarifa de cadastro e qualquer outro custo
+    embutido no contrato. É por isso que pedimos o valor que <em>caiu na conta</em>, e não o valor do contrato.
+  </p>
+  <p>
+    Com a taxa real, a conta fica clara: das parcelas que ainda faltam, uma parte paga a dívida de verdade (o saldo devedor) e o resto é
+    juros. A calculadora mostra os dois separados e compara a sua taxa com a média que os bancos cobram no mesmo tipo de crédito.
+  </p>
+
+  <h3>Exemplo: consignado do INSS</h3>
+  <p>
+    Dona Maria pegou {brl(exV)} em {exN} parcelas de {brl(exP)} e já pagou {exPagas}. A taxa real dela é de
+    <strong>{pct(exI)} ao mês</strong> ({pct(anual(exI), 1)} ao ano). Ela ainda deve {brl(exSaldo)}, mas vai pagar
+    {brl(exP * (exN - exPagas))} até o fim: <strong>{brl(exJuros)} só de juros</strong>. Levando a dívida para um banco que cobre a média do
+    mercado ({pct(exAlvo)} ao mês), a parcela cairia para {brl(exNova)} e a economia total seria de <strong>{brl(exEconomia)}</strong>.
+  </p>
+
+  <h2 id="taxas-medias">Taxas médias de juros por tipo de crédito</h2>
+  <p>
+    Médias cobradas de pessoas físicas, segundo o Banco Central. Use como referência: se a sua taxa está bem acima da média, há espaço para
+    negociar ou levar a dívida para outro banco.
+  </p>
+  <div class="table-scroll">
+    <table>
+      <thead><tr><th>Tipo de crédito</th><th>Média ao mês</th><th>Média ao ano</th><th>Referência</th></tr></thead>
+      <tbody>
+        {
+          linhas.map((l) => (
+            <tr>
+              <td>{l.nome}</td>
+              <td>{l.mes}</td>
+              <td>{l.ano}</td>
+              <td class="small">{l.ref}</td>
+            </tr>
+          ))
+        }
+      </tbody>
+    </table>
+  </div>
+  <p class="small muted">
+    Fonte: Banco Central do Brasil, séries temporais (SGS) e taxas de juros por instituição financeira. Atualizado em {ATUALIZACAO_TAXAS}.
+    Veja a taxa de cada banco no <a href="https://www.bcb.gov.br/estatisticas/txjuros" target="_blank" rel="noopener">ranking de taxas do Banco Central</a>.
+  </p>
+
+  <h2>Portabilidade: como levar a dívida para um banco mais barato</h2>
+  <ol>
+    <li><strong>Peça ao seu banco o saldo devedor e o CET</strong> do contrato. Ele é obrigado a informar.</li>
+    <li><strong>Peça propostas em dois ou três bancos</strong>, dizendo que é portabilidade. Compare pela taxa e pelo CET, nunca só pela parcela.</li>
+    <li><strong>Formalize no banco escolhido.</strong> Ele mesmo quita a dívida no banco antigo; o dinheiro não passa pela sua conta.</li>
+    <li><strong>Fique atento à contraproposta.</strong> O banco atual tem até 5 dias úteis para concluir a transferência e costuma usar esse prazo para tentar segurar você com uma taxa menor.</li>
+  </ol>
+  <p>
+    O passo a passo completo, com os documentos e os cuidados, está no guia
+    <a href="/portabilidade-de-credito-como-funciona/">portabilidade de crédito: como funciona e como pedir</a>.
+  </p>
+
+  <h2>Cartão e cheque especial: troque a dívida cara por uma barata</h2>
+  <p>
+    Rotativo e cheque especial não têm portabilidade, mas são justamente as dívidas mais caras. A saída mais comum é pegar um empréstimo com
+    juros menores (pessoal ou, melhor ainda, consignado), quitar tudo de uma vez e pagar só o novo. Escolha <em>Rotativo do cartão</em> ou
+    <em>Cheque especial</em> na calculadora para ver quanto tempo leva para quitar e quanto você economiza com a troca.
+  </p>
+
+  <h2>Cuidado com golpes de portabilidade</h2>
+  <ul>
+    <li>Nenhum banco pede depósito, “taxa de liberação” ou pagamento adiantado para fazer portabilidade.</li>
+    <li>Desconfie de ligação ou mensagem oferecendo “redução de parcela” em nome do seu banco ou do INSS.</li>
+    <li>Não envie foto de documentos nem códigos recebidos por SMS para quem entrou em contato com você.</li>
+    <li>Confira a instituição no site do Banco Central e contrate só pelos canais oficiais dela.</li>
+  </ul>
+  <p>
+    Quer organizar o resto do orçamento? Veja também a <a href="/ferramentas/calculadora-salario-liquido/">calculadora de salário líquido</a>
+    e a <a href="/ferramentas/calculadora-juros-compostos/">calculadora de juros compostos</a>, que mostra o outro lado: os juros
+    trabalhando a seu favor.
+  </p>
+</ToolLayout>
+
+<script>
+  import '../../scripts/calculadora-divida';
+</script>

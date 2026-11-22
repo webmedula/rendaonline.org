@@ -85,6 +85,12 @@ const FERRAMENTAS: Record<string, { gancho: string; texto: string; titulo: strin
     texto: 'A calculadora desconta INSS e Imposto de Renda com as regras de 2026, já com a isenção para quem ganha até R$ 5 mil. Grátis e sem cadastro.',
     prioridade: 3,
   },
+  'calculadora-juros-divida': {
+    titulo: 'Quanto você paga de juros na sua dívida?',
+    gancho: 'Você sabe quanto do seu empréstimo é só juros? Faça a conta em 1 minuto 👇',
+    texto: 'Coloque o valor, a parcela e o prazo: a calculadora mostra a taxa real, quanto ainda falta de juros, a comparação com a média do Banco Central e quanto você economiza levando a dívida para outro banco.',
+    prioridade: 2,
+  },
   'calculadora-rescisao': {
     titulo: 'Quanto você recebe na rescisão?',
     gancho: 'Saiu ou vai sair do emprego? Confira se a rescisão está certa antes de assinar.',
@@ -292,7 +298,9 @@ export async function getSocialItems(): Promise<SocialItem[]> {
       cta: 'Calcule grátis',
       gancho: f?.gancho ?? `${t.name}: grátis e sem cadastro.`,
       texto: f?.texto ?? t.summary,
-      hashtags: t.slug.includes('freelancer') || t.slug.includes('mei')
+      hashtags: t.slug === 'calculadora-juros-divida'
+        ? ['#dividas', '#emprestimo', '#portabilidade', '#educacaofinanceira', '#financaspessoais']
+        : t.slug.includes('freelancer') || t.slug.includes('mei')
         ? ['#freelancer', '#mei', '#empreendedorismo', '#rendaextra', '#financas']
         : TAGS_FINANCAS,
       data: '2026-11-13T12:00:00.000Z',

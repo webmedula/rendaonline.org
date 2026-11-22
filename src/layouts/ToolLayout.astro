@@ -13,9 +13,13 @@ interface Props {
   lead: string;
   faq: { q: string; a: string }[];
   cta?: { text: string; label: string; href: string };
+  /** Texto curto abaixo do lead (ex.: "Tabelas oficiais de 2026"). */
+  selo?: string;
+  /** Aviso no fim da página (substitui o aviso trabalhista padrão). */
+  aviso?: string;
 }
 
-const { slug, title, description, h1, lead, faq, cta } = Astro.props;
+const { slug, title, description, h1, lead, faq, cta, selo, aviso } = Astro.props;
 const tool = TOOLS.find((t) => t.slug === slug)!;
 const others = TOOLS.filter((t) => t.slug !== slug);
 const url = `${SITE_URL}/ferramentas/${slug}/`;
@@ -63,7 +67,7 @@ const ctaFinal = cta ?? {
     </nav>
     <h1>{h1}</h1>
     <p class="lead">{lead}</p>
-    <p class="small muted">{slug === 'calculadora-juros-compostos' ? 'Cálculo mês a mês' : slug === 'quanto-cobrar-por-hora-freelancer' ? 'Com impostos de 2026' : 'Tabelas oficiais de 2026'} · atualizado em {ATUALIZADO_EM} · grátis, sem cadastro</p>
+    <p class="small muted">{selo ? selo : slug === 'calculadora-juros-compostos' ? 'Cálculo mês a mês' : slug === 'quanto-cobrar-por-hora-freelancer' ? 'Com impostos de 2026' : 'Tabelas oficiais de 2026'} · atualizado em {ATUALIZADO_EM} · grátis, sem cadastro</p>
   </div>
 
   <section class="tool-box" aria-label="Calculadora">
@@ -95,8 +99,10 @@ const ctaFinal = cta ?? {
     }
 
     <p class="notice small">
-      Os resultados são estimativas com base na legislação e nas tabelas vigentes em 2026. Convenções coletivas, adicionais e
-      situações específicas podem mudar os valores. Para decisões importantes, confirme com o RH, um contador ou o sindicato.
+      {
+        aviso ??
+          'Os resultados são estimativas com base na legislação e nas tabelas vigentes em 2026. Convenções coletivas, adicionais e situações específicas podem mudar os valores. Para decisões importantes, confirme com o RH, um contador ou o sindicato.'
+      }
     </p>
 
     <LeadMagnet />
