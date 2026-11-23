@@ -14,15 +14,26 @@ const latest = posts.slice(0, 9);
 
 <BaseLayout title={SITE_TITLE} description={SITE_DESCRIPTION}>
   <section class="hero">
-    <h1>IA, automação e ferramentas para ganhar dinheiro online</h1>
-    <p>
-      Tutoriais passo a passo, testados de verdade, para quem quer usar inteligência artificial e automação para trabalhar,
-      criar conteúdo e montar uma renda na internet.
-    </p>
-    <p class="hero-actions">
-      <a class="btn" href="/quiz-renda-extra/">Descubra sua renda extra ideal (quiz)</a>
-      <a class="btn btn-outline" href="/categoria/ferramentas/">Ferramentas gratuitas</a>
-    </p>
+    <div class="hero-main">
+      <h1>IA, automação e ferramentas para ganhar dinheiro online</h1>
+      <p>
+        Tutoriais passo a passo, testados de verdade, para quem quer usar inteligência artificial e automação para trabalhar,
+        criar conteúdo e montar uma renda na internet.
+      </p>
+      <p class="hero-actions">
+        <a class="btn" href="/quiz-renda-extra/">Descubra sua renda extra ideal (quiz)</a>
+        <a class="btn btn-outline" href="/categoria/ferramentas/">Ferramentas gratuitas</a>
+      </p>
+    </div>
+    <nav class="hero-shortcuts" aria-label="Atalhos">
+      <p class="hero-shortcuts__title">Atalhos</p>
+      <ul>
+        <li><a href="/ferramentas/"><span aria-hidden="true">🧮</span><span><strong>Calculadoras grátis</strong><small>Salário líquido, rescisão, 13º, juros</small></span></a></li>
+        <li><a href="/50-prompts-ia/"><span aria-hidden="true">🤖</span><span><strong>50 prompts de IA grátis</strong><small>Prontos para copiar e usar</small></span></a></li>
+        <li><a href="/trabalho-online/"><span aria-hidden="true">💻</span><span><strong>Trabalho online</strong><small>Plataformas testadas e avaliadas</small></span></a></li>
+        <li class="hero-shortcuts__biz"><a href="/servicos/"><span aria-hidden="true">🚀</span><span><strong>Site ou automação para sua empresa</strong><small>Fale com a WebMedula</small></span></a></li>
+      </ul>
+    </nav>
   </section>
 
   <LeadMagnet />
