@@ -43,3 +43,12 @@ jobs:
           r=$(curl -s "https://rendaonline.org/api/lead.php?status=1&t=$(date +%s)")
           echo "$r"
           echo "$r" | grep -q '"gravavel":true' || { echo "::warning::A captura de contatos (api/lead.php) não está gravando no servidor"; }
+
+      - name: Avisar Bing e outros buscadores (IndexNow)
+        continue-on-error: true
+        run: |
+          KEY=59ab20ffd8884543b609c188ca5a4f59
+          urls=$(find dist -name 'sitemap-*.xml' ! -name 'sitemap-index.xml' -exec grep -oh '<loc>[^<]*</loc>' {} + | sed 's/<\/\?loc>//g' | head -10000)
+          json=$(printf '%s\n' $urls | python3 -c "import json,sys; u=[l.strip() for l in sys.stdin if l.strip()]; print(json.dumps({'host':'rendaonline.org','key':'$KEY','keyLocation':'https://rendaonline.org/$KEY.txt','urlList':u}))")
+          echo "Enviando $(printf '%s\n' $urls | wc -l) URLs"
+          curl -s -o /dev/null -w "IndexNow: HTTP %{http_code}\n" -X POST https://api.indexnow.org/indexnow -H 'Content-Type: application/json; charset=utf-8' -d "$json"
