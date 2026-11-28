@@ -76,7 +76,11 @@ for (const [codigo, palavras] of Object.entries(SERIES)) {
       if (!/^\d{2}$/.test(mm ?? '') || !/^\d{4}$/.test(aaaa ?? '')) throw new Error(`data inválida: ${d?.data}`);
       return { valor: Math.round(v * 100) / 100, mes: `${aaaa}-${mm}`, dia: `${aaaa}-${mm}-${dd}` };
     });
+    // A API devolve os "últimos N" do mais novo para o mais antigo: ordenamos sempre por data.
+    pontos.sort((a, b) => a.dia.localeCompare(b.dia));
     const ult = pontos[pontos.length - 1];
+    const anterior = series[codigo];
+    if (!selic && anterior?.mes && ult.mes < anterior.mes) throw new Error(`o mês mais recente (${ult.mes}) é anterior ao já salvo (${anterior.mes})`);
     const valor = ult.valor;
     const [aaaa, mm] = ult.mes.split('-');
     const antes = series[codigo];

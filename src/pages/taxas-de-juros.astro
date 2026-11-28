@@ -71,7 +71,6 @@ const mesRef = (() => {
 })();
 const pp = (v: number) => `${v > 0 ? '+' : v < 0 ? '−' : ''}${Math.abs(v).toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })} p.p.`;
 const selicTxt = SELIC ? `${SELIC.valor.toLocaleString('pt-BR', { maximumFractionDigits: 2 })}% ao ano` : null;
-const fmtDia = (d: string) => d.split('-').reverse().join('/');
 const inss = linhas.find((l) => l.k === 'consignado-inss')!;
 const rot = linhas.find((l) => l.k === 'cartao-rotativo')!;
 
@@ -129,7 +128,7 @@ const ld = [
       A média de juros que os bancos cobraram de pessoas físicas em <strong>{mesRef}</strong>, segundo o Banco Central. Use como régua antes de
       contratar, negociar ou levar a sua dívida para outro banco.
     </p>
-    <p class="small muted">Fonte: Banco Central do Brasil · atualizado automaticamente · {selicTxt && <>Selic: {selicTxt}{SELIC?.dia && ` (em ${fmtDia(SELIC.dia)})`}</>}</p>
+    <p class="small muted">Fonte: Banco Central do Brasil · atualizado automaticamente · {selicTxt && <>meta da Selic: {selicTxt}</>}</p>
   </div>
 
   <section class="tx-grid" aria-label="Taxas médias por tipo de crédito">
