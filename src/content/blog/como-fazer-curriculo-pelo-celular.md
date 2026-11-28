@@ -2,7 +2,7 @@
 title: "Como fazer um currículo pelo celular em 2026 (passo a passo e modelo pronto)"
 description: "Aprenda a fazer um currículo profissional pelo celular em poucos minutos: o que colocar, o que tirar, modelo pronto para copiar e 3 jeitos de gerar o PDF, inclusive pelo WhatsApp."
 pubDate: 2026-11-21
-category: ferramentas
+category: dinheiro
 tags: ["curriculo", "emprego", "celular", "whatsapp", "modelo"]
 socialTitle: "Como fazer currículo pelo celular"
 imageAlt: "Pessoa montando um currículo profissional pelo celular"

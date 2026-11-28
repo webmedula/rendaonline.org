@@ -29,6 +29,10 @@ export const CATEGORIES = {
     name: 'IA para empresas',
     description: 'Atendimento no WhatsApp, automação e sites para pequenos negócios: como funciona e quanto custa.',
   },
+  dinheiro: {
+    name: 'Dinheiro e trabalho',
+    description: 'Salário, 13º, INSS, Imposto de Renda, dívidas e direitos do trabalhador explicados com contas reais.',
+  },
 } as const;
 
 export type CategorySlug = keyof typeof CATEGORIES;

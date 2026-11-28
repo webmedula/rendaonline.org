@@ -2,7 +2,7 @@
 title: "Portabilidade de crédito: como funciona e como pedir para pagar menos juros (2026)"
 description: "Passo a passo para levar empréstimo, consignado ou financiamento para um banco mais barato, quando compensa, quanto dá para economizar e os golpes que você precisa evitar."
 pubDate: 2026-11-22
-category: ferramentas
+category: dinheiro
 tags: ["portabilidade", "dividas", "emprestimo", "consignado", "juros"]
 socialTitle: "Portabilidade: pague menos juros"
 imageAlt: "Pessoa comparando parcelas de empréstimo no celular"

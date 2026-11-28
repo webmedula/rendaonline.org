@@ -32,6 +32,13 @@ const cat = CATEGORIES[categoria];
         </p>
       )
     }
+    {
+      categoria === 'dinheiro' && (
+        <p class="service-cta__actions">
+          <a class="btn" href="/ferramentas/">Calculadoras grátis de salário, 13º, rescisão e dívidas</a>
+        </p>
+      )
+    }
   </section>
   {
     posts.length === 0 ? (

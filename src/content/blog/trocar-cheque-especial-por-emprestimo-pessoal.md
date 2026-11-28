@@ -2,7 +2,7 @@
 title: "Trocar cheque especial por empréstimo pessoal compensa? Faça a conta antes de decidir"
 description: "O cheque especial pode cobrar até 8% ao mês. Veja quando trocar por empréstimo pessoal ou consignado compensa, quanto se economiza e os cuidados para não piorar a situação."
 pubDate: 2026-11-22
-category: ferramentas
+category: dinheiro
 tags: ["cheque especial", "emprestimo pessoal", "dividas", "juros", "consignado"]
 socialTitle: "Cheque especial ou empréstimo?"
 imageAlt: "Extrato bancário com saldo negativo no cheque especial"
