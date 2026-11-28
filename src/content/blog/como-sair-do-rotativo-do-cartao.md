@@ -2,7 +2,7 @@
 title: "Como sair do rotativo do cartão de crédito: 5 caminhos para parar de pagar os juros mais caros do país"
 description: "O rotativo cobra mais de 15% ao mês. Veja o que a lei garante, quanto você perde pagando o mínimo e 5 jeitos de quitar a fatura gastando bem menos de juros."
 pubDate: 2026-11-22
-category: ferramentas
+category: dinheiro
 tags: ["cartao de credito", "rotativo", "dividas", "juros", "emprestimo"]
 socialTitle: "Como sair do rotativo do cartão"
 imageAlt: "Fatura de cartão de crédito com valor mínimo destacado"

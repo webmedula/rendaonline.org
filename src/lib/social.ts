@@ -51,6 +51,7 @@ const TAGS_CATEGORIA: Record<CategorySlug, string[]> = {
   ferramentas: ['#ferramentasdeia', '#inteligenciaartificial', '#ia', '#produtividade', '#tecnologia'],
   'criar-site': ['#blog', '#adsense', '#criarsite', '#marketingdigital', '#rendaextra'],
   'ia-empresas': ['#empreendedorismo', '#pequenasempresas', '#automacao', '#whatsappbusiness', '#vendas'],
+  dinheiro: ['#financaspessoais', '#clt', '#direitostrabalhistas', '#dinheiro', '#educacaofinanceira'],
 };
 const TAGS_TRABALHO = ['#trabalhoonline', '#rendaextra', '#trabalhoremoto', '#ganhardinheiro', '#homeoffice', '#freelancer'];
 const TAGS_FINANCAS = ['#financaspessoais', '#clt', '#direitostrabalhistas', '#dinheiro', '#educacaofinanceira'];

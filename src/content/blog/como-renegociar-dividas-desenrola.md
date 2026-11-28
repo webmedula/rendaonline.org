@@ -2,7 +2,7 @@
 title: "Como renegociar dívidas em 2026: o que muda com o Desenrola 3.0 e o que fazer agora"
 description: "O que é o Desenrola 3.0, quem pode entrar e quando começa, e os caminhos que já funcionam hoje para renegociar dívidas atrasadas sem cair em golpe."
 pubDate: 2026-11-22
-category: ferramentas
+category: dinheiro
 tags: ["dividas", "desenrola", "renegociacao", "nome sujo", "superendividamento"]
 socialTitle: "Como renegociar dívidas em 2026"
 imageAlt: "Pessoa organizando contas e boletos atrasados na mesa"

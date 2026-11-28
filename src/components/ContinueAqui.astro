@@ -15,6 +15,7 @@ const POR_CATEGORIA: Record<CategorySlug, ToolSlug[]> = {
   ferramentas: ['calculadora-juros-divida', 'calculadora-juros-compostos'],
   'criar-site': ['quanto-cobrar-por-hora-freelancer', 'calculadora-das-mei'],
   'ia-empresas': ['calculadora-das-mei', 'calculadora-rescisao'],
+  dinheiro: ['calculadora-salario-liquido', 'calculadora-juros-divida'],
 };
 const tools = POR_CATEGORIA[category].map((s) => TOOLS.find((t) => t.slug === s)!).filter(Boolean);
 const empresa = category === 'ia-empresas';
